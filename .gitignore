@@ -1,28 +1,56 @@
-# Jupyter tạo tự động
+# Python cache
+__pycache__/
+*.py[codz]
+*$py.class
+*.so
+
+# Packaging/build
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+wheels/
+
+# Environments and secrets
+.env
+.envrc
+.venv/
+venv/
+env/
+ENV/
+
+# Test/type-check/tool caches
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter/IPython generated files
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
-
-# Thư mục tạm của Anaconda/Jupyter
-anaconda_projects/
-**/anaconda_projects/
+profile_default/
+ipython_config.py
 .jupyter/
 .ipython/
 .matplotlib/
 
-# Python cache và môi trường ảo
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-env/
+# Anaconda/Jupyter temporary project state
+anaconda_projects/
+**/anaconda_projects/
 
-# File kiểm thử sinh tạm
+# Locally generated test copies
 *_test.ipynb
 *_executed.ipynb
 
-# File hệ điều hành/IDE
-.DS_Store
-Thumbs.db
+# IDE and operating-system files
 .vscode/
 .idea/
+.spyproject
+.spyderproject
+.DS_Store
+Thumbs.db
+tempCodeRunnerFile.py
 

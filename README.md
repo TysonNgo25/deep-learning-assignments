@@ -1,4 +1,6 @@
-# Bài 03 — Kỹ thuật lập trình Python với Numpy
+# Deep Learning Assignments
+
+## Bài 03 — Kỹ thuật lập trình Python với Numpy
 
 Repository chứa đề bài gốc, notebook lời giải và hướng dẫn chạy trên Anaconda cho bài thực hành số 03.
 
@@ -63,4 +65,4 @@ python-deep-learning/
     └── outputs/                 # Biểu đồ do đáp án sinh ra
 ```
 
-Các tài liệu `python_advance.*`, `img1.png`, `img2.png`, `plot2d.png` và `scater2d.png` trong máy là tài liệu Python mở rộng, không thuộc phần nộp của bài 03 nên không được đưa vào commit bài làm.
+Các tài liệu `python_advance.*`, `img1.png`, `img2.png`, `plot2d.png` và `scater2d.png` là tài liệu Python mở rộng. Chúng không phải đáp án chính nhưng vẫn được lưu trong `bai03` để repository chứa đầy đủ thư mục bài học gốc.
