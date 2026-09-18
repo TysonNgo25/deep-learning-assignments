@@ -1,0 +1,13 @@
+name: bai03-python
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy=1.26
+  - matplotlib=3.8
+  - jupyterlab=4
+  - notebook=7
+  - nbconvert=7
+  - ipykernel=6
+
