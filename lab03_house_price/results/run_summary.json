@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "train_rows": 1460,
+  "competition_test_rows": 1459,
+  "development_rows": 1168,
+  "holdout_rows": 292,
+  "numeric_columns": 35,
+  "categorical_columns": 44,
+  "winner_by_development_cv": {
+    "model": "HistGradientBoosting",
+    "features": "area",
+    "log_rmse_mean": 0.13449490152986648
+  },
+  "holdout_not_used_in_cv": true,
+  "competition_test_has_no_labels": true
+}
