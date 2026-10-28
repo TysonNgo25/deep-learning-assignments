@@ -1,0 +1,30 @@
+# Baseline ĐỀ XUẤT theo Kế hoạch.md mục 5. Cả nhóm chốt ngày 29/10; sau đó chỉ đổi biến đang khảo sát.
+
+data:
+  seed: 42
+  x1_range: [-2.0, 2.0]
+  x2_range: [-4.0, 4.0]
+  mu: [0.0, 0.0]
+  cov: [[0.3, -0.5], [-0.5, 2.0]]
+  n_train_pool: 2000
+  n_val: 500
+  n_test: 100
+
+train:
+  seeds: [0, 1, 2]
+  n_train: 1000          # mặc định cho B, C; A thay đổi biến này
+  hidden: [16, 16]       # 2 tầng ẩn × 16 nơ-ron
+  activation: tanh
+  optimizer: adam
+  lr: 1.0e-3
+  batch_size: 32
+  max_epochs: 1000
+  patience: 100          # early stopping theo val loss
+
+experiments:
+  A:
+    n_train: [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000]
+  B:
+    hidden: [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]]
+  C:
+    hidden: [[16], [16, 16], [16, 16, 16], [16, 16, 16, 16]]
