@@ -34,7 +34,7 @@ Code PyTorch chiếm 25/100 điểm và mọi thực nghiệm A, B, C đều ch�
 - det C = 0.35, nên giá trị lớn nhất của y khoảng 0.269 (tại gốc tọa độ). Lấy mẫu đều trên miền 4 × 8 làm phần lớn điểm có y gần 0, MSE sẽ rất nhỏ (cỡ 1e−5). Bảng kết quả cần ghi dạng số mũ và báo cáo thêm RMSE để so với đỉnh 0.269 cho dễ hiểu.
 - Thực nghiệm A chỉ công bằng khi validation và test giữ nguyên. Đề xuất: sinh 1 lần với seed cố định một pool train 2000 mẫu, validation 500 mẫu, test 100 mẫu. A = 200 lấy 200 dòng đầu của pool, A = 400 lấy 400 dòng đầu, v.v.
 - Trong mỗi nhóm chỉ được đổi đúng một biến. Baseline (seed, batch size, epochs, optimizer, lr, activation, số tầng/nơ-ron, điều kiện dừng) phải chốt trước khi chạy và ghi vào `configs/baseline.yaml`.
-- Đề khuyến khích ≥ 3 seed, báo cáo trung bình ± độ lệch chuẩn. Khối lượng: A 10 cấu hình × 3 seed = 30 lần chạy, B 10 × 3 = 30, C 4 × 3 = 12, tổng 72 lần. Mạng nhỏ, chạy CPU vẫn kịp nếu bật early stopping.
+- Đề khuyến khích ≥ 3 seed, báo cáo trung bình ± độ lệch chuẩn. Khối lượng: A 10 cấu hình × 3 seed = 30 lần chạy, B 13 × 3 = 39, C 4 × 3 = 12, tổng 81 lần. Mạng nhỏ, chạy CPU vẫn kịp nếu bật early stopping.
 - Thực nghiệm C bắt buộc đo thời gian train, nên phải ghi `time.perf_counter()` ngay từ lúc viết `train.py`, không để đến khi chạy mới thêm.
 - 3 điểm vấn đáp tính cho cả nhóm. Thầy có thể hỏi bất kỳ ai về vòng train/val/test, nên ai cũng phải đọc và giải thích được `model.py` và `train.py`, kể cả người không viết hai file này.
 - Đường dẫn tuyệt đối kiểu `C:\Users\dell\...` làm code không chạy trên máy thầy. Toàn bộ đường dẫn dùng `pathlib` tương đối so với gốc project.
@@ -77,7 +77,7 @@ gantt
     Đối chiếu, chạy lại           :2026-11-05, 3d
     section Trung
     Runner A, B                   :2026-10-29, 2d
-    Chạy A, B (60 lần)            :2026-10-31, 4d
+    Chạy A, B (69 lần)            :2026-10-31, 4d
     Viết, đối chiếu, tập          :2026-11-04, 4d
     section Nhân
     plots.py                      :2026-10-29, 2d
@@ -104,20 +104,21 @@ M1 = pipeline chạy được, M2 = đủ kết quả A, B, C, M3 = nháp báo c
 
 ## 5. Quy ước chung và checklist nộp
 
-Baseline dưới đây là đề xuất để cả nhóm chốt trong ngày 29/10. Sau khi chốt, không ai tự đổi tham số ngoài biến đang khảo sát.
+Baseline dưới đây đã chốt ngày 29/10 (khớp `configs/baseline.yaml`). Không ai tự đổi tham số ngoài biến đang khảo sát.
 
-| Tham số | Giá trị đề xuất | Dùng cho |
+| Tham số | Giá trị đã chốt | Dùng cho |
 | --- | --- | --- |
 | Seed dữ liệu | 42 (sinh 1 lần: pool train 2000, val 500, test 100) | A, B, C |
 | Seed huấn luyện | 0, 1, 2 | A, B, C |
 | Kiến trúc baseline | 2 tầng ẩn × 16 nơ-ron, tanh, đầu ra tuyến tính | A |
 | Số mẫu train mặc định | 1000 | B, C |
-| B | 1 tầng ẩn, 1…10 nơ-ron; có thể thêm 16, 32, 64 để thấy rõ quá khớp | B |
+| B | 1 tầng ẩn, 1…10 nơ-ron, thêm 16, 32, 64 để thấy rõ quá khớp | B |
 | C | 1, 2, 3, 4 tầng ẩn, mỗi tầng 16 nơ-ron | C |
 | Optimizer, lr | Adam, 1e−3 | A, B, C |
 | Batch size | 32 | A, B, C |
 | Điều kiện dừng | Tối đa 1000 epoch, early stopping patience 100 theo val loss | A, B, C |
-| Chỉ số | MSE, MAE, RMSE trên train, val, test | A, B, C |
+| Chuẩn hóa y | Không, train và tính chỉ số trên y gốc | A, B, C |
+| Chỉ số | MSE, MAE, RMSE trên train, val, test (ghi dạng số mũ) | A, B, C |
 
 Cấu trúc thư mục thống nhất để mọi người ghi kết quả vào đúng chỗ:
 
