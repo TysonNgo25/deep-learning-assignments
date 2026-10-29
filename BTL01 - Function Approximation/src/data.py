@@ -7,8 +7,6 @@ Dùng:  from src.data import load_train, load_split
        X_train, y_train = load_train(800)   # 800 dòng đầu của pool (thực nghiệm A)
        X_val, y_val = load_split("val")
 """
-import sys
-
 import numpy as np
 import pandas as pd
 import yaml
@@ -110,8 +108,6 @@ def check(splits, cfg):
 
 
 def main():
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
     cfg = load_config()["data"]
     splits = generate_splits(cfg)
     peak = check(splits, cfg)
