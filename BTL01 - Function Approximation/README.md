@@ -53,6 +53,8 @@ python -m experiments.run_B
 Hai runner đọc cấu hình ở `configs/baseline.yaml`, dùng các seed `0, 1, 2`,
 ghi log loss theo epoch cùng metric train/validation vào `results/A/logs/` và
 `results/B/logs/`, bảng mean ± std vào `summary.csv`, và đồ thị vào `figures/`.
+Hai runner dùng chung `experiments/common.py` để thực hiện từng tổ hợp giá trị/seed
+và tổng hợp metric bằng trung bình cùng độ lệch chuẩn mẫu.
 Không có runner nào dùng tập test để chọn mô hình. Có thể chạy một nhóm nhỏ
 để kiểm tra hoặc chạy lại một phần thí nghiệm bằng các tùy chọn:
 
