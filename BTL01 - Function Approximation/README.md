@@ -46,6 +46,16 @@ Chạy từ thư mục này dưới dạng module để import được `src`, v
 ```powershell
 python -m src.data
 python -m experiments.run_A
+python -m experiments.run_B
 ```
 
-Phần này cập nhật khi pipeline xong (mốc 31/10).
+Hai runner đọc cấu hình ở `configs/baseline.yaml`, dùng các seed `0, 1, 2`,
+ghi log loss theo epoch cùng metric train/validation vào `results/A/logs/` và
+`results/B/logs/`, bảng mean ± std vào `summary.csv`, và đồ thị vào `figures/`.
+Không có runner nào dùng tập test để chọn mô hình. Có thể chạy một nhóm nhỏ
+để kiểm tra hoặc chạy lại một phần thí nghiệm bằng các tùy chọn:
+
+```powershell
+python -m experiments.run_A --values 200 400 --seeds 0
+python -m experiments.run_B --values 1 4 10 --seeds 0
+```
