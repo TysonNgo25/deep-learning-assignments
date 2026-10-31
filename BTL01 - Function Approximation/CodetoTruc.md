@@ -161,7 +161,7 @@ Ngày này Trúc không có commit. Mục này ghi lại commit của các bạn
 | Người | Kế hoạch 30/10 | Thực tế |
 | --- | --- | --- |
 | Trúc | Scatter 3D, bề mặt hàm thật, histogram; nháp mục 2 | Chưa commit trong ngày, xong sáng 31/10 |
-| Khang | Viết `train.py` | Xong (`f626842`). `evaluate.py` theo lịch là ngày 31/10, hiện vẫn trống |
+| Khang | Viết `train.py` | Xong (`f626842`); tiếp tục hoàn thiện `evaluate.py` trong ngày 31/10 (`1c73723`) |
 | Trung | Hàm chạy nhiều seed + gộp mean ± std | Xong, và chạy luôn đủ A (30 lần) và B (39 lần), sớm hơn lịch |
 | Nhân | Hoàn thiện `plots.py`, phác `run_C.py` | `run_C.py` xong (`5374531`). `plots.py` vẫn trống |
 
@@ -191,10 +191,10 @@ Chạy `python -c "import experiments.run_A"` (và B, C) trên `main` hiện t�
 ImportError: cannot import name 'evaluate_model' from 'src.evaluate'
 ```
 
-Cả ba runner gọi `evaluate_model` trong `src/evaluate.py`, nhưng file này trên `main` chỉ có docstring (Khang đã revert bản cũ và chưa đẩy lại). `run_C.py` còn import `make_group_figures` từ `src/plots.py`, file này cũng đang trống. Như vậy:
+Cả ba runner gọi `evaluate_model` trong `src/evaluate.py`, nhưng tại lần kiểm tra đầu tiên file này chỉ có docstring. Khang đã bổ sung hàm đánh giá trong commit `1c73723` lúc 22:24 ngày 31/10. Ở thời điểm kiểm tra ban đầu, `src/plots.py` cũng trống; Nhân sau đó hoàn thiện file này và chạy đủ C trong commit `48fbf36`.
 
-- Hiện **không ai chạy lại được A, B, C từ repo**.
-- Log và `summary.csv` của A, B commit lúc 15:09 ngày 30/10, trước khi `train.py` lên repo (23:47) và khi `evaluate.py` vẫn trống. Tức là số liệu này sinh từ code nằm trên máy Trung, không có trong repo. Rubric chấm "số liệu truy vết được" và "chạy lại được", nên khi `evaluate.py` có trên `main`, Trung phải chạy lại A, B và commit log mới.
+- Sau commit `1c73723`, smoke test A đã chạy thành công; A/B vẫn cần chạy lại đủ cấu hình để thay các kết quả cũ chưa truy vết được từ code trong repo lúc chạy.
+- Log và `summary.csv` A/B commit lúc 15:09 ngày 30/10, trước khi `train.py` lên repo (23:47) và khi `evaluate.py` còn trống; chúng được sinh từ code nằm trên máy Trung nên không truy vết được đầy đủ từ repo ở thời điểm đó. Nay `evaluate.py` đã có, Trung cần chạy lại đủ A/B và commit log mới để có kết quả tái lập.
 
 Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay bằng số chạy lại):
 
@@ -211,14 +211,27 @@ Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay
 
 ### Còn treo
 
-- [ ] Báo nhóm: runner A/B/C đang lỗi `ImportError`, cần Khang đẩy `evaluate.py` (có `evaluate_model`) và Nhân đẩy `plots.py` (có `make_group_figures`).
-- [ ] Trung chạy lại A, B từ repo sau khi `evaluate.py` lên `main`, commit log mới.
+- [x] Khắc phục lỗi import: Khang bổ sung `evaluate_model` trong `1c73723`; smoke test A xác nhận runner đã chạy được.
+- [x] Nhân hoàn thiện `plots.py` và chạy đủ C (commit `48fbf36`, đã có log và hình trong repo).
+- [ ] Trung chạy lại đủ A và B từ repo với đủ cấu hình/seed, kiểm tra log mới rồi commit kết quả (smoke test 2 cấu hình bên dưới chưa thay thế việc này).
 
 ---
 
 ## T7 31/10/2026 – Vẽ hình dữ liệu (`scripts/plot_data.py`), nháp mục 2 báo cáo
 
-**Việc theo kế hoạch:** đây là việc của ngày 30/10 ("Vẽ scatter 3D, bề mặt hàm thật, histogram x₁ x₂ y; viết nháp mục 2"), làm xong rạng sáng 31/10. Việc của ngày 31/10 ("chạy thử baseline end-to-end; review code chéo") đã bắt đầu: phát hiện runner đang lỗi import (xem mục 30/10).
+### Commit trong ngày
+
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `2309c3e` | Trúc | Vẽ hình dữ liệu, nháp mục 2 | Thêm script vẽ ba hình dữ liệu, các hình kết quả và nháp mục 2; cập nhật README, đường dẫn báo cáo và nhật ký. |
+| `9568ca7` | Trúc | Merge branch `main` | Gộp thay đổi runner A/B và hàm dùng chung chạy nhiều seed vào nhánh local. |
+| `48fbf36` | Nhân | Complete experiment C and plots | Hoàn thiện `plots.py`, runner C và chạy đủ 12 tổ hợp C; log, bảng tổng hợp và hình đã có trong repo. |
+| `86bd04b` | Nhân | Merge branch `main` | Gộp các thay đổi ngày 31/10; `main` hiện tại đã ở commit này. |
+| `1c73723` | Khang | `evaluate.py`: tính MSE, MAE, RMSE | Bổ sung metric, hàm dự đoán và biểu đồ; khắc phục lỗi import ngăn runner A/B/C khởi động. |
+
+Ghi chú: lần kiểm tra đầu phiên, `main` local sau `origin/main` 2 commit; sau đó đồng bộ đến `86bd04b` và hiện `main`/`origin/main` cùng ở `1c73723`.
+
+**Việc theo kế hoạch:** đây là việc của ngày 30/10 ("Vẽ scatter 3D, bề mặt hàm thật, histogram x₁ x₂ y; viết nháp mục 2"), làm xong rạng sáng 31/10. Việc ngày 31/10 là chạy thử baseline end-to-end và review code chéo. Runner A ban đầu lỗi import, sau khi Khang bổ sung `evaluate.py` đã chạy được smoke test A (chi tiết bên dưới).
 
 Đề mục 3.1 yêu cầu: "Vẽ scatter 3D của dữ liệu, bề mặt hàm thật và mô tả phân bố của x₁, x₂, y". Rubric mục Dữ liệu có 2 điểm cho "trực quan hóa/kiểm tra dữ liệu".
 
@@ -267,6 +280,11 @@ python -m scripts.plot_data
 
 ### Đã kiểm tra
 
+- Lần chạy đầu `python -m experiments.run_A --values 200 400 --seeds 0` bị dừng ở import vì `evaluate_model` chưa có. Sau khi Khang đẩy `1c73723`, chạy lại cùng lệnh thành công:
+  - A=200, seed 0: val MSE `5.484254e-06`, MAE `0.00178050`, RMSE `0.00234185`, best epoch 991.
+  - A=400, seed 0: val MSE `1.562960e-06`, MAE `0.000988967`, RMSE `0.00125018`, best epoch 999.
+- Đây là smoke test theo yêu cầu ngày 31, chỉ 2 cấu hình và 1 seed; không phải kết quả A đầy đủ (10 cấu hình × 3 seed), cũng không thay thế baseline end-to-end hoặc chạy B. Các file kết quả A có sẵn từ trước được giữ nguyên sau khi thử để không làm mất bảng đủ cấu hình.
+- Import cả ba module `experiments.run_A`, `experiments.run_B`, `experiments.run_C` sau commit `1c73723` đều thành công.
 - Chạy 2 lần liên tiếp, 3 file PNG giống hệt từng byte (so MD5), nên hình tái lập được.
 - Đã mở xem từng hình: nhãn trục không chồng nhau, chữ tiếng Việt hiện đúng dấu.
 - Các số trong nháp mục 2 đều tính lại bằng code, không chép tay:
@@ -313,10 +331,9 @@ Kết quả đúng: in ra 3 dòng `-> ...\report\figures\fig_data_*.png`. Nếu 
 
 ### Còn treo
 
-- [ ] Commit `scripts/plot_data.py`, `src/paths.py`, `README.md`, `report/figures/`, `report/section_2_data.md`, `CodetoTruc.md`.
-- [ ] Gửi nhóm chat: runner A/B/C lỗi `ImportError` (chi tiết ở mục 30/10).
-- [ ] Chạy thử baseline end-to-end khi `evaluate.py` đã lên `main` (việc kế hoạch 31/10).
-- [ ] Review code chéo: đọc `model.py`, `train.py` đủ để tự giải thích được.
+- [x] Commit `scripts/plot_data.py`, `src/paths.py`, `README.md`, `report/figures/`, `report/section_2_data.md`, `CodetoTruc.md` (đã có trong `2309c3e`).
+- [x] Chạy thử A của Trung (2 giá trị, 1 seed): hoàn tất sau khi `evaluate_model` được thêm.
+- [ ] Chạy baseline end-to-end và review code chéo: đọc `model.py`, `train.py` đủ để tự giải thích được.
 - [ ] Khi ghép báo cáo: chuyển công thức LaTeX trong `section_2_data.md` sang Equation của Word, đánh lại số hình/bảng nếu thứ tự mục thay đổi.
 
 ---
