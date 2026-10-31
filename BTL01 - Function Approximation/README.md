@@ -45,6 +45,7 @@ Chạy từ thư mục này dưới dạng module để import được `src`, v
 
 ```powershell
 python -m src.data
+python -m scripts.plot_data     # hình dữ liệu cho mục 2 -> report/figures/
 python -m experiments.run_A
 python -m experiments.run_B
 ```
