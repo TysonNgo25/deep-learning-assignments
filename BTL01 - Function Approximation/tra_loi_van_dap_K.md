@@ -297,3 +297,109 @@ Kết quả cần có từ 1 đến 3 dòng history; `best_epoch` nằm trong s�
 - [x] Đo thời gian bằng `time.perf_counter()`.
 - [x] Có thể lưu/nạp checkpoint cùng kiến trúc và metadata.
 - [x] Chạy smoke test ngắn; không coi đây là kết quả A/B/C chính thức.
+
+---
+
+## 8. Ngày 31/10 — Đánh giá mô hình với `src/evaluate.py`
+
+### 8.1. Yêu cầu trong kế hoạch và đề
+
+Theo `Kế hoạch.md`, ngày 31/10 Khang phụ trách `evaluate.py`: tính MSE, MAE, RMSE; tạo bề mặt xấp xỉ và đồ thị giá trị thật–dự đoán. Đề gốc mục 3.2 trang 1 yêu cầu đánh giá trên test bằng MSE cùng ít nhất một metric bổ sung, và trực quan hóa \(y\) thật–\(\hat y\) cùng bề mặt xấp xỉ.
+
+### 8.2. API đánh giá
+
+```python
+from src.evaluate import evaluate_model, predict
+
+test_scores = evaluate_model(model, X_test, y_test)
+y_hat = predict(model, X_test)
+```
+
+- `evaluate_model(...)` trả về `{"mse": ..., "mae": ..., "rmse": ...}`.
+- `predict(...)` trả NumPy array có shape `(n, 1)`.
+- Hàm đánh giá kiểm tra shape, số mẫu, NaN/Inf và dự đoán không hữu hạn; lỗi đầu vào báo rõ.
+- Mô hình được chuyển tạm sang chế độ `eval()` và inference nằm trong `torch.no_grad()`. Trạng thái train/eval ban đầu được khôi phục sau prediction.
+- Hàm nhận split từ phía gọi. Trong thí nghiệm, dùng validation để phát triển/chọn mô hình; chỉ sau khi chốt mới truyền test để đánh giá cuối.
+
+Metric được tính trên \(y\) gốc:
+
+\[
+\mathrm{MSE}=\frac{1}{N}\sum_i(y_i-\hat y_i)^2,\quad
+\mathrm{MAE}=\frac{1}{N}\sum_i|y_i-\hat y_i|,\quad
+\mathrm{RMSE}=\sqrt{\mathrm{MSE}}.
+\]
+
+### 8.3. Hai biểu đồ
+
+```python
+from src.evaluate import plot_surface_comparison, plot_y_vs_yhat
+
+scores = plot_y_vs_yhat(y_test, y_hat, "results/final_y_yhat.png")
+plot_surface_comparison(
+    model, mu, cov, x1_range, x2_range,
+    save_path="results/final_surface.png",
+)
+```
+
+- `plot_y_vs_yhat` vẽ mỗi mẫu test thành một điểm và thêm đường tham chiếu \(y=\hat y\). Hàm cũng trả về MSE/MAE/RMSE của các điểm được vẽ.
+- `plot_surface_comparison` tạo lưới đều trên miền, vẽ bề mặt Gaussian thật và bề mặt MLP dự đoán cạnh nhau. `resolution` điều khiển số điểm lưới mỗi chiều.
+- Thư mục đích được tạo tự động; biểu đồ được đóng sau khi lưu để tránh giữ figure trong các lần chạy lặp.
+
+### 8.4. Câu hỏi vấn đáp ngày 31/10
+
+**Câu 1: Phần em làm ngày 31/10 là gì?**
+
+**Trả lời:** Em viết `src/evaluate.py`: dự đoán ở chế độ inference, tính MSE/MAE/RMSE, vẽ \(y\)–\(\hat y\) và so sánh bề mặt Gaussian thật với bề mặt MLP.
+
+**Câu 2: Vì sao cần MAE/RMSE ngoài MSE?**
+
+**Trả lời:** MSE nhạy với sai số lớn nhưng có đơn vị bình phương. MAE và RMSE cùng đơn vị với \(y\), dễ diễn giải độ lớn sai số hơn. Đề yêu cầu MSE và ít nhất một metric bổ sung; code cung cấp cả MAE và RMSE.
+
+**Câu 3: Điểm nằm trên đường chéo trong đồ thị có ý nghĩa gì?**
+
+**Trả lời:** Đường là \(y=\hat y\), tức dự đoán đúng bằng giá trị thật. Điểm càng gần đường càng có sai số nhỏ; lệch lên/xuống thể hiện dự đoán cao/thấp hơn thực tế.
+
+**Câu 4: Vì sao vẽ surface trên lưới đều?**
+
+**Trả lời:** Lưới đều cho phép so hình dạng liên tục của hàm thật và MLP trên toàn miền thay vì chỉ nhìn các điểm lấy mẫu ngẫu nhiên.
+
+**Câu 5: Hàm evaluate tự biết dữ liệu nào là test không?**
+
+**Trả lời:** Không. Hàm tính metric trên dữ liệu được truyền vào. Script gọi hàm phải bảo đảm không dùng test để chọn mô hình; test chỉ dùng sau khi đã chọn cấu hình bằng validation.
+
+### 8.5. Kiểm thử ngày 31/10 và số tham chiếu
+
+Đã chạy baseline hiện tại: train 1000 mẫu, hidden `[16, 16]`, `tanh`, Adam, learning rate `0.001`, batch size `32`, tối đa 1000 epoch, patience 100, seed `0`. Huấn luyện chạy đủ 1000 epoch; best epoch là 998. Kết quả một lần chạy:
+
+| Split | MSE | MAE | RMSE |
+|---|---:|---:|---:|
+| Train | \(3.96226244\times10^{-7}\) | \(4.82903298\times10^{-4}\) | \(6.29465046\times10^{-4}\) |
+| Validation | \(4.17493047\times10^{-7}\) | \(5.01333200\times10^{-4}\) | \(6.46137019\times10^{-4}\) |
+| Test | \(4.40567471\times10^{-7}\) | \(5.27307225\times10^{-4}\) | \(6.63752568\times10^{-4}\) |
+
+Kiểm thử xác nhận shape dự đoán `(100, 1)`, các metric hữu hạn, CSV/checkpoint được ghi, và hai ảnh được tạo. Các file kiểm thử được tạo trong thư mục tạm rồi tự dọn. Đây là **một lần baseline để kiểm tra pipeline**, không thay kết quả tổng hợp A/B/C hoặc mean ± std của ba seed; thời gian thực tế thay đổi theo máy.
+
+### 8.6. Đối chiếu hoàn thành ngày 31/10
+
+- [x] Hàm metric trả MSE, MAE, RMSE và xử lý shape scalar `(n,)` / `(n, 1)`.
+- [x] Prediction hỗ trợ CPU và device của model, dùng `eval()`/`no_grad()`.
+- [x] Vẽ y thật–ŷ dự đoán và đường tham chiếu \(y=\hat y\).
+- [x] Vẽ bề mặt Gaussian thật cạnh bề mặt MLP trên lưới.
+- [x] Chạy baseline end-to-end qua train → evaluate → xuất hình.
+- [x] Kiểm tra giá trị không hợp lệ và trường hợp metric có kết quả tính tay đã biết.
+
+## 9. Công việc Khang còn được giao sau ngày 31/10
+
+Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo vẫn thuộc phần Khang:
+
+| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 31/10 |
+|---|---|---|
+| **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Chưa làm theo lịch; hai hàm vẽ lõi đã có, nhưng hình dùng kết quả mô hình được chọn và hỗ trợ các runner vẫn cần phối hợp khi có kết quả. |
+| **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Chưa làm theo lịch. |
+| **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Chưa thể làm cho đến khi A/B/C có kết quả và Trúc chọn mô hình; không chọn bằng test. |
+| **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Chưa làm theo lịch; cần dùng hình/số liệu mô hình cuối. |
+| **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Chưa làm theo lịch; phụ thuộc log/bảng A/B. |
+| **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Chưa làm theo lịch; chuẩn bị sau khi nhóm có đủ kết quả. |
+| **7/11** | Chạy lại toàn bộ từ đầu trên máy sạch theo README. | Chưa làm theo lịch; cần đợi pipeline và runner A/B/C hoàn tất. |
+
+Ngày 1/11, 2/11 và 4/11 có thể chuẩn bị nội dung/ảnh với mô hình hiện có; các việc chốt mô hình, kiểm tra số liệu toàn bài và chạy lại sạch phụ thuộc tiến độ của cả nhóm. Danh sách này phân biệt **mã lõi đã hoàn thành** với **các deliverable sau đó vẫn còn phải thực hiện**.
