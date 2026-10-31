@@ -94,7 +94,7 @@ M1 = pipeline chạy được, M2 = đủ kết quả A, B, C, M3 = nháp báo c
 | T6 30/10 |  | Vẽ scatter 3D, bề mặt hàm thật, histogram x₁ x₂ y; viết nháp mục 2 | Viết `train.py` (DataLoader, Adam, MSELoss, log CSV, checkpoint, đo thời gian) | Viết hàm chạy nhiều seed + gộp mean ± std | Hoàn thiện `plots.py`, phác `run_C.py` |
 | T7 31/10 | Mốc 1: pipeline chạy | Chạy thử baseline end-to-end; review code chéo | Viết `evaluate.py`; sửa lỗi sau review | Chạy thử A với 2 giá trị, 1 seed | Chạy thử C với 1 giá trị, 1 seed |
 | CN 1/11 |  | Viết nháp mục 1 Giới thiệu | Vẽ bề mặt xấp xỉ + y–ŷ; hỗ trợ Trung, Nhân khi lỗi | Chạy đủ A (10 giá trị × 3 seed) | Chạy đủ C (4 giá trị × 3 seed) |
-| T2 2/11 |  | Kiểm tra log và hình A, C khớp với config | Viết nháp mục 3 (sơ đồ MLP, công thức forward, loss) | Chạy đủ B (10 giá trị × 3 seed); xuất bảng + đồ thị A | Xuất bảng + đồ thị C (test error, loss hội tụ, thời gian) |
+| T2 2/11 |  | Kiểm tra log và hình A, C khớp với config | Viết nháp mục 3 (sơ đồ MLP, công thức forward, loss) | Chạy đủ B (13 giá trị × 3 seed); xuất bảng + đồ thị A | Xuất bảng + đồ thị C (test error, loss hội tụ, thời gian) |
 | T3 3/11 | Mốc 2: đủ kết quả | Chọn mô hình cuối theo val loss, đánh giá 1 lần trên test cùng Khang | Lưu `.pt` mô hình được chọn; đánh giá test | Xuất bảng + đồ thị B; viết nháp 4.2 | Viết nháp 4.3 |
 | T4 4/11 |  | Ghép báo cáo bản 1, đánh số hình/bảng | Viết mục đánh giá chung (y–ŷ, bề mặt) | Viết thảo luận A, B (thiếu khớp, quá khớp) | Viết thảo luận C; dựng khung slide |
 | T5 5/11 | Mốc 3: nháp báo cáo + slide | Viết mục 6, tài liệu tham khảo; viết README | So số liệu báo cáo với log (chéo phần Trung) | So số liệu báo cáo với log (chéo phần Nhân) | Đưa hình, bảng vào slide; mỗi người gửi phần slide của mình |

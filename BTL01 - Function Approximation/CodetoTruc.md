@@ -6,6 +6,56 @@ Kế hoạch gốc: [Kế hoạch.md](Kế%20hoạch.md).
 
 ---
 
+## T4 28/10/2026 – Phân chia đồ án, dựng khung project BTL01
+
+Mục này bổ sung tối 31/10: ngày 28/10 có commit nhưng nhật ký mới bắt đầu từ 29/10. Chèn ở đây (không ở cuối file) để các mục giữ đúng thứ tự ngày.
+
+### Việc theo kế hoạch
+
+Kế hoạch 28/10 của Trúc: "Đọc đề, gửi kế hoạch, tạo thư mục BTL01 trên GitHub + cấu trúc thư mục". Làm xong cả ba việc.
+
+### Commit trong ngày
+
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `c6b5683` | Trúc | Phân chia đồ án BTL01 | Đưa `Kế hoạch.md` (đề bài phân tích, phân vai, lịch 28/10 → 8/11, baseline đề xuất, checklist nộp) và 4 file đề vào `Đề và yêu cầu/` (`MLP_Exercise - Yeu Cau.pdf`, `MLP_Exercise.pdf`, `Sample_Code.html`, `Sample_Report.pdf`). |
+| `bc9ef1c` | Trúc | Dựng khung project BTL01 | Tạo cấu trúc thư mục thống nhất cho cả nhóm, `README.md`, `requirements.txt`, `configs/baseline.yaml` (bản đề xuất), `src/paths.py` và file rỗng có docstring ghi người phụ trách cho từng module. |
+
+### Kết quả
+
+Cây thư mục tạo trong `bc9ef1c`:
+
+```text
+configs/baseline.yaml            baseline ĐỀ XUẤT (chốt ngày 29/10)
+data/  models/  report/  slides/ thư mục rỗng, giữ bằng .gitkeep
+src/        paths.py (đã viết), data.py, model.py, train.py, evaluate.py, plots.py (chỉ có docstring)
+scripts/    plot_data.py (chỉ có docstring)
+experiments/ run_A.py, run_B.py, run_C.py (chỉ có docstring)
+results/A|B|C/logs/, results/A|B|C/figures/
+README.md, requirements.txt
+```
+
+### Giải thích
+
+- **Vì sao dựng khung trước khi viết code?** Bốn người viết song song. Có sẵn tên file, tên thư mục và nơi ghi log thì mỗi người làm phần mình mà không đặt tên lệch nhau. Mỗi file rỗng có docstring ghi người phụ trách và hạn, ví dụ `src/data.py`: "Phụ trách: Trúc (hạn 29/10)", `run_A.py`: "Phụ trách: Trung".
+- **`.gitkeep`**: git không lưu thư mục rỗng. Đặt một file rỗng tên `.gitkeep` vào để thư mục `results/A/logs/`… có sẵn trên máy mọi người sau khi clone.
+- **`src/paths.py`**: `ROOT = Path(__file__).resolve().parent.parent` lấy gốc project từ vị trí file, rồi ghép `configs`, `data`, `results`, `models`. Cả nhóm import đường dẫn từ đây nên không ai phải ghi đường dẫn tuyệt đối kiểu `C:\Users\...`. Đề mục 5 yêu cầu "không phụ thuộc đường dẫn cá nhân". (Ngày 31/10 thêm `REPORT_DIR`.)
+- **`configs/baseline.yaml` bản đề xuất**: ghi sẵn seed 42, miền, μ, C, số mẫu 2000/500/100, kiến trúc 2 × 16 tanh, Adam 1e−3, batch 32, 1000 epoch, patience 100. B lúc này chỉ có 1…10 nơ-ron. Ngày 29/10 nhóm chốt, thêm 16/32/64 cho B và `normalize_y: false` (xem mục 29/10).
+- **`requirements.txt`**: numpy, pandas, matplotlib, pyyaml, torch, ipykernel. Không có scipy vì tự viết hàm Gaussian, không có tensorflow/keras vì đề cấm.
+- **Đọc đề, rút ra chỗ dễ mất điểm** (ghi trong `Kế hoạch.md` mục 2): code mẫu dùng Keras và báo cáo mẫu dùng C = ma trận đơn vị, lấy test làm validation, nên không chép theo; pipeline phải xong trước 31/10 vì A/B/C đều phụ thuộc vào nó.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao không dùng code mẫu?* Code mẫu viết bằng Keras, đề cấm TensorFlow/Keras. Chỉ mượn cách chia hàm (sinh dữ liệu, đọc dữ liệu, vẽ 3D), phần mô hình và vòng train viết lại bằng PyTorch.
+- *Vì sao baseline ghi trong file yaml?* Đề yêu cầu công bố baseline và chỉ đổi đúng một biến trong mỗi nhóm thực nghiệm. Cả nhóm đọc chung một file nên không ai vô tình dùng tham số khác.
+
+### Còn treo
+
+- [x] Chốt baseline với nhóm (làm ngày 29/10).
+- [x] Viết `src/data.py` (làm ngày 29/10).
+
+---
+
 ## T5 29/10/2026 – Viết `src/data.py`, sinh dữ liệu
 
 **Việc theo kế hoạch:** viết `data.py` (hàm Gaussian, sinh pool train 2000 / val 500 / test 100, lưu CSV) và chốt baseline với nhóm.
@@ -199,7 +249,7 @@ Cả ba runner gọi `evaluate_model` trong `src/evaluate.py`, nhưng tại lầ
 Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay bằng số chạy lại):
 
 - Ở A, `best_epoch` trung bình từ 835 đến 994 trên tối đa 1000. Val loss gần như vẫn còn giảm khi chạm 1000 epoch, early stopping hầu như không kích hoạt. Cần nói rõ trong mục 4 rằng mô hình dừng vì giới hạn epoch.
-- Ở B, val MSE giảm đều từ 1 đến 64 nơ-ron (2.9e−3 xuống 3e−6), chưa thấy quá khớp. Dữ liệu không nhiễu và val dày (500 điểm) nên khó quá khớp. Phần thảo luận B cần nói thẳng điều này thay vì gượng ép "quá khớp".
+- Ở B, val MSE nhìn chung giảm từ 1 đến 64 nơ-ron (2.9e−3 xuống 3e−6), chưa thấy quá khớp. *(Đính chính 31/10: không giảm đều. B = 8 → 9 → 10 val MSE tăng nhẹ 9.5e−5 → 1.07e−4 → 1.10e−4. Train MSE của B = 9, 10 (1.03e−4, 9.8e−5) cũng cao hơn B = 8 (8.3e−5), nên đây là do huấn luyện chưa hội tụ hết, không phải quá khớp. Quá khớp là train giảm mà val tăng.)* Dữ liệu không nhiễu và val dày (500 điểm) nên khó quá khớp. Phần thảo luận B cần nói thẳng điều này thay vì gượng ép "quá khớp".
 - B = 1 nơ-ron có val MSE 2.9e−3, trong khi đoán ŷ = 0 cho mọi điểm đã được 3.7e−3 trên val (trung bình y²). Một nơ-ron gần như không học được hàm, ví dụ rõ cho thiếu khớp.
 - `run_C.py` tính test cho mọi cấu hình C. Được phép nếu chỉ báo cáo và chọn cấu hình theo val. Khi viết 4.3 phải ghi rõ cột dùng để chọn là `val_mse`.
 
@@ -213,11 +263,11 @@ Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay
 
 - [x] Khắc phục lỗi import: Khang bổ sung `evaluate_model` trong `1c73723`; smoke test A xác nhận runner đã chạy được.
 - [x] Nhân hoàn thiện `plots.py` và chạy đủ C (commit `48fbf36`, đã có log và hình trong repo).
-- [ ] Trung chạy lại đủ A và B từ repo với đủ cấu hình/seed, kiểm tra log mới rồi commit kết quả (smoke test 2 cấu hình bên dưới chưa thay thế việc này).
+- [x] ~~Trung chạy lại đủ A và B từ repo~~: không cần nữa. Tối 31/10 Trúc kiểm tra tái lập: train lại `A_1000_seed0`, `B_1_seed0`, `B_10_seed2` (và `C_2_seed0`) bằng code hiện tại trên repo, val loss trùng log cũ từng epoch, chênh 0.0. Log A/B ngày 30/10 truy vết được về code trên repo (chi tiết ở mục 31/10).
 
 ---
 
-## T7 31/10/2026 – Vẽ hình dữ liệu (`scripts/plot_data.py`), nháp mục 2 báo cáo
+## T7 31/10/2026 – Vẽ hình dữ liệu, nháp mục 2; chạy baseline end-to-end và review chéo (Mốc 1)
 
 ### Commit trong ngày
 
@@ -228,10 +278,21 @@ Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay
 | `48fbf36` | Nhân | Complete experiment C and plots | Hoàn thiện `plots.py`, runner C và chạy đủ 12 tổ hợp C; log, bảng tổng hợp và hình đã có trong repo. |
 | `86bd04b` | Nhân | Merge branch `main` | Gộp các thay đổi ngày 31/10; `main` hiện tại đã ở commit này. |
 | `1c73723` | Khang | `evaluate.py`: tính MSE, MAE, RMSE | Bổ sung metric, hàm dự đoán và biểu đồ; khắc phục lỗi import ngăn runner A/B/C khởi động. |
+| `e80cce7` | Trung | chạy thử A với 2 giá trị và chạy đầy đủ a b | Chỉ sửa `CodetoTruc.md` (ghi kết quả smoke test A, tick việc treo). **Không có file log hay `summary.csv` nào thay đổi**: log A/B trong repo vẫn là bản của `9dcb237` (30/10). Phần "chạy đầy đủ a b" trong message không khớp nội dung commit. |
+| _(điền sau)_ | Trúc | _(commit tối 31/10)_ | `scripts/run_baseline.py`, `results/baseline/`, sửa bug sau review trong `run_A.py`, `run_B.py`, `run_C.py`, `evaluate.py`; README, `Kế hoạch.md` (B 13 giá trị), nhật ký này (thêm mục 28/10, đính chính). |
 
-Ghi chú: lần kiểm tra đầu phiên, `main` local sau `origin/main` 2 commit; sau đó đồng bộ đến `86bd04b` và hiện `main`/`origin/main` cùng ở `1c73723`.
+Ghi chú: lần kiểm tra đầu phiên, `main` local sau `origin/main` 2 commit; sau đó đồng bộ đến `86bd04b` và hiện `main`/`origin/main` cùng ở `e80cce7`.
 
-**Việc theo kế hoạch:** đây là việc của ngày 30/10 ("Vẽ scatter 3D, bề mặt hàm thật, histogram x₁ x₂ y; viết nháp mục 2"), làm xong rạng sáng 31/10. Việc ngày 31/10 là chạy thử baseline end-to-end và review code chéo. Runner A ban đầu lỗi import, sau khi Khang bổ sung `evaluate.py` đã chạy được smoke test A (chi tiết bên dưới).
+**Việc theo kế hoạch:**
+
+| Người | Kế hoạch 31/10 | Thực tế |
+| --- | --- | --- |
+| Trúc | Chạy thử baseline end-to-end; review code chéo | Xong cả hai (chi tiết bên dưới). Kèm việc của 30/10 (hình dữ liệu, nháp mục 2) làm xong rạng sáng 31/10 |
+| Khang | Viết `evaluate.py`; sửa lỗi sau review | `evaluate.py` xong (`1c73723`). Sửa lỗi sau review: còn chờ các góp ý ở mục Review |
+| Trung | Chạy thử A với 2 giá trị, 1 seed | Xong (A = 200, 400, seed 0) |
+| Nhân | Chạy thử C với 1 giá trị, 1 seed | Làm vượt: chạy đủ C (4 × 3 seed) trong `48fbf36` |
+
+→ **Mốc 1 (pipeline chạy được) đạt.** Đề mục 3.1 về hình dữ liệu được giải thích ở các phần đầu; phần baseline và review nằm ở các tiểu mục có chữ "baseline" và "Review".
 
 Đề mục 3.1 yêu cầu: "Vẽ scatter 3D của dữ liệu, bề mặt hàm thật và mô tả phân bố của x₁, x₂, y". Rubric mục Dữ liệu có 2 điểm cho "trực quan hóa/kiểm tra dữ liệu".
 
@@ -245,12 +306,18 @@ Ghi chú: lần kiểm tra đầu phiên, `main` local sau `origin/main` 2 commi
 | `report/figures/fig_data_histograms.png` | sinh ra | Hình 2.3: phân bố x₁, x₂, y của từng tập |
 | `report/section_2_data.md` | viết mới | Nháp mục 2 báo cáo |
 | `src/paths.py` | sửa | Thêm `REPORT_DIR = ROOT / "report"` |
-| `README.md` | sửa | Thêm lệnh `python -m scripts.plot_data` |
+| `README.md` | sửa | Thêm lệnh `python -m scripts.plot_data`; tối 31/10 thêm `run_baseline` và `run_C` (trước đó README thiếu lệnh chạy C) |
+| `scripts/run_baseline.py` | viết mới (tối 31/10) | Chạy thử baseline end-to-end |
+| `results/baseline/logs/baseline_seed0.csv` | sinh ra | Loss train/val từng epoch (1000 dòng) |
+| `results/baseline/baseline_seed0.pt` | sinh ra | Checkpoint tốt nhất theo val loss |
+| `results/baseline/figures/baseline_seed0_val_y_yhat.png` | sinh ra | y–ŷ trên val |
+| `results/baseline/figures/baseline_seed0_surface.png` | sinh ra | Bề mặt hàm thật cạnh bề mặt MLP |
 
 Lệnh chạy (đứng ở thư mục BTL01, sau khi đã có `data/*.csv`):
 
 ```powershell
 python -m scripts.plot_data
+python -m scripts.run_baseline
 ```
 
 ### Giải thích từng hàm trong `plot_data.py`
@@ -278,6 +345,21 @@ python -m scripts.plot_data
 
 **`main()`**: gọi 3 hàm vẽ, lưu vào `report/figures/`, in đường dẫn từng file.
 
+### Giải thích `scripts/run_baseline.py` (tối 31/10)
+
+"End-to-end" nghĩa là đi hết một vòng từ đầu đến cuối bằng đúng code trong repo: đọc CSV → train → lưu `.pt` → nạp lại `.pt` → tính chỉ số → vẽ hình. Mỗi file do một người viết, nên chỉ chạy thật cả chuỗi mới biết các file có nối khớp với nhau không (tên hàm, shape mảng, kiểu dữ liệu).
+
+- **`matplotlib.use("Agg")` đặt trước khi import `src.evaluate`**: `evaluate.py` import `pyplot` ngay đầu file. Nếu chọn backend sau đó thì quá muộn, máy không màn hình có thể lỗi.
+- **`torch.set_num_threads(1)`**: giống runner A/B/C. Thời gian train đo trong cùng điều kiện, và dùng 1 luồng thì phép cộng số thực luôn theo cùng thứ tự, kết quả lặp lại được.
+- **Đọc tham số từ `configs/baseline.yaml`**, không gõ tay số nào: `n_train = 1000`, `hidden = [16, 16]`, `tanh`, Adam, lr 1e−3, batch 32, 1000 epoch, patience 100. Đổi baseline chỉ cần sửa một chỗ.
+- **`load_train(n_train)`** lấy 1000 dòng đầu của pool, đúng cách runner A/B/C lấy dữ liệu (`pool_x[:n_train]`).
+- **`train_model(..., log_path=..., checkpoint_path=...)`**: runner A/B/C không truyền hai tham số này, nên phần ghi log/checkpoint của `train.py` chưa ai chạy. Script này chạy luôn hai nhánh đó.
+- **Nạp lại checkpoint và so dự đoán**: `load_checkpoint` dựng lại `MLP` từ `hidden`, `activation` lưu trong file rồi nạp trọng số. So dự đoán trên val của mô hình nạp lại với mô hình trong bộ nhớ, lệch phải bằng 0. Ngày 3/11 nhóm sẽ lưu `best_model.pt` và nạp lại để chấm test, nên nạp lại phải đúng từ bây giờ.
+- **Tính chỉ số bằng mô hình nạp lại** (không dùng mô hình trong bộ nhớ): mọi số in ra là số của chính file `.pt`.
+- **`np.mean(y_val**2)`**: MSE nếu đoán ŷ = 0 cho mọi điểm, làm mốc so sánh. MSE của mô hình phải nhỏ hơn mốc này nhiều mới gọi là học được.
+- **`plot_y_vs_yhat`, `plot_surface_comparison`**: hai hình đề yêu cầu ở mục "Đánh giá chung", lần đầu được chạy thật.
+- **Không đọc `test.csv`**: chạy thử thì không được nhìn test, nếu không sẽ bị nghi đã dùng test để chỉnh mô hình.
+
 ### Đã kiểm tra
 
 - Lần chạy đầu `python -m experiments.run_A --values 200 400 --seeds 0` bị dừng ở import vì `evaluate_model` chưa có. Sau khi Khang đẩy `1c73723`, chạy lại cùng lệnh thành công:
@@ -294,6 +376,83 @@ python -m scripts.plot_data
   - Trung bình y² (MSE nếu đoán ŷ = 0): train 0.00445, val 0.00368, test 0.00511.
   - Val có 13.6% mẫu ở x₁ ∈ [1.6, 2], lý do độ lệch chuẩn x₁ của val (1.227) cao hơn lý thuyết (1.155).
 
+**Baseline end-to-end (tối 31/10, env `btl01`, `torch.__version__` in ra `2.15.0+cpu`):**
+
+- `python -m src.data` sinh lại dữ liệu, `git status data` không thấy thay đổi: CSV tái lập được từ seed 42.
+- `python -m scripts.run_baseline` chạy hết, không lỗi:
+
+  ```text
+  Kiến trúc 2 -> 16 -> 16 -> 1, tanh, 337 tham số; n_train = 1000, seed = 0
+  Dừng ở epoch 1000, best epoch 998, early stopping: False, thời gian train 26.6 s
+    train MSE 3.9627e-07  MAE 4.8292e-04  RMSE 6.2950e-04
+    val   MSE 4.1756e-07  MAE 5.0138e-04  RMSE 6.4619e-04
+    val   MSE khi đoán ŷ = 0: 3.6805e-03
+  Checkpoint nạp lại lệch tối đa 0.0e+00 so với mô hình trong bộ nhớ
+  ```
+
+- Chạy lần 2: cùng val MSE `4.1756e-07`, cùng best epoch 998. Chỉ thời gian train khác (39.1 s), do máy đang bận việc khác.
+- **So chéo với log của bạn**: baseline cùng cấu hình với `C_2_seed0` (Nhân) và `A_1000_seed0` (Trung). Val loss của cả 1000 epoch trùng nhau tuyệt đối (chênh lớn nhất `0.0`), best val loss đều là `4.175624e-07` ở epoch 998.
+- **Kiểm tra log B cũ**: train lại bằng `train_model` (gọi thẳng, không qua runner để không ghi đè `summary.csv`) hai cấu hình rồi so với log trong repo:
+  - B = 1, seed 0: dừng sớm ở epoch 148 cả hai bên, best `2.915562e-03`, chênh `0.0`.
+  - B = 10, seed 2: 1000 epoch, best `9.955913e-05`, chênh `0.0`.
+- Kết luận: **log A/B commit ngày 30/10 tái lập được từ code hiện tại trên repo** (4/4 cấu hình thử đều khớp từng epoch). Lo ngại "log A/B không truy vết được" ở mục 30/10 được giải tỏa bằng số liệu. Chỉ có thứ tự cột trong log A cũ khác bản `run_A.py` hiện tại (`n_train` đứng ngay sau `val_loss`), các con số không đổi.
+- Hình y–ŷ: các điểm nằm sát đường chéo trên toàn khoảng 0 đến 0.27. Hình bề mặt: MLP trùng hàm thật bằng mắt thường, kể cả hướng nghiêng của elip.
+
+### Review code chéo (tối 31/10)
+
+Đã đọc `model.py`, `train.py`, `evaluate.py`, `experiments/common.py`, `run_A.py`, `run_B.py`, `run_C.py`, `plots.py`.
+
+**Những chỗ đúng yêu cầu rubric** (để Trúc tự tin trả lời khi bị hỏi):
+
+| Yêu cầu | Ở đâu |
+| --- | --- |
+| `nn.Module` + `nn.Linear`, tùy số tầng/nơ-ron | `MLP(hidden=[...])` trong `model.py` |
+| `DataLoader`, `MSELoss`, Adam/SGD | `train.py` dòng 132–143 |
+| `model.train()` / `model.eval()` + `torch.no_grad()` | `train.py` dòng 155, 175–177; `evaluate.predict` |
+| Vòng train tự viết: `zero_grad → forward → loss → backward → step` | `train.py` dòng 163–167 |
+| Log loss theo epoch | `history` trong `train.py`, ghi ra CSV |
+| Checkpoint theo val loss, nạp lại bản tốt nhất | `train.py` dòng 189–210 |
+| Đo thời gian bằng `time.perf_counter()` | `train.py` dòng 153, 205 |
+| Seed cho khởi tạo trọng số và thứ tự xáo batch | `_seed_everything` gọi **trước** khi tạo `MLP`; `DataLoader(generator=...)` |
+| Hàm train không nhận test | chữ ký `train_model(X_train, y_train, X_val, y_val, ...)` |
+
+**Góp ý gửi nhóm** (xếp theo mức ảnh hưởng):
+
+1. **Trung, Nhân: chạy `--values` một phần sẽ ghi đè `summary.csv` và hình đầy đủ.** `run_A/B/C.py` luôn ghi `summary.csv` và figure từ những giá trị vừa chạy. Ví dụ `python -m experiments.run_A --values 200 400 --seeds 0` làm `results/A/summary.csv` chỉ còn 2 dòng. Đề xuất: khi có `--values`/`--seeds` thì ghi ra `summary_partial.csv`, hoặc không ghi summary. Trước mắt: chạy thử xong thì `git checkout -- results/` để lấy lại bản đầy đủ. → **Đã sửa** (xem "Sửa bug sau review" bên dưới).
+2. **Nhân: hình C chỉ vẽ sai số test, chưa có val.** `plots.py` vẽ `C_test_mse`, `C_test_rmse`; chưa có hình nào cho `val_mse`, mà cấu hình phải được chọn theo val. Cần thêm một hình val (hoặc vẽ val và test chung) để mục 4.3 chọn số tầng theo val. Việc này thuộc "xuất bảng + đồ thị C" ngày 2/11, chưa phải lỗi. Comment ở `run_C.py` dòng 94 ghi test được đánh giá "sau khi chọn mô hình", nhưng thực tế test được tính cho mọi lần chạy. → **Comment đã sửa.**
+3. **Nhân: `run_C.py` tự viết `_evaluate` thay vì dùng `src.evaluate.evaluate_model`.** Lúc viết thì `evaluate.py` còn trống nên mới tự viết. → **Quyết định giữ `_evaluate`**: thử thì hai hàm lệch ở chữ số thứ 8 (`_evaluate` tính float32, `evaluate_model` float64), đổi sẽ làm `results/C/summary.csv` không còn khớp từng chữ số với code. Chỉ sửa docstring cho đúng lý do.
+4. **Trung, Nhân: tên cột A/B khác C.** A/B dùng `n_train`/`n_neurons`, `elapsed_seconds`, `summary.csv` một dòng mỗi cấu hình (mean/std). C dùng `value`, `train_time_s`, `summary.csv` một dòng mỗi lần chạy kèm `summary_mean_std.csv`. Không sai, nhưng khi ghép bảng báo cáo phải nhớ cột nào là cột nào. Chốt trước 2/11.
+5. **Cả nhóm: phần lớn lần chạy dừng vì đủ 1000 epoch, không phải nhờ early stopping.** Đếm số log ngắn hơn 1000 dòng: chỉ 20/81 lần chạy dừng sớm (A 6/30, B 10/39, C 4/12). Baseline seed 0 có best epoch 998/1000, val loss vẫn đang giảm khi chạm giới hạn. Mục 4 phải ghi rõ lần chạy nào dừng sớm, lần nào dừng vì đủ epoch. Không đổi baseline lúc này vì đã chốt. Có thể đưa vào phần hạn chế.
+6. **Nhân, Trung: thời gian train phụ thuộc máy và tải.** Cùng một cấu hình (2 × 16, 1000 mẫu, seed 0) mà ra 20.9 s trong `results/C/summary.csv`, 26.6 s và 39.1 s ở hai lần chạy trên máy Trúc. Bảng thời gian ở C chỉ so được khi cả 12 lần chạy trên cùng một máy, cùng một phiên; báo cáo cần ghi cấu hình máy. Thời gian đo cũng gồm cả việc tính val loss mỗi epoch.
+7. **Khang: hình bề mặt `plot_surface_comparison` bị chồng nhãn trục x₁** (−2.0, −1.5, −1.0 dính nhau). Thưa bớt vạch chia, ví dụ `axis.set_xticks([-2, -1, 0, 1, 2])`, trước khi đưa vào báo cáo. → **Đã sửa.**
+8. **Trung: message `e80cce7` ghi "chạy đầy đủ a b" nhưng commit chỉ sửa nhật ký.** Lần sau message nên ghi đúng nội dung commit, vì thầy có thể xem lịch sử git.
+
+### Sửa bug sau review (tối 31/10, Trúc là nhóm trưởng sửa thay)
+
+Sửa vào file của các bạn, nên các bạn **pull về trước khi sửa tiếp** để không bị xung đột. Không file log hay bảng kết quả nào đã commit bị thay đổi.
+
+| File (người viết) | Sửa gì | Vì sao |
+| --- | --- | --- |
+| `experiments/run_A.py` (Trung) | Thêm biến `is_full_run`: chạy đủ 10 giá trị × seed 0, 1, 2 thì ghi `summary.csv` + hình như cũ; chạy một phần thì ghi `summary_partial.csv`, không vẽ hình | Góp ý 1: tránh ghi đè bảng đầy đủ khi chạy thử |
+| `experiments/run_B.py` (Trung) | Như trên, so với 13 giá trị của B | Như trên |
+| `experiments/run_C.py` (Nhân) | Như trên: chạy một phần thì chỉ ghi `summary_partial.csv`, không ghi `summary.csv`, `summary_mean_std.csv`, không gọi `make_group_figures`. Sửa comment dòng 94 và docstring `_evaluate` | Góp ý 1, 2, 3 |
+| `src/evaluate.py` (Khang) | `plot_surface_comparison` đặt 5 vạch chia mỗi trục: x₁ −2…2, x₂ −4…4 | Góp ý 7: nhãn x₁ bị chồng |
+| `README.md` (Trúc) | Ghi rõ chạy một phần thì ra `summary_partial.csv` | Để cả nhóm biết hành vi mới |
+
+`is_full_run` so **tập hợp** giá trị và seed với cấu hình trong yaml, nên `--values` liệt kê đủ cả 10 giá trị A vẫn được tính là chạy đầy đủ.
+
+**Đã kiểm tra:**
+
+- `python -m experiments.run_A --values 200 --seeds 0`: in `Partial run: wrote ...summary_partial.csv`, val MSE `5.484254e-06` (đúng số smoke test trước). `results/A/summary.csv` và hình không đổi.
+- `python -m experiments.run_C --values 1 --seeds 0`: test MSE `1.101137e-05`, trùng dòng C = 1, seed 0 trong `summary.csv` đã commit. `summary.csv`, `summary_mean_std.csv`, 5 hình C không đổi; `C_1_seed0.csv` ghi lại giống hệt từng byte.
+- Log `A_200_seed0.csv` ghi lại có số giống hệt bản đã commit, chỉ khác thứ tự cột (bản cũ đặt `n_train` sau `val_loss`) và thời gian chạy. Đã `git checkout` trả về bản đã commit và xóa hai file `summary_partial.csv` sinh ra khi thử.
+- Chạy lại `python -m scripts.run_baseline`: số liệu không đổi, hình bề mặt mới có vạch x₁ −2, −1, 0, 1, 2, không còn chồng chữ.
+
+**Câu hỏi vấn đáp có thể gặp:**
+
+- *Vì sao `run_C.py` không dùng chung `evaluate_model`?* `_evaluate` tính MSE trên float32, `evaluate_model` trên float64; hai cách lệch nhau ở chữ số thứ 8 (val MSE C = 2 seed 0: `4.1756243e-07` so với `4.1756242e-07`). Giữ `_evaluate` để kết quả C đã commit tái lập được từng chữ số. Mức lệch này nhỏ hơn rất nhiều so với chênh lệch giữa các seed nên không ảnh hưởng kết luận.
+- *Chạy thử một phần thì kết quả nằm ở đâu?* `results/<nhóm>/summary_partial.csv`. File này chỉ để xem nhanh, không commit, không đưa vào báo cáo.
+
 ### Cách tự kiểm tra lại
 
 Mở Anaconda Prompt:
@@ -306,6 +465,22 @@ git status
 ```
 
 Kết quả đúng: in ra 3 dòng `-> ...\report\figures\fig_data_*.png`. Nếu đã commit hình, `git status` sau khi chạy lại không thấy file PNG nào bị sửa. Mở 3 hình trong `report\figures\`: Hình 2.2b phải thấy elip nghiêng (phía trên lệch sang trái), Hình 2.3 cột đầu tiên của y cao khoảng 70%.
+
+Kiểm tra baseline end-to-end (mất khoảng 30–40 giây):
+
+```powershell
+python -m src.data
+git status data
+python -m scripts.run_baseline
+```
+
+Kết quả đúng:
+
+- `git status data` không liệt kê file nào (dữ liệu sinh lại giống hệt).
+- `run_baseline` in `best epoch 998`, `val MSE 4.1756e-07`, `RMSE 6.4619e-04` và `lệch tối đa 0.0e+00`. Thời gian train mỗi lần một khác, không sao.
+- Mở `results\baseline\figures\baseline_seed0_val_y_yhat.png`: các điểm nằm trên đường chéo đỏ.
+
+Nếu ra số khác ở chữ số thứ 4 trở đi thì gần như chắc chắn khác phiên bản PyTorch hoặc chưa `conda activate btl01`.
 
 ### Số liệu cho báo cáo
 
@@ -320,6 +495,17 @@ Kết quả đúng: in ra 3 dòng `-> ...\report\figures\fig_data_*.png`. Nếu 
 | Trung vị y (train) | 0.0031 |
 | MSE khi đoán ŷ = 0 (test) | 0.0051 |
 
+Baseline (2 × 16, tanh, n_train 1000, seed 0), nguồn `results/baseline/logs/baseline_seed0.csv`. Số này trùng với dòng C = 2, seed 0 trong `results/C/summary.csv`, nên báo cáo có thể trích từ bất kỳ file nào:
+
+| Đại lượng | Giá trị |
+| --- | --- |
+| Số tham số | 337 (2·16+16 + 16·16+16 + 16·1+1) |
+| Best epoch / số epoch đã chạy | 998 / 1000 (không dừng sớm) |
+| Train MSE / RMSE | 3.96e−07 / 6.30e−04 |
+| Val MSE / MAE / RMSE | 4.18e−07 / 5.01e−04 / 6.46e−04 |
+| Val MSE khi đoán ŷ = 0 | 3.68e−03 (gấp khoảng 8800 lần MSE của mô hình) |
+| RMSE val so với đỉnh 0.269 | ≈ 0.24% |
+
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Vì sao elip đồng mức nghiêng?* Vì hiệp phương sai −0.5 khác 0, x₁ và x₂ tương quan âm (ρ = −0.645). Nếu C chéo (như báo cáo mẫu dùng ma trận đơn vị) thì elip thẳng theo trục.
@@ -328,12 +514,22 @@ Kết quả đúng: in ra 3 dòng `-> ...\report\figures\fig_data_*.png`. Nếu 
 - *Histogram test vì sao răng cưa nhiều?* Chỉ có 100 mẫu, mỗi khoảng trung bình 10 mẫu, lệch vài mẫu đã thành vài %. Phân bố vẫn phủ đủ miền nên không cần sinh lại.
 - *Phân bố y lệch về 0 thì ảnh hưởng gì?* MSE rất nhỏ nên phải báo RMSE. Vùng đỉnh ít mẫu nhất nên sai số lớn nhất nhiều khả năng nằm quanh μ. Mốc so sánh: đoán toàn 0 đã được MSE ≈ 0.005, mô hình phải thấp hơn nhiều.
 - *Vì sao bề mặt hàm thật vẽ trên lưới, không vẽ từ dữ liệu?* Dữ liệu ngẫu nhiên, rải không đều. Hàm thật tính được tại mọi điểm nên vẽ trên lưới đều cho mặt liền.
+- *Làm sao biết kết quả của nhóm chạy lại được?* Baseline chạy trên máy Trúc trùng từng epoch với log C = 2 của Nhân và A = 1000 của Trung, hai người chạy trên máy khác. Train lại thêm 2 cấu hình B cũng khớp tuyệt đối. Lý do: mọi nguồn ngẫu nhiên đều gắn seed (dữ liệu seed 42; khởi tạo trọng số và thứ tự batch theo seed huấn luyện), cộng với `torch.set_num_threads(1)`.
+- *Vì sao phải lưu rồi nạp lại checkpoint khi chạy thử?* Mô hình cuối được nộp dưới dạng `best_model.pt` và chấm test bằng file đó. Phải chắc rằng nạp lại cho đúng dự đoán như lúc train (lệch 0.0), nếu không số test sẽ không phải của mô hình đã chọn.
+- *Checkpoint lưu những gì?* `state_dict` (trọng số và bias của từng `nn.Linear`) cộng với `hidden`, `activation` để dựng lại đúng kiến trúc, và best epoch, best val loss, seed, cấu hình train để truy vết.
+- *337 tham số tính thế nào?* Tầng 2→16: 2·16 trọng số + 16 bias = 48. Tầng 16→16: 256 + 16 = 272. Tầng 16→1: 16 + 1 = 17. Tổng 48 + 272 + 17 = 337.
+- *Vì sao val MSE nhỏ như vậy mà vẫn chưa dừng sớm?* Val loss vẫn còn giảm đến epoch 998, nên patience 100 chưa bao giờ hết. Mô hình dừng vì chạm giới hạn 1000 epoch. Dữ liệu không nhiễu nên train thêm vẫn còn cải thiện được.
+- *Chạy thử có dùng tập test không?* Không. `run_baseline.py` chỉ đọc `train_pool` và `val`. Test để dành cho lần đánh giá duy nhất ngày 3/11, sau khi đã chọn mô hình theo val.
 
 ### Còn treo
 
 - [x] Commit `scripts/plot_data.py`, `src/paths.py`, `README.md`, `report/figures/`, `report/section_2_data.md`, `CodetoTruc.md` (đã có trong `2309c3e`).
 - [x] Chạy thử A của Trung (2 giá trị, 1 seed): hoàn tất sau khi `evaluate_model` được thêm.
-- [ ] Chạy baseline end-to-end và review code chéo: đọc `model.py`, `train.py` đủ để tự giải thích được.
+- [x] Chạy baseline end-to-end và review code chéo (tối 31/10, xem các tiểu mục baseline và Review ở trên).
+- [ ] Commit phần tối 31/10 rồi điền hash vào bảng commit ở đầu mục này.
+- [x] Sửa bug góp ý 1 (ghi đè `summary.csv`), comment góp ý 2–3, góp ý 7 (nhãn trục) — Trúc sửa thay tối 31/10.
+- [ ] Gửi nhóm chat: báo đã sửa `run_A.py`, `run_B.py`, `run_C.py`, `evaluate.py` (mọi người pull trước khi sửa tiếp), kèm các góp ý còn lại (2: hình `val_mse` cho C vào ngày 2/11; 4: thống nhất tên cột; 5, 6: ghi chú khi viết báo cáo; 8: message commit).
+- [ ] Nhắn Khang: `tra_loi_van_dap_K.md` mục 8.5 ghi val MSE baseline `4.17493e-07`, còn log trong repo (baseline, `A_1000_seed0`, `C_2_seed0`) đều ra `4.17562e-07`. Có thể do khác phiên bản PyTorch (Khang chạy bằng `.venv`), chưa kiểm chứng. File của Khang nên Khang tự sửa; báo cáo lấy số từ log.
 - [ ] Khi ghép báo cáo: chuyển công thức LaTeX trong `section_2_data.md` sang Equation của Word, đánh lại số hình/bảng nếu thứ tự mục thay đổi.
 
 ---

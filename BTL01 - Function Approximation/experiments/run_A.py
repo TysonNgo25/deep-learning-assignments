@@ -135,8 +135,17 @@ def run_experiment(
     summary["max_epochs"] = train_config["max_epochs"]
     summary["patience"] = train_config["patience"]
     summary["seeds"] = ",".join(map(str, run_seeds))
-    summary.to_csv(result_dir / "summary.csv", index=False)
-    _plot_summary(summary, result_dir / "figures" / "A_validation_metrics.png")
+    # A subset run (--values/--seeds) must not overwrite the full table and figure.
+    is_full_run = (
+        set(values) == set(config["experiments"]["A"]["n_train"])
+        and set(run_seeds) == set(train_config["seeds"])
+    )
+    if is_full_run:
+        summary.to_csv(result_dir / "summary.csv", index=False)
+        _plot_summary(summary, result_dir / "figures" / "A_validation_metrics.png")
+    else:
+        summary.to_csv(result_dir / "summary_partial.csv", index=False)
+        print(f"Partial run: wrote {result_dir / 'summary_partial.csv'}; summary.csv and figures unchanged")
     return summary
 
 

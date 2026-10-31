@@ -29,7 +29,7 @@ Mở notebook thì chọn kernel **Python (btl01)**.
 configs/baseline.yaml   baseline chung (chốt 29/10)
 data/                   train_pool.csv, val.csv, test.csv
 src/                    paths.py, data.py, model.py, train.py, evaluate.py, plots.py
-scripts/                plot_data.py (hình dữ liệu cho mục 2)
+scripts/                plot_data.py (hình dữ liệu cho mục 2), run_baseline.py (chạy thử end-to-end)
 experiments/            run_A.py, run_B.py, run_C.py
 results/A|B|C/          logs/*.csv, figures/*.png, summary.csv
 models/                 best_model.pt
@@ -46,9 +46,15 @@ Chạy từ thư mục này dưới dạng module để import được `src`, v
 ```powershell
 python -m src.data
 python -m scripts.plot_data     # hình dữ liệu cho mục 2 -> report/figures/
+python -m scripts.run_baseline  # chạy thử baseline end-to-end -> results/baseline/
 python -m experiments.run_A
 python -m experiments.run_B
+python -m experiments.run_C
 ```
+
+`scripts/run_baseline.py` train một lần cấu hình baseline (2 × 16, tanh, 1000 mẫu,
+seed 0), lưu checkpoint, nạp lại và đánh giá trên train/val, vẽ hình y–ŷ và bề mặt
+xấp xỉ. Script không dùng tập test.
 
 Hai runner đọc cấu hình ở `configs/baseline.yaml`, dùng các seed `0, 1, 2`,
 ghi log loss theo epoch cùng metric train/validation vào `results/A/logs/` và
@@ -56,7 +62,9 @@ ghi log loss theo epoch cùng metric train/validation vào `results/A/logs/` và
 Hai runner dùng chung `experiments/common.py` để thực hiện từng tổ hợp giá trị/seed
 và tổng hợp metric bằng trung bình cùng độ lệch chuẩn mẫu.
 Không có runner nào dùng tập test để chọn mô hình. Có thể chạy một nhóm nhỏ
-để kiểm tra hoặc chạy lại một phần thí nghiệm bằng các tùy chọn:
+để kiểm tra hoặc chạy lại một phần thí nghiệm bằng các tùy chọn bên dưới. Khi chỉ
+chạy một phần, runner ghi bảng ra `summary_partial.csv` và giữ nguyên `summary.csv`
+cùng các hình của bản chạy đầy đủ:
 
 ```powershell
 python -m experiments.run_A --values 200 400 --seeds 0

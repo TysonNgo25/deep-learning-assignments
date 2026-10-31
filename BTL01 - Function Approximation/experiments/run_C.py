@@ -19,7 +19,11 @@ SUMMARY_METRICS = ("train_mse", "val_mse", "test_mse", "test_mae", "test_rmse", 
 
 
 def _evaluate(model: torch.nn.Module, x, y) -> dict[str, float]:
-    """Compute the requested regression metrics without depending on evaluate.py."""
+    """Compute MSE, MAE and RMSE in float32.
+
+    Kept instead of src.evaluate.evaluate_model (float64) so the committed C results
+    stay reproducible digit for digit; the two differ only around the 8th significant digit.
+    """
     model.eval()
     with torch.no_grad():
         prediction = model(torch.tensor(x, dtype=torch.float32)).cpu().numpy().reshape(-1)
@@ -91,7 +95,7 @@ def run_experiment(
 
             train_metrics = _evaluate(training.model, train_x, train_y)
             val_metrics = _evaluate(training.model, val_x, val_y)
-            # Test is loaded and evaluated only after training and model selection are complete.
+            # Test metrics are recorded for every run for reporting only; depth is selected by val_mse.
             test_x, test_y = load_split("test")
             test_metrics = _evaluate(training.model, test_x, test_y)
             row = {
@@ -120,6 +124,12 @@ def run_experiment(
             )
 
     summary = pd.DataFrame(runs)
+    # A subset run (--values/--seeds) must not overwrite the full tables and figures.
+    is_full_run = set(values) == set(configured_depths) and set(run_seeds) == set(train_config["seeds"])
+    if not is_full_run:
+        summary.to_csv(result_dir / "summary_partial.csv", index=False)
+        print(f"Partial run: wrote {result_dir / 'summary_partial.csv'}; summary files and figures unchanged")
+        return summary
     summary.to_csv(result_dir / "summary.csv", index=False)
     # Keep the per-run summary consumed by plots.py; also export the requested mean ± std table.
     grouped = summary.groupby("value")[list(SUMMARY_METRICS)].agg(["mean", "std"])

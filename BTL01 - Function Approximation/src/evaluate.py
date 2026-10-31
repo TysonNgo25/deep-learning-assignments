@@ -188,6 +188,9 @@ def plot_surface_comparison(
         axis = fig.add_subplot(1, 2, index, projection="3d")
         axis.plot_surface(grid_x1, grid_x2, surface, cmap="viridis", linewidth=0)
         axis.set(xlabel="x₁", ylabel="x₂", zlabel="f(x₁, x₂)", title=title)
+        # Five ticks per axis keep the x₁ labels from overlapping on the short side.
+        axis.set_xticks(np.linspace(*x1_range, 5))
+        axis.set_yticks(np.linspace(*x2_range, 5))
     fig.tight_layout()
 
     destination = Path(save_path)
