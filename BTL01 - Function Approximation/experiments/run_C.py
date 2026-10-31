@@ -10,13 +10,23 @@ import pandas as pd
 import torch
 
 from src.data import load_config, load_split
-from src.evaluate import evaluate_model
 from src.paths import RESULTS_DIR
 from src.plots import make_group_figures
 from src.train import train_model
 
 
 SUMMARY_METRICS = ("train_mse", "val_mse", "test_mse", "test_mae", "test_rmse", "train_time_s", "best_epoch")
+
+
+def _evaluate(model: torch.nn.Module, x, y) -> dict[str, float]:
+    """Compute the requested regression metrics without depending on evaluate.py."""
+    model.eval()
+    with torch.no_grad():
+        prediction = model(torch.tensor(x, dtype=torch.float32)).cpu().numpy().reshape(-1)
+    target = torch.tensor(y, dtype=torch.float32).numpy().reshape(-1)
+    error = prediction - target
+    mse = float((error**2).mean())
+    return {"mse": mse, "mae": float(abs(error).mean()), "rmse": float(mse**0.5)}
 
 
 def _training_options(config: dict) -> dict:
@@ -79,11 +89,11 @@ def run_experiment(
                 seed=seed,
             )
 
-            train_metrics = evaluate_model(training.model, train_x, train_y)
-            val_metrics = evaluate_model(training.model, val_x, val_y)
+            train_metrics = _evaluate(training.model, train_x, train_y)
+            val_metrics = _evaluate(training.model, val_x, val_y)
             # Test is loaded and evaluated only after training and model selection are complete.
             test_x, test_y = load_split("test")
-            test_metrics = evaluate_model(training.model, test_x, test_y)
+            test_metrics = _evaluate(training.model, test_x, test_y)
             row = {
                 "group": "C",
                 "value": depth,
