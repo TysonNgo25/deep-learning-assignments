@@ -243,8 +243,8 @@ ImportError: cannot import name 'evaluate_model' from 'src.evaluate'
 
 Cả ba runner gọi `evaluate_model` trong `src/evaluate.py`, nhưng tại lần kiểm tra đầu tiên file này chỉ có docstring. Khang đã bổ sung hàm đánh giá trong commit `1c73723` lúc 22:24 ngày 31/10. Ở thời điểm kiểm tra ban đầu, `src/plots.py` cũng trống; Nhân sau đó hoàn thiện file này và chạy đủ C trong commit `48fbf36`.
 
-- Sau commit `1c73723`, smoke test A đã chạy thành công; A/B vẫn cần chạy lại đủ cấu hình để thay các kết quả cũ chưa truy vết được từ code trong repo lúc chạy.
-- Log và `summary.csv` A/B commit lúc 15:09 ngày 30/10, trước khi `train.py` lên repo (23:47) và khi `evaluate.py` còn trống; chúng được sinh từ code nằm trên máy Trung nên không truy vết được đầy đủ từ repo ở thời điểm đó. Nay `evaluate.py` đã có, Trung cần chạy lại đủ A/B và commit log mới để có kết quả tái lập.
+- Sau commit `1c73723`, smoke test A đã chạy thành công. Ở cuối ngày 31/10, các log A/B cũ được kiểm tra tái lập bằng cách chạy lại một số cấu hình đại diện; theo lịch, Trung tiếp tục chạy lại đủ A vào ngày 1/11 (xem mục bên dưới).
+- Log A/B ban đầu được commit lúc 15:09 ngày 30/10, trước khi `train.py` lên repo (23:47) và khi `evaluate.py` còn trống. Ngày 1/11, Trung đã chạy lại đủ 30 lượt A bằng code hiện tại, cập nhật log và summary; log B cũ vẫn được giữ vì các cấu hình kiểm tra đại diện đã tái lập khớp từng epoch.
 
 Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay bằng số chạy lại):
 
@@ -263,7 +263,7 @@ Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay
 
 - [x] Khắc phục lỗi import: Khang bổ sung `evaluate_model` trong `1c73723`; smoke test A xác nhận runner đã chạy được.
 - [x] Nhân hoàn thiện `plots.py` và chạy đủ C (commit `48fbf36`, đã có log và hình trong repo).
-- [x] ~~Trung chạy lại đủ A và B từ repo~~: không cần nữa. Tối 31/10 Trúc kiểm tra tái lập: train lại `A_1000_seed0`, `B_1_seed0`, `B_10_seed2` (và `C_2_seed0`) bằng code hiện tại trên repo, val loss trùng log cũ từng epoch, chênh 0.0. Log A/B ngày 30/10 truy vết được về code trên repo (chi tiết ở mục 31/10).
+- [x] Kiểm tra tái lập log A/B cũ: tối 31/10 Trúc train lại `A_1000_seed0`, `B_1_seed0`, `B_10_seed2` (và `C_2_seed0`) bằng code hiện tại trên repo; val loss trùng log cũ từng epoch, chênh 0.0. Theo lịch ngày 1/11, Trung còn chạy lại toàn bộ A; B tiếp tục dùng log cũ đã được kiểm chứng đại diện.
 
 ---
 
@@ -533,3 +533,74 @@ Baseline (2 × 16, tanh, n_train 1000, seed 0), nguồn `results/baseline/logs/b
 - [ ] Khi ghép báo cáo: chuyển công thức LaTeX trong `section_2_data.md` sang Equation của Word, đánh lại số hình/bảng nếu thứ tự mục thay đổi.
 
 ---
+
+## CN 01/11/2026 – Chạy đủ thực nghiệm A
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 1/11 Trung chạy đủ thực nghiệm A: 10 cỡ mẫu train (200 đến 2000, bước 200), mỗi cỡ mẫu chạy với 3 seed (0, 1, 2), tổng cộng 30 lượt. Giữ nguyên baseline: MLP `[16, 16]`, tanh, Adam, learning rate `1e-3`, batch size 32, tối đa 1000 epoch, patience 100 theo validation loss.
+
+### Commit trong ngày
+
+Chưa có commit ngày 1/11 trong lịch sử Git tại thời điểm ghi mục này. Trúc tự commit; khi commit sẽ bổ sung hash và message.
+
+### Kết quả
+
+Chạy `python -m experiments.run_A` từ thư mục `BTL01 - Function Approximation`. Runner đọc cấu hình và dữ liệu hiện có, chạy đủ 30 tổ hợp, ghi lại:
+
+- `results/A/logs/A_<n_train>_seed<seed>.csv`: log theo epoch cho mỗi lượt chạy, gồm 30 file.
+- `results/A/summary.csv`: bảng mean ± sample std theo từng cỡ mẫu, tổng cộng 10 dòng.
+- `results/A/figures/A_validation_metrics.png`: đồ thị các metric validation theo số mẫu train.
+
+Không dùng tập test trong thực nghiệm A; các chỉ số trong bảng dưới đây là trên validation.
+
+### Giải thích các hàm liên quan
+
+- `run_experiment()` trong `experiments/run_A.py` đọc baseline, kiểm tra cỡ mẫu/seed, cố định validation, rồi chạy lần lượt từng cỡ mẫu và seed.
+- Hàm `run_one()` huấn luyện một cấu hình bằng `train_model()`, tính metric train/validation qua `evaluate_model()`, ghi lịch sử từng epoch và cấu hình vào log CSV.
+- `run_seeded_experiments()` trong `experiments/common.py` gọi mỗi cặp giá trị/seed đúng một lần; `summarize_seed_runs()` tổng hợp trung bình và độ lệch chuẩn mẫu giữa ba seed.
+- `_plot_summary()` vẽ các metric validation theo cỡ mẫu trên trục log để dễ so sánh sai số nhỏ.
+
+### Đã kiểm tra
+
+- Runner hoàn tất đủ 30 lượt; summary có đủ 10 cỡ mẫu và ghi seed `0,1,2` cho từng cỡ.
+- Kiểm tra đủ 30 log: mỗi log có epoch liên tiếp bắt đầu từ 1, cấu hình trong log khớp tên file/cỡ mẫu/seed, metric hữu hạn. Số epoch mỗi lượt từ 617 đến 1000; lượt dừng trước 1000 là do early stopping.
+- Toàn bộ lượt dùng đúng baseline đã chốt; `git diff --check` đạt.
+- Validation MSE trung bình giảm từ `1.219636e-05` ở 200 mẫu xuống `1.681281e-07` ở 2000 mẫu, khoảng 72.5 lần. Với ba seed, kết quả vẫn dao động; vì vậy báo cáo mean ± std thay vì chỉ chọn một lần chạy.
+
+### Số liệu cho báo cáo mục 4.1
+
+| Số mẫu train | Validation MSE (mean ± std) | Validation RMSE (mean) | Best epoch (mean) |
+| ---: | ---: | ---: | ---: |
+| 200 | `1.219636e-05 ± 7.144094e-06` | `3.3857e-03` | 985.3 |
+| 400 | `2.224003e-06 ± 1.091532e-06` | `1.4638e-03` | 994.3 |
+| 600 | `1.222356e-06 ± 2.747918e-07` | `1.1012e-03` | 953.7 |
+| 800 | `8.253509e-07 ± 1.502634e-07` | `9.0583e-04` | 853.0 |
+| 1000 | `4.350544e-07 ± 2.451342e-08` | `6.5941e-04` | 988.0 |
+| 1200 | `3.433571e-07 ± 4.001068e-08` | `5.8528e-04` | 965.3 |
+| 1400 | `3.244289e-07 ± 1.587016e-07` | `5.5781e-04` | 858.3 |
+| 1600 | `2.853109e-07 ± 1.335988e-07` | `5.2441e-04` | 835.0 |
+| 1800 | `2.391381e-07 ± 3.670003e-08` | `4.8807e-04` | 856.0 |
+| 2000 | `1.681281e-07 ± 5.886715e-08` | `4.0545e-04` | 892.0 |
+
+### Cách tự kiểm tra lại
+
+Trong Anaconda Prompt:
+
+```powershell
+cd /d "D:\Games\code cua c#\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+python -m experiments.run_A
+```
+
+Kết quả đúng: terminal in 30 dòng `A n_train=..., seed=...`; `results/A/summary.csv` có 10 dòng cấu hình; `results/A/logs/` có 30 log. Mỗi cấu hình chạy lại có thể khác thời gian đo, còn metric và lịch sử loss phải tái lập trong cùng môi trường/phiên bản thư viện.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao mỗi cỡ mẫu chạy ba seed?* Để đánh giá ảnh hưởng của khởi tạo và thứ tự mini-batch; mean ± std phản ánh cả xu hướng lẫn độ dao động, tránh kết luận từ một lần chạy.
+- *Vì sao validation MSE nhìn chung giảm khi tăng số mẫu?* Mạng được cung cấp nhiều điểm huấn luyện hơn để xấp xỉ hàm trên miền; kết quả thực nghiệm cho thấy xu hướng này, dù các cỡ gần nhau có thể dao động giữa seed.
+- *Có dùng test để chọn mô hình hoặc tính bảng A không?* Không. A so sánh và chọn theo validation; test được giữ riêng cho đánh giá cuối theo kế hoạch.
+
+### Còn treo
+
+- [ ] Ngày 2/11: chạy đủ B (13 cấu hình × 3 seed); đối chiếu bảng và hình A đã sinh, rồi xuất phần kết quả A/B cho báo cáo.
