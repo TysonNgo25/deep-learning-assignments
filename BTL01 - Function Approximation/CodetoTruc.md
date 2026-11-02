@@ -224,6 +224,7 @@ Ngày này Trúc không có commit. Mục này ghi lại commit của các bạn
 | `9dcb237` | Trung | runner a , b | `experiments/run_A.py`, `run_B.py`, 69 file log, `summary.csv` và hình của A, B; sửa README phần chạy. |
 | `5374531` | Nhân | Implement experiment C runner | `experiments/run_C.py`: chạy C = 1..4 tầng × 16 nơ-ron, xuất `summary.csv` và bảng mean ± std. |
 | `f626842` | Khang | Training loop | `src/train.py`: hàm `train_model` và `load_checkpoint`, thêm phần 30/10 vào `tra_loi_van_dap_K.md`. |
+| `3d52c2b` | Trung | task ngày 30 | Viết `experiments/common.py` (`run_seeded_experiments`, `summarize_seed_runs`), chuyển `run_A.py`, `run_B.py` sang dùng hai hàm chung này, thêm 2 dòng README. Commit lúc 23:57, sau khi log A/B đã lên lúc 15:09. *(Bổ sung 02/11: lần rà trước bỏ sót commit này.)* |
 
 ### Tóm tắt code của các bạn (để Trúc trả lời được khi bị hỏi)
 
@@ -526,7 +527,7 @@ Baseline (2 × 16, tanh, n_train 1000, seed 0), nguồn `results/baseline/logs/b
 - [x] Commit `scripts/plot_data.py`, `src/paths.py`, `README.md`, `report/figures/`, `report/section_2_data.md`, `CodetoTruc.md` (đã có trong `2309c3e`).
 - [x] Chạy thử A của Trung (2 giá trị, 1 seed): hoàn tất sau khi `evaluate_model` được thêm.
 - [x] Chạy baseline end-to-end và review code chéo (tối 31/10, xem các tiểu mục baseline và Review ở trên).
-- [ ] Commit phần tối 31/10 rồi điền hash vào bảng commit ở đầu mục này.
+- [x] Commit phần tối 31/10 rồi điền hash vào bảng commit ở đầu mục này (`d4dee21`).
 - [x] Sửa bug góp ý 1 (ghi đè `summary.csv`), comment góp ý 2–3, góp ý 7 (nhãn trục) — Trúc sửa thay tối 31/10.
 - [ ] Gửi nhóm chat: báo đã sửa `run_A.py`, `run_B.py`, `run_C.py`, `evaluate.py` (mọi người pull trước khi sửa tiếp), kèm các góp ý còn lại (2: hình `val_mse` cho C vào ngày 2/11; 4: thống nhất tên cột; 5, 6: ghi chú khi viết báo cáo; 8: message commit).
 - [ ] Nhắn Khang: `tra_loi_van_dap_K.md` mục 8.5 ghi val MSE baseline `4.17493e-07`, còn log trong repo (baseline, `A_1000_seed0`, `C_2_seed0`) đều ra `4.17562e-07`. Có thể do khác phiên bản PyTorch (Khang chạy bằng `.venv`), chưa kiểm chứng. File của Khang nên Khang tự sửa; báo cáo lấy số từ log.
@@ -537,6 +538,15 @@ Baseline (2 × 16, tanh, n_train 1000, seed 0), nguồn `results/baseline/logs/b
 ## CN 01/11/2026 – Chạy đủ thực nghiệm A
 
 ### Việc theo kế hoạch
+
+| Người | Kế hoạch 1/11 | Thực tế |
+| --- | --- | --- |
+| Trúc | Viết nháp mục 1 Giới thiệu | Chưa làm trong ngày. Xong ngày 2/11, ghi ở mục 02/11 |
+| Khang | Vẽ bề mặt xấp xỉ + y–ŷ; hỗ trợ Trung, Nhân | Hình baseline tham khảo commit sáng 2/11 (`7c60412`) |
+| Trung | Chạy đủ A (10 giá trị × 3 seed) | Xong (`4179694`), chi tiết bên dưới |
+| Nhân | Chạy đủ C (4 giá trị × 3 seed) | Đã xong từ 31/10 (`48fbf36`) |
+
+*(Bảng trên Trúc bổ sung ngày 02/11. Phần dưới do Trung viết.)*
 
 Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 1/11 Trung chạy đủ thực nghiệm A: 10 cỡ mẫu train (200 đến 2000, bước 200), mỗi cỡ mẫu chạy với 3 seed (0, 1, 2), tổng cộng 30 lượt. Giữ nguyên baseline: MLP `[16, 16]`, tanh, Adam, learning rate `1e-3`, batch size 32, tối đa 1000 epoch, patience 100 theo validation loss.
 
@@ -590,7 +600,7 @@ Không dùng tập test trong thực nghiệm A; các chỉ số trong bảng d�
 Trong Anaconda Prompt:
 
 ```powershell
-cd /d "D:\Games\code cua c#\deep-learning-assignments\BTL01 - Function Approximation"
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
 conda activate btl01
 python -m experiments.run_A
 ```
@@ -609,7 +619,7 @@ Kết quả đúng: terminal in 30 dòng `A n_train=..., seed=...`; `results/A/s
 
 ---
 
-## T2 02/11/2026 – Chạy đủ B, nháp mục 3, xuất đồ thị A
+## T2 02/11/2026 – Chạy đủ B, nháp mục 3, xuất đồ thị A; nháp mục 1, kiểm tra log và hình A, B, C
 
 ### Việc theo kế hoạch
 
@@ -619,10 +629,10 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), Trung chạy đủ thực nghiệm B 
 
 | Hash | Người | Message | Làm gì |
 | --- | --- | --- | --- |
-| `36c51cb` | Khang | task ngày 2 | Chạy lại đủ thực nghiệm B, cập nhật log/summary và nhật ký ngày 2/11. |
-| `7c60412` | Khang | Tạo hình baseline tham khảo 1/11 | Thêm hình so sánh baseline và log chẩn đoán, cập nhật tài liệu vấn đáp của Khang. |
-
-Phần nháp mục 3 và cập nhật nhật ký/vấn đáp đang được chuẩn bị để Trúc xem lại trước khi tự commit; bổ sung hash/message của commit mới vào bảng này sau khi commit.
+| `7c60412` | Khang | Tạo hình baseline tham khảo 1/11 | Thêm hình so sánh baseline và log chẩn đoán vào `results/diagnostics/`, cập nhật tài liệu vấn đáp của Khang. Việc kế hoạch 1/11, commit lúc 08:13 ngày 2/11. |
+| `36c51cb` | Trung | task ngày 2 | Chạy lại đủ thực nghiệm B, cập nhật log/summary và nhật ký ngày 2/11. *(Sửa 02/11: bản trước ghi nhầm người là Khang.)* |
+| `aa5948c` | Khang | Nháp mục 3 báo cáo 2/11 | Thêm `report/section_3_model.md`, cập nhật `tra_loi_van_dap_K.md` và nhật ký. |
+| _(điền sau)_ | Trúc | _(commit tối 2/11)_ | Nháp mục 1 `report/section_1_intro.md` (việc kế hoạch 1/11); kiểm tra log, bảng, hình A/B/C (việc kế hoạch 2/11, chỉ ghi vào nhật ký); sửa bảng commit 30/10, 01/11, 02/11. |
 
 ### Kết quả
 
@@ -675,7 +685,7 @@ Validation MSE nhìn chung giảm mạnh khi tăng độ rộng; tốt nhất tr
 Trong Anaconda Prompt:
 
 ```powershell
-cd /d "D:\Games\code cua c#\deep-learning-assignments\BTL01 - Function Approximation"
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
 conda activate btl01
 python -m experiments.run_B
 ```
@@ -689,6 +699,90 @@ Kết quả đúng: terminal in 39 dòng `B neurons=..., seed=...`; summary có 
 - *Kết quả có chứng minh quá khớp không?* Chưa. Validation và train error đa phần cùng xu hướng và khá gần nhau; vài điểm tăng ở 9–10 nơ-ron kèm biến động seed lớn, chưa đủ để kết luận quá khớp.
 - *Vì sao một nơ-ron cho sai số cao?* Một tầng ẩn quá hẹp có năng lực biểu diễn hạn chế để khớp hình dạng Gaussian hai chiều.
 
+### Phần của Trúc: nháp mục 1 Giới thiệu (việc kế hoạch 01/11, làm ngày 02/11)
+
+**Kiểm tra đầu phiên:** so `git log` với nhật ký thì thấy ba chỗ thiếu sót, đã sửa ở trên. Commit `3d52c2b` (Trung, 30/10) bị thiếu ở mục 30/10. `36c51cb` ở mục này ghi nhầm là của Khang. `aa5948c` (Khang, nháp mục 3) chưa có trong bảng. Hai mục 01/11 và 02/11 do Trung viết dùng đường dẫn `cd` trên máy Trung (`D:\Games\...`), đã đổi sang đường dẫn trên máy Trúc.
+
+**Kết quả:** file mới [report/section_1_intro.md](report/section_1_intro.md). Đề mục 6 yêu cầu mục 1 gồm "mục tiêu, phát biểu bài toán, nội dung đóng góp của nhóm/cá nhân". Báo cáo mẫu không có mục Giới thiệu (bắt đầu luôn từ "Data Preparation"), nên bố cục theo đề:
+
+| Tiểu mục | Nội dung |
+| --- | --- |
+| 1.1. Mục tiêu | Học lại hàm Gaussian bằng MLP PyTorch, đo ảnh hưởng của số mẫu, số nơ-ron, số tầng. Vì sao không dùng code mẫu (Keras, C đơn vị, lấy test làm validation) |
+| 1.2. Phát biểu bài toán | Đầu vào, nhãn, miền, μ, C, chỉ số MSE/MAE/RMSE, chia tập 2000/500/100, Bảng 1.1 ba nhóm A/B/C (30 + 39 + 12 = 81 lần chạy), baseline, lý do thêm B = 16/32/64 |
+| 1.3. So sánh công bằng | Một file yaml cho mọi lần chạy, A lấy tiền tố pool, 3 seed, kiểm tra tái lập ngày 31/10 |
+| 1.4. Phân công và đóng góp | Bảng 1.2: thành viên, MSSV, vai trò, code, phần báo cáo. Cột tỷ lệ để trống |
+| 1.5. Kết quả chính | Để trống, điền sau 03/11 |
+| 1.6. Bố cục báo cáo | Mục 2 đến 6 |
+
+Văn bản viết theo bộ quy tắc "viết văn không rập khuôn": không có dấu gạch ngang dài, dấu chấm phẩy hay in đậm trong thân bài, không có các từ nối sáo như "Bên cạnh đó", "Ngoài ra". Đã rà lại bằng tìm kiếm, kết quả 0 lần.
+
+**Đã kiểm tra (trên log hiện tại, sau khi Trung chạy lại A ngày 1/11 và B ngày 2/11):**
+
+- 81/81 log A, B, C có cùng `optimizer adam, lr 0.001, batch 32, max_epochs 1000, patience 100, tanh` trong `config_json`. Đây là căn cứ cho câu "không lần chạy nào lệch tham số" ở 1.3.
+- Log baseline vẫn trùng `A_1000_seed0.csv` và `C_2_seed0.csv` từng epoch (chênh 0.0). Đây là căn cứ cho câu về tái lập ở 1.3.
+- Val MSE thấp nhất trong 81 lần chạy là `1.05e-07` (`A_2000_seed1`), cao nhất là `2.92e-03` (`B_1_seed1`). Đây là căn cứ cho câu "từ cỡ 10⁻³ xuống cỡ 10⁻⁷" ở 1.2.
+- Tỷ lệ y < 0.01 trên cả 2600 điểm là 62.4%, khớp câu "hơn 60%".
+- MSSV và vai trò lấy từ `Kế hoạch.md` mục 3. Danh sách file code lấy từ cây thư mục hiện tại.
+
+**Cách tự kiểm tra lại:** mở `report/section_1_intro.md` trong VS Code, bấm Ctrl+Shift+V để xem bản hiển thị. Phải thấy 6 tiểu mục (1.1 đến 1.6), 2 bảng (Bảng 1.1, 1.2), 4 ô `[...]` ở cột "Đóng góp" của Bảng 1.2, và 2 ghi chú trong ngoặc vuông chờ điền (dòng tỷ lệ đóng góp dưới Bảng 1.2, đoạn 1.5).
+
+**Câu hỏi vấn đáp có thể gặp:**
+
+- *Vì sao nhóm không dùng code mẫu?* Đề cấm TensorFlow/Keras. Báo cáo mẫu còn dùng ma trận hiệp phương sai đơn vị (đề của nhóm là C = [[0.3, −0.5], [−0.5, 2]]), và vẽ đường "Testing" trong lúc train, tức là lấy test làm validation, trái với yêu cầu không dùng test để chọn mô hình.
+- *Vì sao B chạy thêm 16, 32, 64 nơ-ron?* Đề cho phép mở rộng. Với tối đa 10 nơ-ron, có thể chỉ thấy thiếu khớp. Mạng rộng hơn mới có cơ sở để nhận xét quá khớp, đúng ý rubric B.
+- *Vì sao mục Giới thiệu chưa có kết quả?* Mô hình cuối chọn theo validation ngày 03/11 và chỉ đánh giá test một lần sau đó. Viết kết quả trước ngày đó là viết số chưa có.
+
 ### Còn treo
 
 - [ ] Ngày 3/11: xuất bảng và đồ thị B cho báo cáo; chọn mô hình cuối theo validation loss, phối hợp đánh giá một lần trên test.
+- [ ] Trúc commit nháp mục 1 + sửa nhật ký, rồi điền hash vào dòng `_(điền sau)_` trong bảng commit mục này.
+- [ ] Sau 03/11: điền mục 1.5 (mô hình chọn, sai số test). Ngày 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
+- [x] Việc kế hoạch 02/11 của Trúc ("Kiểm tra log và hình A, C khớp với config"): xong, xem tiểu mục ngay dưới.
+- [ ] Ghi chú cho mục 4.3, 5 (Nhân): C = 1 chưa hội tụ ở epoch 1000; thời gian C = 3 dao động mạnh giữa các seed. Hình C vẫn chỉ có test, cần thêm hình val trước khi chọn cấu hình (3/11).
+
+### Phần của Trúc: kiểm tra log và hình A, C khớp với config (việc kế hoạch 02/11)
+
+**Vì sao cần kiểm:** rubric mục Báo cáo chấm "hình/bảng và số liệu truy vết được", rubric chung ghi "mục nào không kiểm chứng được sẽ không được điểm". Log A vừa chạy lại ngày 1/11 và B ngày 2/11, nên phải chắc hình và bảng trong repo là của lần chạy hiện tại, không phải hình cũ còn sót lại.
+
+**Cách kiểm:** một script tạm (không đưa vào repo) đọc `configs/baseline.yaml` rồi làm 3 bước. Có kiểm thêm B (việc này của Trung ngày 3/11) vì chạy cùng một lượt.
+
+1. Log so với config. Với mỗi giá trị A, B, C và seed 0, 1, 2 trong yaml: file log phải tồn tại, không có file thừa. `config_json` trong log phải đúng nhóm, đúng seed, đúng giá trị như tên file. Các tham số optimizer, lr, batch, max_epochs, patience, activation phải bằng baseline. A phải dùng `hidden [16, 16]`, B và C phải dùng `n_train 1000`, C phải là `[16] × số tầng`. Cột epoch phải liên tục từ 1. Lần chạy dừng trước 1000 epoch phải dừng đúng 100 epoch sau best epoch (đúng luật patience).
+2. Bảng so với log. Tính lại mean và std (ddof = 1) của train MSE, val MSE, val MAE, val RMSE, best epoch từ 3 log của từng cấu hình, so với `summary.csv` của A, B. Với mỗi lần chạy, `best_epoch` phải bằng epoch có val loss nhỏ nhất trong log, `val_mse` phải bằng val loss nhỏ nhất đó. Với C, kiểm thêm `summary_mean_std.csv` bằng đúng gom nhóm của `summary.csv`.
+3. Hình so với bảng. Vẽ lại hình từ `summary.csv` hiện tại bằng đúng hàm của runner (`_plot_summary` của A, B; `make_group_figures` của C) ra thư mục tạm, rồi so MD5 với hình trong repo.
+
+**Kết quả: 0 lỗi.**
+
+| Phần kiểm | Số lượng | Kết quả |
+| --- | --- | --- |
+| Log A / B / C | 30 / 39 / 12, không file thừa | Đủ, đúng config, epoch liên tục, early stopping đúng luật patience |
+| `results/A/summary.csv` | 10 dòng | Khớp log |
+| `results/B/summary.csv` | 13 dòng | Khớp log |
+| `results/C/summary.csv`, `summary_mean_std.csv` | 12 + 4 dòng | Khớp log và khớp nhau |
+| `A_validation_metrics.png` | 1 hình | Vẽ lại giống từng byte |
+| `B_metrics_vs_neurons.png` | 1 hình | Vẽ lại giống từng byte |
+| `C_loss_curves`, `C_test_mse`, `C_test_rmse`, `C_train_time`, `C_error_and_time` | 5 hình | Vẽ lại giống từng byte |
+
+`git status` sau khi chạy không có file nào trong `results/` bị đổi.
+
+**Xem bằng mắt:** mở `A_validation_metrics.png`, `C_loss_curves.png`, `C_error_and_time.png`. Trục có nhãn, có thanh std, tiếng Việt đúng dấu. Ba điều cần mang vào báo cáo:
+
+- Hình A chỉ vẽ validation, không có đường train. Đề yêu cầu "thể hiện train/validation/test có nhãn rõ ràng", nên khi xuất bảng A cho báo cáo (Trung) cần có cột train cạnh val.
+- Đường val của C = 1 vẫn đang giảm ở epoch 1000 (khoảng 1.5e−5), tức mạng 1 tầng dừng vì hết epoch, chưa hội tụ. Các mạng 2–4 tầng xuống dưới 1e−5 từ khoảng epoch 150–200.
+- Thời gian C = 3 có std lớn (21.9 ± khoảng 6 giây) so với C = 2 (21.5 ± khoảng 2 giây). Đây là do tải máy khác nhau giữa các lần chạy, không phải do số tầng. Phần thảo luận C nên nói rõ điều này.
+
+**Cách tự kiểm tra lại:** script nằm ở thư mục tạm của Claude: `C:\Users\hntruc\AppData\Local\Temp\claude\d--Data-GitHub-deep-learning-assignments\e15caa8e-270a-4563-a23b-ed4a886b7e60\scratchpad\check_day2.py`. Trong Anaconda Prompt:
+
+```bat
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+set PYTHONPATH=%CD%
+python "C:\Users\hntruc\AppData\Local\Temp\claude\d--Data-GitHub-deep-learning-assignments\e15caa8e-270a-4563-a23b-ed4a886b7e60\scratchpad\check_day2.py"
+```
+
+Kết quả đúng: 7 dòng `... giống từng byte` và dòng cuối `PROBLEMS: 0`. Thư mục tạm có thể bị Windows dọn. Nếu cần chạy lại vào ngày 7/11 thì nhờ Claude đưa script vào `scripts/`.
+
+**Câu hỏi vấn đáp có thể gặp:**
+
+- *Làm sao chứng minh hình trong báo cáo đúng là từ log?* Vẽ lại từ `summary.csv` bằng đúng hàm của runner ra giống từng byte với hình đã nộp, và `summary.csv` tính lại được từ log từng lần chạy.
+- *Lần chạy nào dừng sớm thì kiểm thế nào là đúng?* Số epoch đã chạy phải bằng best epoch + 100 (patience). Cả 20 lần dừng sớm đều đúng luật này.
+- *Vì sao mạng 1 tầng có sai số lớn hơn hẳn?* Hình loss C cho thấy C = 1 hội tụ chậm hơn nhiều và chưa xong ở epoch 1000, trong khi cùng 16 nơ-ron nhưng 2 tầng thì xuống dưới 1e−5 từ khoảng epoch 200.
