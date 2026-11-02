@@ -609,7 +609,7 @@ Kết quả đúng: terminal in 30 dòng `A n_train=..., seed=...`; `results/A/s
 
 ---
 
-## T2 02/11/2026 – Chạy đủ thực nghiệm B, xuất đồ thị A
+## T2 02/11/2026 – Chạy đủ B, nháp mục 3, xuất đồ thị A
 
 ### Việc theo kế hoạch
 
@@ -619,9 +619,10 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), Trung chạy đủ thực nghiệm B 
 
 | Hash | Người | Message | Làm gì |
 | --- | --- | --- | --- |
+| `36c51cb` | Khang | task ngày 2 | Chạy lại đủ thực nghiệm B, cập nhật log/summary và nhật ký ngày 2/11. |
 | `7c60412` | Khang | Tạo hình baseline tham khảo 1/11 | Thêm hình so sánh baseline và log chẩn đoán, cập nhật tài liệu vấn đáp của Khang. |
 
-Kết quả chạy B và phần nhật ký ngày này chưa commit; Trúc tự commit sau khi xem lại.
+Phần nháp mục 3 và cập nhật nhật ký/vấn đáp đang được chuẩn bị để Trúc xem lại trước khi tự commit; bổ sung hash/message của commit mới vào bảng này sau khi commit.
 
 ### Kết quả
 
@@ -632,6 +633,8 @@ Chạy `python -m experiments.run_B` trong thư mục BTL01. Runner chạy đủ
 - `results/B/figures/B_metrics_vs_neurons.png`: MSE train/validation, validation MAE và RMSE theo số nơ-ron.
 
 Đồ thị A được dựng lại từ `results/A/summary.csv` bằng `_plot_summary()` của `experiments/run_A.py`, lưu ở `results/A/figures/A_validation_metrics.png`. Đã mở kiểm tra: đủ ba panel MSE/MAE/RMSE trên validation, trục sai số dùng thang log và có thanh độ lệch chuẩn.
+
+Theo phần việc của Khang trong [Kế hoạch.md](Kế%20hoạch.md), đã tạo bản nháp mục 3 tại `report/section_3_model.md`. Nội dung gồm sơ đồ baseline `2 → 16 → 16 → 1`, công thức forward, MSE, cấu hình baseline, quy trình train/validation, early stopping và nguyên tắc giữ test độc lập. Bản này mô tả đúng phần cài đặt hiện có, phân biệt hình baseline tham khảo với kết quả cuối A/B/C và chưa thay thế báo cáo hoàn chỉnh của nhóm.
 
 ### Giải thích các hàm liên quan
 

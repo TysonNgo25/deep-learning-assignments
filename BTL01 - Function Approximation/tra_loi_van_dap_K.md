@@ -1,4 +1,4 @@
-# Trả lời vấn đáp — Khang: phần việc ngày 29–30/10
+# Trả lời vấn đáp — Khang: phần việc ngày 29/10–2/11
 
 ## 1. Xác định phần việc theo ngày
 
@@ -392,10 +392,10 @@ Kiểm thử xác nhận shape dự đoán `(100, 1)`, các metric hữu hạn, 
 
 Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo vẫn thuộc phần Khang:
 
-| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 31/10 |
+| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 2/11 |
 |---|---|---|
 | **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Đã tạo hai hình baseline tham khảo trên validation tại `results/diagnostics/figures/`; rà log A/B/C thấy đủ số lần chạy và không phát hiện lỗi đang chặn. Chưa phải mô hình cuối. |
-| **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Chưa làm theo lịch. |
+| **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Đã tạo `report/section_3_model.md`; đây là bản nháp phương pháp, chưa ghép vào báo cáo cuối. |
 | **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Chưa thể làm cho đến khi A/B/C có kết quả và Trúc chọn mô hình; không chọn bằng test. |
 | **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Chưa làm theo lịch; cần dùng hình/số liệu mô hình cuối. |
 | **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Chưa làm theo lịch; phụ thuộc log/bảng A/B. |
@@ -441,3 +441,40 @@ Kiểm tra giao diện runner cho thấy A/B gọi `train_model` và `evaluate_m
 - C: 4 độ sâu × 3 seed = 12 log; summary mỗi lần chạy có 12 dòng, summary mean ± std có 4 dòng.
 
 Rà soát số file/log và summary không phát hiện thiếu cấu hình, giá trị NaN hoặc lỗi đang chặn. Chưa có yêu cầu lỗi cụ thể từ Trung/Nhân trong lượt này nên không sửa file của hai bạn.
+
+---
+
+## 11. Nháp mục 3 báo cáo — công việc ngày 2/11
+
+Đã tạo [section_3_model.md](report/section_3_model.md) theo phần việc trong [Kế hoạch.md](Kế%20hoạch.md). Bản nháp trình bày kiến trúc baseline, công thức lan truyền thuận, MSE, cấu hình train, cách chọn checkpoint bằng validation và việc không dùng test trong quá trình huấn luyện/chọn mô hình. Đây là nội dung phương pháp; kết quả so sánh A/B/C và kết quả test của mô hình cuối phải lấy từ các bảng/nhật ký tương ứng, không lấy một lần chạy minh họa làm kết luận cuối.
+
+### Câu 14: Mạng biến đổi hai đầu vào thành một dự đoán như thế nào?
+
+**Trả lời:** Mỗi dòng đầu vào có hai giá trị \(x_1,x_2\), nên tensor theo batch có shape \((N,2)\). Mỗi tầng ẩn tính phép tuyến tính \(W h+b\), rồi áp dụng activation `tanh`. Baseline có hai tầng ẩn, mỗi tầng 16 nơ-ron. Tầng cuối ánh xạ sang một giá trị \(\hat y\), nên output có shape \((N,1)\).
+
+### Câu 15: Vì sao dùng MSE làm loss?
+
+**Trả lời:** MSE lấy trung bình bình phương chênh lệch giữa nhãn \(y\) và dự đoán \(\hat y\). Đây là loss hồi quy trực tiếp cho sai số số học; bình phương làm sai số lớn đóng góp nhiều hơn. Đạo hàm của loss được lan truyền ngược để cập nhật trọng số. MSE nhỏ hơn là tốt hơn khi so sánh trên cùng tập dữ liệu và cùng thang đo.
+
+### Câu 16: Validation và test khác nhau thế nào trong quy trình này?
+
+**Trả lời:** Sau mỗi epoch, validation loss được tính để theo dõi quá trình học và chọn trọng số ở epoch tốt nhất; nếu validation không cải thiện đủ lâu thì dừng sớm. Tập test không được đưa vào hàm huấn luyện, không quyết định epoch hay cấu hình. Test chỉ dùng để đánh giá cuối sau khi mô hình được chọn theo validation.
+
+### Câu 17: Vì sao trả về checkpoint ở epoch tốt nhất thay vì epoch cuối?
+
+**Trả lời:** Loss train có thể tiếp tục giảm trong khi validation loss không còn cải thiện. Lưu và nạp lại `state_dict` tại epoch có validation loss tốt nhất giúp kết quả trả về theo đúng tiêu chí chọn đã định, đồng thời early stopping tránh tiếp tục huấn luyện khi không có cải thiện validation.
+
+### Câu 18: Mục 3 đã chứng minh mô hình nào là tốt nhất chưa?
+
+**Trả lời:** Chưa. Mục 3 mô tả phương pháp và cấu hình. Muốn kết luận phải đối chiếu kết quả validation của các thí nghiệm A/B/C theo tiêu chí nhóm đã thống nhất; sau đó đánh giá test một lần cho mô hình được chọn. Hình baseline tham khảo chỉ chứng minh pipeline chạy và hỗ trợ quan sát, không thay thế phép so sánh cuối.
+
+### Đã kiểm tra và cách tự kiểm tra
+
+- Đối chiếu mô tả kiến trúc, loss, batch size, optimizer, seed, epoch và patience với `src/model.py`, `src/train.py` và `configs/baseline.yaml`.
+- Đọc lại mục 3 để đảm bảo tách rõ baseline với các biến thể A/B/C, validation với test, và kết quả minh họa với kết quả chọn cuối.
+- Mở file `report/section_3_model.md` để rà sơ đồ, công thức và bảng cấu hình; đây là tài liệu Markdown nên không có lệnh chạy riêng.
+
+### Còn treo
+
+- [ ] Ngày 3/11: phối hợp Trúc chọn mô hình theo validation và đánh giá test cuối; không chọn mô hình theo test.
+- [ ] Ngày 4/11: viết phần đánh giá chung bằng hình/số liệu của mô hình cuối.
