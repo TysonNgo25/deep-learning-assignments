@@ -279,9 +279,9 @@ Nhận xét sơ bộ từ `summary.csv` (chỉ để định hướng, sẽ thay
 | `86bd04b` | Nhân | Merge branch `main` | Gộp các thay đổi ngày 31/10; `main` hiện tại đã ở commit này. |
 | `1c73723` | Khang | `evaluate.py`: tính MSE, MAE, RMSE | Bổ sung metric, hàm dự đoán và biểu đồ; khắc phục lỗi import ngăn runner A/B/C khởi động. |
 | `e80cce7` | Trung | chạy thử A với 2 giá trị và chạy đầy đủ a b | Chỉ sửa `CodetoTruc.md` (ghi kết quả smoke test A, tick việc treo). **Không có file log hay `summary.csv` nào thay đổi**: log A/B trong repo vẫn là bản của `9dcb237` (30/10). Phần "chạy đầy đủ a b" trong message không khớp nội dung commit. |
-| _(điền sau)_ | Trúc | _(commit tối 31/10)_ | `scripts/run_baseline.py`, `results/baseline/`, sửa bug sau review trong `run_A.py`, `run_B.py`, `run_C.py`, `evaluate.py`; README, `Kế hoạch.md` (B 13 giá trị), nhật ký này (thêm mục 28/10, đính chính). |
+| `d4dee21` | Trúc | Task ngày 31 và fix bug | Thêm script và output baseline end-to-end, sửa lỗi trong runner/evaluate, cập nhật README, kế hoạch và nhật ký. |
 
-Ghi chú: lần kiểm tra đầu phiên, `main` local sau `origin/main` 2 commit; sau đó đồng bộ đến `86bd04b` và hiện `main`/`origin/main` cùng ở `e80cce7`.
+Ghi chú: cuối ngày 31/10, nhánh `main` ở `d4dee21`; các commit sau đó được ghi tại mục ngày tương ứng.
 
 **Việc theo kế hoạch:**
 
@@ -542,7 +542,9 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 1/11 Trung chạy đủ thực 
 
 ### Commit trong ngày
 
-Chưa có commit ngày 1/11 trong lịch sử Git tại thời điểm ghi mục này. Trúc tự commit; khi commit sẽ bổ sung hash và message.
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `4179694` | Trung | xong task ngày 1 | Cập nhật nhật ký ngày 1/11, chạy lại đủ A 10 cỡ mẫu × 3 seed và ghi lại 30 log cùng `summary.csv`. |
 
 ### Kết quả
 
@@ -603,4 +605,87 @@ Kết quả đúng: terminal in 30 dòng `A n_train=..., seed=...`; `results/A/s
 
 ### Còn treo
 
-- [ ] Ngày 2/11: chạy đủ B (13 cấu hình × 3 seed); đối chiếu bảng và hình A đã sinh, rồi xuất phần kết quả A/B cho báo cáo.
+- [x] Ngày 2/11: chạy đủ B (13 cấu hình × 3 seed), đối chiếu bảng và hình; đồ thị A đã được dựng lại từ summary A và kiểm tra.
+
+---
+
+## T2 02/11/2026 – Chạy đủ thực nghiệm B, xuất đồ thị A
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), Trung chạy đủ thực nghiệm B với 13 cấu hình một tầng ẩn (1–10, 16, 32, 64 nơ-ron), mỗi cấu hình ba seed (0, 1, 2), tổng cộng 39 lượt. Cùng ngày xuất bảng và đồ thị A từ kết quả đã chạy ngày 1/11. Giữ nguyên baseline còn lại: 1000 mẫu train, validation cố định 500 mẫu, tanh, Adam, learning rate `1e-3`, batch size 32, tối đa 1000 epoch và patience 100.
+
+### Commit trong ngày
+
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `7c60412` | Khang | Tạo hình baseline tham khảo 1/11 | Thêm hình so sánh baseline và log chẩn đoán, cập nhật tài liệu vấn đáp của Khang. |
+
+Kết quả chạy B và phần nhật ký ngày này chưa commit; Trúc tự commit sau khi xem lại.
+
+### Kết quả
+
+Chạy `python -m experiments.run_B` trong thư mục BTL01. Runner chạy đủ 39 tổ hợp và ghi:
+
+- `results/B/logs/B_<n_neurons>_seed<seed>.csv`: log loss theo epoch và metric của từng lượt, 39 file.
+- `results/B/summary.csv`: metric train/validation, mean ± độ lệch chuẩn mẫu theo 13 cấu hình.
+- `results/B/figures/B_metrics_vs_neurons.png`: MSE train/validation, validation MAE và RMSE theo số nơ-ron.
+
+Đồ thị A được dựng lại từ `results/A/summary.csv` bằng `_plot_summary()` của `experiments/run_A.py`, lưu ở `results/A/figures/A_validation_metrics.png`. Đã mở kiểm tra: đủ ba panel MSE/MAE/RMSE trên validation, trục sai số dùng thang log và có thanh độ lệch chuẩn.
+
+### Giải thích các hàm liên quan
+
+- `run_experiment()` trong `experiments/run_B.py` đọc widths/seeds từ YAML, cố định 1000 mẫu train cùng một tập validation, rồi chạy mỗi cặp cấu hình/seed.
+- Hàm `run_one()` tạo MLP một tầng ẩn với width đang khảo sát, gọi `train_model()`, tính metric train và validation bằng `evaluate_model()`, sau đó ghi log kèm `config_json`.
+- `run_seeded_experiments()` bảo đảm thực hiện từng tổ hợp đúng một lần; `summarize_seed_runs()` tổng hợp mean và sample std của các metric qua ba seed.
+- `_plot_summary()` trong runner A vẽ sai số validation theo số mẫu, kèm thanh std; dùng trục y log để biểu diễn các MSE rất nhỏ.
+
+### Đã kiểm tra
+
+- Runner hoàn tất đủ 39 lượt; có 13 dòng trong summary, các seed `0,1,2`, và đúng 39 log.
+- Kiểm tra từng log: epoch chạy liên tiếp từ 1; width, seed, số mẫu, activation và optimizer trong `config_json` khớp tên file/cấu hình; giá trị số hữu hạn. Số epoch thực tế dao động 142–1000 do early stopping hoặc chạm giới hạn.
+- Tính lại mean/std trực tiếp từ 39 log khớp summary ở cả 8 metric train/validation (MSE, MAE, RMSE, best epoch, thời gian). `git diff --check` đạt.
+- Chạy đủ B không đọc tập test. Các đồ thị dùng metric validation để so cấu hình.
+
+### Số liệu cho báo cáo mục 4.1–4.2
+
+| Nơ-ron tầng ẩn | Train MSE (mean) | Validation MSE (mean ± std) | Validation MAE (mean) | Validation RMSE (mean) |
+| ---: | ---: | ---: | ---: | ---: |
+| 1 | `3.194696e-03` | `2.915716e-03 ± 9.510978e-07` | `3.645343e-02` | `5.399737e-02` |
+| 2 | `1.523689e-03` | `1.425589e-03 ± 7.845172e-07` | `2.075444e-02` | `3.775697e-02` |
+| 3 | `9.739749e-04` | `9.597027e-04 ± 4.176711e-04` | `1.900816e-02` | `3.052771e-02` |
+| 4 | `4.688371e-04` | `4.581120e-04 ± 4.936266e-05` | `1.601929e-02` | `2.138230e-02` |
+| 5 | `3.421323e-04` | `3.676638e-04 ± 2.614009e-05` | `1.484398e-02` | `1.916631e-02` |
+| 6 | `2.724247e-04` | `3.003678e-04 ± 9.401193e-05` | `1.328608e-02` | `1.719137e-02` |
+| 7 | `1.325110e-04` | `1.702886e-04 ± 2.100770e-05` | `9.788611e-03` | `1.303225e-02` |
+| 8 | `8.285447e-05` | `9.535581e-05 ± 2.581063e-05` | `7.328694e-03` | `9.704418e-03` |
+| 9 | `1.033432e-04` | `1.073820e-04 ± 9.703880e-05` | `7.440686e-03` | `9.715284e-03` |
+| 10 | `9.787021e-05` | `1.099850e-04 ± 9.745668e-06` | `8.423320e-03` | `1.048042e-02` |
+| 16 | `9.281447e-06` | `1.193230e-05 ± 4.160529e-06` | `2.601272e-03` | `3.414008e-03` |
+| 32 | `3.535831e-06` | `3.936774e-06 ± 1.442151e-06` | `1.561799e-03` | `1.963094e-03` |
+| 64 | `2.244774e-06` | `2.810769e-06 ± 1.480155e-06` | `1.226480e-03` | `1.638064e-03` |
+
+Validation MSE nhìn chung giảm mạnh khi tăng độ rộng; tốt nhất trong 13 cấu hình là 64 nơ-ron (`2.810769e-06` trung bình). Ở 9–10 nơ-ron, validation MSE cao hơn cấu hình 8 và độ lệch giữa seed lớn, nên không kết luận xu hướng giảm là hoàn toàn đơn điệu. Train và validation MSE khá gần nhau; kết quả này chưa cho thấy bằng chứng rõ ràng về quá khớp. Mạng 1 nơ-ron có sai số lớn, biểu hiện thiếu khả năng biểu diễn.
+
+### Cách tự kiểm tra lại
+
+Trong Anaconda Prompt:
+
+```powershell
+cd /d "D:\Games\code cua c#\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+python -m experiments.run_B
+```
+
+Kết quả đúng: terminal in 39 dòng `B neurons=..., seed=...`; summary có 13 dòng cho widths 1–10, 16, 32, 64; thư mục log có 39 CSV và thư mục figures có `B_metrics_vs_neurons.png`. Đồ thị A đã có ở `results/A/figures/A_validation_metrics.png`.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao B chỉ thay số nơ-ron?* Để cô lập ảnh hưởng độ rộng; số mẫu, số tầng, activation, optimizer, learning rate, batch size và điều kiện dừng được giữ cố định.
+- *Vì sao chạy ba seed?* Kết quả còn phụ thuộc khởi tạo và thứ tự mini-batch; mean ± std cho thấy mức biến động, đặc biệt rõ ở widths 3 và 9.
+- *Kết quả có chứng minh quá khớp không?* Chưa. Validation và train error đa phần cùng xu hướng và khá gần nhau; vài điểm tăng ở 9–10 nơ-ron kèm biến động seed lớn, chưa đủ để kết luận quá khớp.
+- *Vì sao một nơ-ron cho sai số cao?* Một tầng ẩn quá hẹp có năng lực biểu diễn hạn chế để khớp hình dạng Gaussian hai chiều.
+
+### Còn treo
+
+- [ ] Ngày 3/11: xuất bảng và đồ thị B cho báo cáo; chọn mô hình cuối theo validation loss, phối hợp đánh giá một lần trên test.
