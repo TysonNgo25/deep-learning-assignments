@@ -394,7 +394,7 @@ Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo
 
 | Ngày | Việc được giao | Trạng thái sau khi hoàn thành 31/10 |
 |---|---|---|
-| **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Chưa làm theo lịch; hai hàm vẽ lõi đã có, nhưng hình dùng kết quả mô hình được chọn và hỗ trợ các runner vẫn cần phối hợp khi có kết quả. |
+| **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Đã tạo hai hình baseline tham khảo trên validation tại `results/diagnostics/figures/`; rà log A/B/C thấy đủ số lần chạy và không phát hiện lỗi đang chặn. Chưa phải mô hình cuối. |
 | **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Chưa làm theo lịch. |
 | **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Chưa thể làm cho đến khi A/B/C có kết quả và Trúc chọn mô hình; không chọn bằng test. |
 | **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Chưa làm theo lịch; cần dùng hình/số liệu mô hình cuối. |
@@ -402,4 +402,42 @@ Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo
 | **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Chưa làm theo lịch; chuẩn bị sau khi nhóm có đủ kết quả. |
 | **7/11** | Chạy lại toàn bộ từ đầu trên máy sạch theo README. | Chưa làm theo lịch; cần đợi pipeline và runner A/B/C hoàn tất. |
 
-Ngày 1/11, 2/11 và 4/11 có thể chuẩn bị nội dung/ảnh với mô hình hiện có; các việc chốt mô hình, kiểm tra số liệu toàn bài và chạy lại sạch phụ thuộc tiến độ của cả nhóm. Danh sách này phân biệt **mã lõi đã hoàn thành** với **các deliverable sau đó vẫn còn phải thực hiện**.
+Ngày 1/11 đã có hình baseline tham khảo; ngày 2/11 và 4/11 có thể tiếp tục chuẩn bị nội dung với mô hình hiện có. Các việc chốt mô hình, kiểm tra số liệu toàn bài và chạy lại sạch phụ thuộc tiến độ của cả nhóm. Danh sách này phân biệt **mã lõi đã hoàn thành** với **các deliverable sau đó vẫn còn phải thực hiện**.
+
+---
+
+## 10. Thực hiện công việc ngày 1/11
+
+### 10.1. Tạo hình baseline tham khảo
+
+Vì lịch ngày 3/11 mới chốt mô hình cuối cùng, hình của ngày 1/11 dùng **baseline hiện tại** (`hidden=[16,16]`, `tanh`, seed `0`) để minh họa pipeline. Đồ thị \(y\)–\(\hat y\) dùng **validation 500 mẫu**, không dùng test. Bề mặt xấp xỉ được vẽ trên lưới đều trong miền đề bài. Không gọi đây là kết quả mô hình tốt nhất/cuối cùng.
+
+File đã tạo:
+
+| File | Nội dung |
+|---|---|
+| `results/diagnostics/figures/baseline_seed0_validation_y_yhat.png` | Scatter y thật–ŷ trên validation và đường chuẩn \(y=\hat y\). |
+| `results/diagnostics/figures/baseline_seed0_surface_comparison.png` | Bề mặt Gaussian thật và MLP baseline đặt cạnh nhau. |
+| `results/diagnostics/logs/baseline_seed0.csv` | Train loss và validation loss từng epoch của lần chạy tạo hình. |
+| `results/diagnostics/baseline_seed0_metrics.csv` | MSE/MAE/RMSE trên train và validation của baseline tham khảo. |
+
+### 10.2. Kết quả lần chạy tạo hình
+
+Baseline dùng 1000 mẫu train, hai tầng ẩn × 16 nơ-ron, `tanh`, Adam, learning rate \(10^{-3}\), batch size 32, tối đa 1000 epoch, patience 100, seed 0. Chạy đủ 1000 epoch; epoch có validation loss thấp nhất là 998.
+
+| Tập | MSE | MAE | RMSE |
+|---|---:|---:|---:|
+| Train | \(3.96226244\times10^{-7}\) | \(4.82903298\times10^{-4}\) | \(6.29465046\times10^{-4}\) |
+| Validation | \(4.17493047\times10^{-7}\) | \(5.01333200\times10^{-4}\) | \(6.46137019\times10^{-4}\) |
+
+Đây là số liệu của một lần chạy baseline để tạo hình, không thay bảng A/B/C, không có ý nghĩa mean ± std và không thay đánh giá test cuối.
+
+### 10.3. Hỗ trợ và rà kết quả A/B/C
+
+Kiểm tra giao diện runner cho thấy A/B gọi `train_model` và `evaluate_model`; C dùng hàm metric riêng trong `run_C.py` để giữ cách tính float32 nhất quán với kết quả C đã lưu. Các kết quả hiện có khớp số cấu hình và seed trong baseline:
+
+- A: 10 kích thước train × 3 seed = 30 log; summary có 10 dòng.
+- B: 13 độ rộng × 3 seed = 39 log; summary có 13 dòng.
+- C: 4 độ sâu × 3 seed = 12 log; summary mỗi lần chạy có 12 dòng, summary mean ± std có 4 dòng.
+
+Rà soát số file/log và summary không phát hiện thiếu cấu hình, giá trị NaN hoặc lỗi đang chặn. Chưa có yêu cầu lỗi cụ thể từ Trung/Nhân trong lượt này nên không sửa file của hai bạn.
