@@ -1,0 +1,35 @@
+{
+  "selection": {
+    "criterion": "validation MSE only; test metrics were not used for selection",
+    "experiment": "A",
+    "n_train": 2000,
+    "hidden": [
+      16,
+      16
+    ],
+    "activation": "tanh",
+    "seed": 1,
+    "best_epoch": 980,
+    "best_validation_loss": 1.0819539397743938e-07,
+    "validation_metrics": {
+      "mse": 1.0819538486722812e-07,
+      "mae": 0.00024504975120144535,
+      "rmse": 0.0003289306687848187
+    },
+    "selected_config_mean_validation_mse": 1.681281041800533e-07,
+    "selected_seed_validation_mse_from_A_log": 1.0453882026695283e-07
+  },
+  "test_protocol": "The existing test split had already been evaluated for all 12 experiment C runs. These are post-selection test metrics on that previously queried split, not an untouched independent test estimate.",
+  "test_metrics": {
+    "mse": 8.651794452892656e-08,
+    "mae": 0.00021639690794436985,
+    "rmse": 0.0002941393284294478
+  },
+  "training": {
+    "epochs_run": 1000,
+    "elapsed_seconds": 66.28443470000002,
+    "stopped_early": false,
+    "checkpoint": "final\\selected_model.pt",
+    "epoch_log": "final\\logs\\selected_model_seed1.csv"
+  }
+}

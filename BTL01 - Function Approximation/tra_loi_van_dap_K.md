@@ -1,4 +1,4 @@
-# Trả lời vấn đáp — Khang: phần việc ngày 29/10–2/11
+# Trả lời vấn đáp — Khang: phần việc ngày 29/10–3/11
 
 ## 1. Xác định phần việc theo ngày
 
@@ -392,11 +392,11 @@ Kiểm thử xác nhận shape dự đoán `(100, 1)`, các metric hữu hạn, 
 
 Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo vẫn thuộc phần Khang:
 
-| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 2/11 |
+| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 3/11 |
 |---|---|---|
 | **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Đã tạo hai hình baseline tham khảo trên validation tại `results/diagnostics/figures/`; rà log A/B/C thấy đủ số lần chạy và không phát hiện lỗi đang chặn. Chưa phải mô hình cuối. |
 | **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Đã tạo `report/section_3_model.md`; đây là bản nháp phương pháp, chưa ghép vào báo cáo cuối. |
-| **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Chưa thể làm cho đến khi A/B/C có kết quả và Trúc chọn mô hình; không chọn bằng test. |
+| **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Đã chọn A/2000, `hidden=[16,16]`, seed 1 theo validation; lưu checkpoint và đánh giá test theo quyết định Trúc. Test đã được xem trước trong thực nghiệm C nên phải công bố giới hạn này. |
 | **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Chưa làm theo lịch; cần dùng hình/số liệu mô hình cuối. |
 | **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Chưa làm theo lịch; phụ thuộc log/bảng A/B. |
 | **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Chưa làm theo lịch; chuẩn bị sau khi nhóm có đủ kết quả. |
@@ -476,5 +476,62 @@ Rà soát số file/log và summary không phát hiện thiếu cấu hình, gi�
 
 ### Còn treo
 
-- [ ] Ngày 3/11: phối hợp Trúc chọn mô hình theo validation và đánh giá test cuối; không chọn mô hình theo test.
 - [ ] Ngày 4/11: viết phần đánh giá chung bằng hình/số liệu của mô hình cuối.
+
+---
+
+## 12. Chọn mô hình, lưu checkpoint và đánh giá test — công việc ngày 3/11
+
+### Việc theo kế hoạch và quyết định chọn mô hình
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), Khang phối hợp với Trúc chốt mô hình theo validation, lưu `.pt` và đánh giá test. Trúc xác nhận chọn cấu hình A với 2000 mẫu train, `hidden=[16,16]`, activation `tanh`, seed 1. Tiêu chí chọn chỉ dùng validation:
+
+- Trong nhóm A, B, C, cấu hình A/2000 có validation MSE trung bình thấp nhất: \(1.68128104\times10^{-7}\). So sánh này dùng các kết quả A/B/C đã chạy theo kế hoạch; A dùng 2000 mẫu train, còn B/C dùng 1000.
+- Trong ba seed của A/2000, seed 1 có validation MSE thấp nhất trong log A: \(1.04538820\times10^{-7}\).
+- Không dùng metric test để chọn cấu hình hay seed.
+
+### Kết quả và file
+
+Chạy `python -m scripts.run_final`. Script huấn luyện lại cấu hình đã chọn bằng train pool và validation, lưu checkpoint rồi mới nạp tập test để tính metric. Kết quả lần chạy này:
+
+| Tập | MSE | MAE | RMSE |
+|---|---:|---:|---:|
+| Validation | \(1.08195385\times10^{-7}\) | \(2.45049751\times10^{-4}\) | \(3.28930669\times10^{-4}\) |
+| Test (100 mẫu) | \(8.65179445\times10^{-8}\) | \(2.16396908\times10^{-4}\) | \(2.94139328\times10^{-4}\) |
+
+Mô hình chọn được có 337 tham số, best epoch 980; chạy đủ 1000 epoch và không dừng sớm. Các file tạo ra:
+
+| File | Nội dung |
+|---|---|
+| `results/final/selected_model.pt` | Trọng số MLP tốt nhất theo validation loss, kèm kiến trúc, seed và metadata huấn luyện. |
+| `results/final/logs/selected_model_seed1.csv` | Train loss và validation loss từng epoch của lần huấn luyện tạo checkpoint. |
+| `results/final/final_metrics.json` | Cấu hình chọn, metric validation/test, thông tin checkpoint và ghi chú protocol test. |
+| `scripts/run_final.py` | Script tái hiện quy trình; từ chối chạy tiếp nếu `final_metrics.json` đã tồn tại để tránh vô tình chấm lại test. |
+
+### Hạn chế cần nói rõ khi vấn đáp
+
+Thực nghiệm C đã tính metric test cho cả 12 lượt trước khi chốt mô hình. Theo xác nhận của Trúc, cấu hình cuối vẫn được đánh giá trên tập test hiện có, nhưng metric test ở trên phải mô tả là **điểm hậu tuyển chọn trên tập đã được truy vấn trước**, không phải ước lượng độc lập từ một test set hoàn toàn chưa từng xem. Việc dùng test trong C không tham gia quyết định chọn A/2000 seed 1; lựa chọn được làm chỉ từ validation.
+
+Có khác biệt nhỏ giữa seed 1 trong log A và lần tái huấn luyện cuối: log A ghi best epoch 999, validation MSE \(1.04538820\times10^{-7}\), còn lần tạo checkpoint cuối đạt best epoch 980, validation MSE \(1.08195385\times10^{-7}\). Cả hai lần dùng seed 1; nguyên nhân chênh lệch chưa được xác minh, nên không khẳng định chính xác tái lập từng chữ số. Mô hình cuối và số liệu cuối trong bảng trên lấy từ chính checkpoint vừa lưu.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao chọn A/2000 thay vì B/64 hoặc C/4?* Vì tiêu chí chốt là validation MSE. Mean validation MSE A/2000 là \(1.68128104\times10^{-7}\), thấp hơn B/64 (\(2.81076869\times10^{-6}\)) và C/4 (\(4.09843324\times10^{-7}\)). Không nhìn test để chọn.
+- *Mô hình cuối cụ thể là gì?* Hai đầu vào → hai tầng ẩn, mỗi tầng 16 nơ-ron, activation `tanh` → một đầu ra. Dùng 2000 mẫu train, seed 1; checkpoint là trọng số tại best epoch 980 của lần huấn luyện tạo file cuối.
+- *Có thể nói test là đánh giá độc lập chưa?* Không. Thực nghiệm C đã tính test cho cả bốn độ sâu và ba seed trước đó. Cần công bố giới hạn này; muốn có đánh giá hoàn toàn mới thì nhóm phải thống nhất một tập test mới/chưa từng xem.
+- *Vì sao validation MSE của lần tạo checkpoint không khớp hẳn với log A?* Có chênh lệch nhỏ được ghi nhận giữa hai lượt cùng seed. Chưa xác minh được nguyên nhân, nên báo cáo dùng số từ checkpoint cuối và không tuyên bố tái lập bit-for-bit.
+
+### Cách tự kiểm tra lại
+
+Trong Anaconda Prompt tại thư mục BTL01, chạy một lần:
+
+```powershell
+conda activate btl01
+python -m scripts.run_final
+```
+
+Kết quả đúng phải in cấu hình A/2000, seed 1, best epoch 980, các metric ở bảng trên và đường dẫn checkpoint. Lệnh sẽ báo lỗi nếu `results/final/final_metrics.json` đã tồn tại; không xóa file này để chạy lại trên cùng test nếu chưa có quyết định mới của nhóm.
+
+### Còn treo
+
+- [ ] Ngày 4/11: viết phần đánh giá chung y–ŷ và bề mặt bằng checkpoint đã chọn; không gọi test hiện tại là hoàn toàn chưa từng được xem.

@@ -735,7 +735,7 @@ Văn bản viết theo bộ quy tắc "viết văn không rập khuôn": không 
 ### Còn treo
 
 - [x] Trung (ngày 3/11): đưa bảng và đồ thị B vào nháp mục 4.2 (xem mục 03/11 bên dưới).
-- [ ] Trúc/Khang (ngày 3/11): chọn mô hình cuối theo validation loss và phối hợp đánh giá test theo kế hoạch.
+- [x] Trúc/Khang (ngày 3/11): chọn mô hình cuối theo validation loss, lưu checkpoint và đánh giá test theo quyết định của Trúc; ghi rõ test đã được dùng trong thực nghiệm C.
 - [ ] Trúc commit nháp mục 1 + sửa nhật ký, rồi điền hash vào dòng `_(điền sau)_` trong bảng commit mục này.
 - [ ] Sau 03/11: điền mục 1.5 (mô hình chọn, sai số test). Ngày 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
 - [x] Việc kế hoạch 02/11 của Trúc ("Kiểm tra log và hình A, C khớp với config"): xong, xem tiểu mục ngay dưới.
@@ -790,7 +790,7 @@ Kết quả đúng: 7 dòng `... giống từng byte` và dòng cuối `PROBLEMS
 
 ---
 
-## T3 03/11/2026 – Xuất bảng, hình B; viết nháp mục 4.2
+## T3 03/11/2026 – Xuất bảng B, chốt mô hình cuối và đánh giá test
 
 ### Việc theo kế hoạch
 
@@ -798,7 +798,12 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), Trung xuất bảng và đồ thị B
 
 ### Commit trong ngày
 
-Chưa có commit ngày 3/11 trong lịch sử Git tại thời điểm ghi mục này. Trúc tự commit; bổ sung hash và message sau khi commit.
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `2f395e0` | Trung (`trungboro116`) | task ngày 3 | Thêm nháp báo cáo kết quả A/B và ghi nhật ký ngày 3/11. |
+| `7f7cd93` | Trúc (`TysonNgo25`) | Rà soát và bàn giao kết quả thực nghiệm C | Cập nhật nháp mục 4.3 và ghi chú bàn giao kết quả C. |
+
+Các thay đổi phần Khang trong phiên này chưa commit; Trúc tự commit rồi bổ sung hash và message vào nhật ký.
 
 ### Kết quả
 
@@ -813,6 +818,20 @@ Chưa có commit ngày 3/11 trong lịch sử Git tại thời điểm ghi mục
 - Nhận xét B không kết luận quá khớp chỉ dựa vào dao động ở width 9–10; train error cũng không giảm so với width 8. Cấu hình width 64 có validation MSE trung bình thấp nhất trong nhóm B (`2.810769e-06`).
 - `git diff --check` đạt. Tập test không được dùng cho kết quả A/B.
 
+### Phần Khang: chọn checkpoint theo validation và đánh giá test
+
+Trúc xác nhận chọn cấu hình A với 2000 mẫu train, MLP `[16, 16]`, `tanh`, seed 1. Việc chọn chỉ dựa trên validation: A/2000 có validation MSE trung bình `1.68128104e-07`, thấp hơn best mean của B/64 (`2.81076869e-06`) và C/4 (`4.09843324e-07`); trong ba seed A/2000, seed 1 có validation MSE thấp nhất trong log A (`1.04538820e-07`). Đã thêm `scripts/run_final.py` và chạy tạo checkpoint:
+
+- `results/final/selected_model.pt`: checkpoint ở best validation epoch 980; mạng có 337 tham số.
+- `results/final/logs/selected_model_seed1.csv`: log 1000 epoch của lần chạy tạo checkpoint.
+- `results/final/final_metrics.json`: cấu hình, metric validation/test, metadata và cảnh báo protocol.
+
+Kết quả lần tạo checkpoint: validation MSE/MAE/RMSE lần lượt là `1.08195385e-07`, `2.45049751e-04`, `3.28930669e-04`; test MSE/MAE/RMSE lần lượt là `8.65179445e-08`, `2.16396908e-04`, `2.94139328e-04`. Đã kiểm tra `.pt` được nạp lại trước khi tính metric. Script lưu metadata và từ chối đánh giá test lại nếu `results/final/final_metrics.json` đã tồn tại.
+
+**Giới hạn test:** runner C đã tính metric test cho cả 12 lượt trước khi chốt mô hình. Theo xác nhận của Trúc, đã đánh giá mô hình được chọn trên chính tập test hiện có nhưng phải gọi đây là điểm hậu tuyển chọn trên tập đã được truy vấn trước, không phải đánh giá trên test set hoàn toàn chưa từng xem. Các metric test không được dùng để chọn cấu hình.
+
+Khi huấn luyện lại seed 1 để tạo checkpoint cuối, validation MSE là `1.08195385e-07`, best epoch 980; log A trước đó ghi `1.04538820e-07`, best epoch 999. Nguyên nhân chênh lệch nhỏ chưa xác minh. Khi ghép báo cáo, dùng metric validation/test gắn với checkpoint cuối và không tuyên bố tái lập bit-for-bit.
+
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Vì sao Bảng 4.2.1 có train lẫn validation?* Train cho biết độ khớp trên dữ liệu đã học; validation phản ánh khả năng tổng quát hóa trên dữ liệu không tham gia cập nhật trọng số. So sánh hai tập giúp phát hiện dấu hiệu thiếu khớp/quá khớp.
@@ -822,4 +841,5 @@ Chưa có commit ngày 3/11 trong lịch sử Git tại thời điểm ghi mục
 ### Còn treo
 
 - [ ] Ngày 4/11: Trung viết thảo luận A/B về ảnh hưởng số mẫu, thiếu khớp/quá khớp.
-- [ ] Trúc/Khang chọn mô hình cuối theo validation loss và phối hợp đánh giá test theo kế hoạch; khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn.
+- [x] Trúc/Khang chọn mô hình cuối theo validation loss, lưu checkpoint và đánh giá test; kết quả kèm cảnh báo test đã được truy vấn trong thực nghiệm C.
+- [ ] Khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn và đưa metric của checkpoint cuối vào đúng mục.
