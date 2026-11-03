@@ -1,6 +1,6 @@
 # 1. Giới thiệu
 
-Nháp ngày 02/11/2026 (việc theo kế hoạch ngày 01/11), người viết: Huỳnh Ngọc Trúc. Chỗ ghi [...] là thông tin chỉ có sau khi nhóm chọn mô hình cuối (03/11) và chốt tỷ lệ đóng góp (07/11).
+Nháp ngày 02/11/2026 (việc theo kế hoạch ngày 01/11), cập nhật ngày 04/11/2026 (mục 1.2 và 1.5), người viết: Huỳnh Ngọc Trúc. Chỗ ghi [...] là tỷ lệ đóng góp, chốt ngày 07/11.
 
 ## 1.1. Mục tiêu
 
@@ -14,7 +14,7 @@ Nhóm 5 dùng mạng perceptron nhiều tầng (MLP) viết bằng PyTorch để
 
 Hàm đạt đỉnh f(μ) ≈ 0.269 tại gốc tọa độ rồi giảm nhanh khi ra xa, đến mức hơn 60% điểm lấy mẫu có y < 0.01. MSE của các mô hình vì thế rất nhỏ, trong 81 lần chạy của nhóm nằm trong khoảng từ cỡ 10⁻³ (mạng 1 nơ-ron) xuống cỡ 10⁻⁷ (baseline với 2000 mẫu train). Nhóm báo cáo thêm MAE và RMSE, hai chỉ số có cùng đơn vị với y, để đọc sai số so với đỉnh 0.269.
 
-Dữ liệu gồm ba tập độc lập, sinh một lần với seed 42 và lưu thành CSV: pool train 2000 điểm, validation 500 điểm, test 100 điểm. Validation quyết định khi nào dừng sớm, giữ checkpoint nào và cấu hình nào tốt hơn. Tập test chỉ chạm tới một lần, khi đánh giá mô hình cuối, vì đề cấm dùng test để chọn siêu tham số.
+Dữ liệu gồm ba tập độc lập, sinh một lần với seed 42 và lưu thành CSV: pool train 2000 điểm, validation 500 điểm, test 100 điểm. Validation quyết định khi nào dừng sớm, giữ checkpoint nào và cấu hình nào tốt hơn. Tập test không tham gia lựa chọn nào trong số đó, vì đề cấm dùng test để chọn siêu tham số. Nhóm chỉ tính sai số test ở hai chỗ. Chỗ thứ nhất là từng lượt chạy của thực nghiệm C, vì đề yêu cầu báo test error theo số tầng. Chỗ thứ hai là mô hình cuối, sau khi đã chọn xong theo validation.
 
 Bảng 1.1. Ba nhóm thực nghiệm. Mỗi nhóm chỉ đổi một yếu tố, các tham số khác giữ theo baseline.
 
@@ -51,7 +51,20 @@ Bảng 1.2. Thành viên, nhiệm vụ và tỷ lệ đóng góp.
 
 ## 1.5. Kết quả chính
 
-[Điền sau 03/11: cấu hình được chọn theo validation, sai số của nó trên test (MSE, MAE, RMSE) và một câu kết luận cho mỗi nhóm A, B, C.]
+Nhóm xếp hạng cả 27 cấu hình của A, B, C theo val MSE trung bình qua ba seed. Đứng đầu là baseline 2 tầng ẩn × 16 nơ-ron train với đủ 2000 mẫu của pool (A = 2000), val MSE 1.68 × 10⁻⁷ ± 5.89 × 10⁻⁸. Cấu hình tốt nhất của B (64 nơ-ron) chỉ đạt 2.81 × 10⁻⁶, của C (4 tầng) đạt 4.10 × 10⁻⁷ với 1000 mẫu train. Trong ba seed của A = 2000, seed 1 có val MSE thấp nhất (1.05 × 10⁻⁷). Nhóm train lại đúng cấu hình và seed này, lưu trọng số ở epoch có val loss nhỏ nhất vào `results/final/selected_model.pt` (337 tham số), rồi nạp lại file đó để tính sai số trên test một lần.
+
+Bảng 1.3. Sai số của mô hình cuối (checkpoint ở epoch 980). Nguồn: `results/final/final_metrics.json`.
+
+| Tập | MSE | MAE | RMSE |
+| --- | ---: | ---: | ---: |
+| Validation (500 điểm) | 1.081954e-07 | 2.450498e-04 | 3.289307e-04 |
+| Test (100 điểm) | 8.651794e-08 | 2.163969e-04 | 2.941393e-04 |
+
+RMSE trên test bằng khoảng 0.11% giá trị đỉnh 0.269 của hàm. Con số test cần đọc kèm một giới hạn. Runner C đã tính sai số trên chính 100 điểm test này trước khi nhóm chọn mô hình, nên đây là điểm đo trên một tập nhóm đã từng xem kết quả, không phải tập test hoàn toàn mới. Sai số test của C không tham gia vào việc chọn cấu hình.
+
+Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code.
+
+Ở A, val MSE giảm đều qua cả mười cỡ mẫu, từ 1.22 × 10⁻⁵ với 200 mẫu xuống 1.68 × 10⁻⁷ với 2000 mẫu, khoảng 72 lần. Ở B, val MSE giảm từ 2.92 × 10⁻³ với 1 nơ-ron xuống 2.81 × 10⁻⁶ với 64 nơ-ron và chững lại ở 9, 10 nơ-ron. Train và val MSE của B sát nhau ở mọi độ rộng, chưa cho thấy quá khớp rõ ràng. Ở C, tầng ẩn thứ hai đưa val MSE từ 1.19 × 10⁻⁵ xuống 4.35 × 10⁻⁷. Tầng thứ ba và thứ tư không giảm thêm rõ rệt, trong khi thời gian train trung bình tăng từ 15.2 lên 25.7 giây.
 
 ## 1.6. Bố cục báo cáo
 

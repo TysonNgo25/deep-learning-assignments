@@ -632,7 +632,7 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), Trung chạy đủ thực nghiệm B 
 | `7c60412` | Khang | Tạo hình baseline tham khảo 1/11 | Thêm hình so sánh baseline và log chẩn đoán vào `results/diagnostics/`, cập nhật tài liệu vấn đáp của Khang. Việc kế hoạch 1/11, commit lúc 08:13 ngày 2/11. |
 | `36c51cb` | Trung | task ngày 2 | Chạy lại đủ thực nghiệm B, cập nhật log/summary và nhật ký ngày 2/11. *(Sửa 02/11: bản trước ghi nhầm người là Khang.)* |
 | `aa5948c` | Khang | Nháp mục 3 báo cáo 2/11 | Thêm `report/section_3_model.md`, cập nhật `tra_loi_van_dap_K.md` và nhật ký. |
-| _(điền sau)_ | Trúc | _(commit tối 2/11)_ | Nháp mục 1 `report/section_1_intro.md` (việc kế hoạch 1/11); kiểm tra log, bảng, hình A/B/C (việc kế hoạch 2/11, chỉ ghi vào nhật ký); sửa bảng commit 30/10, 01/11, 02/11. |
+| `c7ac0eb` | Trúc | Nháp mục 1 Giới thiệu; kiểm tra log, bảng, hình A/B/C khớp config | Nháp mục 1 `report/section_1_intro.md` (việc kế hoạch 1/11); kiểm tra log, bảng, hình A/B/C (việc kế hoạch 2/11, chỉ ghi vào nhật ký); sửa bảng commit 30/10, 01/11, 02/11. |
 
 ### Kết quả
 
@@ -736,8 +736,9 @@ Văn bản viết theo bộ quy tắc "viết văn không rập khuôn": không 
 
 - [x] Trung (ngày 3/11): đưa bảng và đồ thị B vào nháp mục 4.2 (xem mục 03/11 bên dưới).
 - [x] Trúc/Khang (ngày 3/11): chọn mô hình cuối theo validation loss, lưu checkpoint và đánh giá test theo quyết định của Trúc; ghi rõ test đã được dùng trong thực nghiệm C.
-- [ ] Trúc commit nháp mục 1 + sửa nhật ký, rồi điền hash vào dòng `_(điền sau)_` trong bảng commit mục này.
-- [ ] Sau 03/11: điền mục 1.5 (mô hình chọn, sai số test). Ngày 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
+- [x] Trúc commit nháp mục 1 + sửa nhật ký, rồi điền hash vào bảng commit mục này (`c7ac0eb`, điền ngày 04/11).
+- [x] Sau 03/11: điền mục 1.5 (mô hình chọn, sai số test). Xong ngày 04/11, xem mục 04/11.
+- [ ] Ngày 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
 - [x] Việc kế hoạch 02/11 của Trúc ("Kiểm tra log và hình A, C khớp với config"): xong, xem tiểu mục ngay dưới.
 - [ ] Ghi chú cho mục 4.3, 5 (Nhân): C = 1 chưa hội tụ ở epoch 1000; thời gian C = 3 dao động mạnh giữa các seed. Hình C vẫn chỉ có test, cần thêm hình val trước khi chọn cấu hình (3/11).
 
@@ -801,9 +802,10 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), Trung xuất bảng và đồ thị B
 | Hash | Người | Message | Làm gì |
 | --- | --- | --- | --- |
 | `2f395e0` | Trung (`trungboro116`) | task ngày 3 | Thêm nháp báo cáo kết quả A/B và ghi nhật ký ngày 3/11. |
-| `7f7cd93` | Trúc (`TysonNgo25`) | Rà soát và bàn giao kết quả thực nghiệm C | Cập nhật nháp mục 4.3 và ghi chú bàn giao kết quả C. |
+| `7f7cd93` | Nhân (`TysonNgo25`) | Rà soát và bàn giao kết quả thực nghiệm C | Cập nhật nháp mục 4.3 và ghi chú bàn giao kết quả C trong `CodetoNhan.md`. |
+| `672fc7b` | Khang (`MinKhang`) | Chọn mô hình, lưu checkpoint và đánh giá test — 3/11 | Thêm `scripts/run_final.py`, train lại A/2000 seed 1, lưu `results/final/selected_model.pt`, log và `final_metrics.json`, cập nhật `tra_loi_van_dap_K.md` và nhật ký. |
 
-Các thay đổi phần Khang trong phiên này chưa commit; Trúc tự commit rồi bổ sung hash và message vào nhật ký.
+*(Sửa 04/11: bản trước ghi `7f7cd93` là của Trúc, thực ra `TysonNgo25` là tài khoản của Nhân. Thêm dòng `672fc7b` của Khang, commit lúc 23:23 ngày 3/11.)*
 
 ### Kết quả
 
@@ -842,4 +844,96 @@ Khi huấn luyện lại seed 1 để tạo checkpoint cuối, validation MSE l�
 
 - [ ] Ngày 4/11: Trung viết thảo luận A/B về ảnh hưởng số mẫu, thiếu khớp/quá khớp.
 - [x] Trúc/Khang chọn mô hình cuối theo validation loss, lưu checkpoint và đánh giá test; kết quả kèm cảnh báo test đã được truy vấn trong thực nghiệm C.
-- [ ] Khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn và đưa metric của checkpoint cuối vào đúng mục.
+- [ ] Khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn và đưa metric của checkpoint cuối vào đúng mục. *(04/11: đã đưa vào mục 1.5. Còn mục đánh giá chung của Khang.)*
+
+---
+
+## T4 04/11/2026 – Rà soát độc lập việc chọn mô hình cuối, điền mục 1.5, sửa nhật ký 02/11 và 03/11
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), việc của Trúc ngày 03/11 (Mốc 2) là "Chọn mô hình cuối theo val loss, đánh giá 1 lần trên test cùng Khang". Khang đã chạy phần train và đánh giá test tối 03/11 (`672fc7b`), theo cấu hình Trúc xác nhận. Phần còn lại của Trúc, làm bù ngày 04/11:
+
+1. Tự kiểm lại việc chọn, không dựa vào số Khang ghi: đúng là cấu hình tốt nhất theo validation chưa, checkpoint nạp lại có ra đúng số không, vì sao val MSE của checkpoint lệch so với log A.
+2. Điền mục 1.5 "Kết quả chính" (treo từ 02/11) và sửa câu sai về tập test ở mục 1.2.
+3. Sửa bảng commit 02/11, 03/11.
+
+Việc kế hoạch ngày 04/11 của Trúc ("Ghép báo cáo bản 1, đánh số hình/bảng") chưa làm, xem phần Còn treo.
+
+### Commit trong ngày
+
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| _(Trúc điền ở mục ngày sau)_ | Trúc | _(commit tối 04/11)_ | Mục 1.2, 1.5 của `report/section_1_intro.md`, sửa nhật ký 02/11, 03/11, thêm mục này. |
+
+### Kết quả
+
+File đã sửa:
+
+- [report/section_1_intro.md](report/section_1_intro.md): mục 1.5 có đoạn chọn mô hình, Bảng 1.3 (sai số val/test của checkpoint), đoạn giới hạn về test, đoạn giải thích lệch val MSE, và một câu kết luận cho mỗi nhóm A, B, C. Mục 1.2 sửa câu "Tập test chỉ chạm tới một lần". Dòng đầu ghi ngày cập nhật.
+- `CodetoTruc.md`: điền hash `c7ac0eb` ở bảng 02/11. Sửa bảng 03/11: `7f7cd93` là của Nhân (`TysonNgo25`), không phải Trúc. Thêm dòng `672fc7b` của Khang.
+
+Không sửa code, không chạy lại thực nghiệm, không đụng `results/`. Không đánh giá lại test lần nào (chỉ nạp checkpoint để so với số đã lưu, xem dưới).
+
+### Vì sao phải sửa câu ở mục 1.2
+
+Bản 02/11 viết "Tập test chỉ chạm tới một lần, khi đánh giá mô hình cuối". Câu này sai: `experiments/run_C.py` đã tính test MSE/MAE/RMSE cho cả 12 lượt C, và mục 4.3 của Nhân báo các số đó (rubric C yêu cầu "test error"). Nếu thầy đối chiếu `results/C/summary.csv` (có cột `test_mse`) với câu trong mục 1 thì báo cáo tự mâu thuẫn. Câu mới nói đúng: test không dùng để chọn gì cả, và chỉ được tính ở hai chỗ (từng lượt C theo yêu cầu đề, và mô hình cuối).
+
+### Đã kiểm tra
+
+Script tạm `check_day3.py` (không đưa vào repo) làm bốn bước:
+
+1. **Xếp hạng 27 cấu hình** (A 10, B 13, C 4) theo val MSE trung bình từ ba file summary. A/2000 đứng đầu (`1.681281e-07`), sau đó là A/1800, 1600, 1400, 1200, rồi mới đến C/4 (`4.098433e-07`). B tốt nhất (64 nơ-ron) chỉ `2.810769e-06`. Trong A/2000, val MSE theo seed là 0: `2.21e-07`, 1: `1.05e-07`, 2: `1.79e-07`, nên seed 1 đúng là seed tốt nhất. Cả hai bước chọn chỉ đọc cột `val_*`.
+2. **Nạp lại checkpoint** `results/final/selected_model.pt`: `hidden [16, 16]`, tanh, seed 1, best epoch 980, 337 tham số, `train_config` khớp `baseline.yaml`. Tính lại val/test trên máy Trúc, lệch tương đối lớn nhất so với `final_metrics.json` là `1.5e-05` (chữ số thứ 5), do tính float32 trên máy khác. Không có lệch nào cỡ nhầm file hay nhầm tập.
+3. **So log checkpoint (máy Khang) với log `A_2000_seed1.csv` (máy Trung)**: khác nhau ngay từ epoch 1, chênh tương đối `9.1e-08` (chữ số thứ 8), dồn dần qua 1000 epoch thành best epoch 980 thay vì 999.
+4. **Train lại A/2000 seed 1 trên máy Trúc** (torch 2.15.0+cpu, chỉ dùng train + val): best epoch 999, val `1.04538820e-07`, log **trùng log A của Trung ở cả 1000 epoch, chênh 0**. So với log của Khang thì vẫn lệch từ epoch 1.
+
+Kết luận bước 3–4: code `run_final.py` và runner A cho cùng kết quả khi cùng môi trường. Chênh lệch `1.08e-07` so với `1.05e-07` đến từ môi trường máy Khang (nhiều khả năng khác phiên bản torch, vì `requirements.txt` chỉ ghi `torch>=2.3`), không phải lỗi code hay lỗi chọn mô hình. Câu "Nguyên nhân chênh lệch nhỏ chưa xác minh" ở mục 03/11 giờ đã có câu trả lời.
+
+`git status` sau khi chạy script: không có file nào trong `results/` bị đổi.
+
+### Số liệu cho báo cáo
+
+| Mục | Số liệu | Nguồn |
+| --- | --- | --- |
+| Mô hình cuối | A/2000, `[16, 16]`, tanh, seed 1, checkpoint epoch 980, 337 tham số | `results/final/final_metrics.json` |
+| Val (checkpoint) | MSE `1.081954e-07`, MAE `2.450498e-04`, RMSE `3.289307e-04` | như trên |
+| Test (checkpoint) | MSE `8.651794e-08`, MAE `2.163969e-04`, RMSE `2.941393e-04` | như trên |
+| RMSE test so với đỉnh | 2.94e-4 / 0.269 ≈ 0.11% | tính tay |
+| A: 200 → 2000 mẫu | val MSE `1.22e-05` → `1.68e-07`, giảm khoảng 72 lần, giảm đều qua 10 cỡ | `results/A/summary.csv` |
+| C: 1 → 2 tầng | val MSE `1.19e-05` → `4.35e-07`, thời gian 15.2 → 25.7 giây (1 → 4 tầng) | `results/C/summary_mean_std.csv` |
+
+### Cách tự kiểm tra lại
+
+Script nằm ở thư mục tạm: `C:\Users\hntruc\AppData\Local\Temp\claude\8f4061f45a75c2c3\d5eb5e8e-6672-4074-837b-74ebe57b4733\scratchpad\check_day3.py`. Trong Anaconda Prompt:
+
+```bat
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+set PYTHONPATH=%CD%
+python "C:\Users\hntruc\AppData\Local\Temp\claude\8f4061f45a75c2c3\d5eb5e8e-6672-4074-837b-74ebe57b4733\scratchpad\check_day3.py"
+```
+
+Kết quả đúng (mất khoảng 45 giây vì bước 4 train lại):
+
+- Bảng top 6 có `A n_train=2000` ở dòng đầu.
+- `lệch tương đối lớn nhất so với JSON` cỡ `1e-05`.
+- Bước 4: `so với log A (Trung): epoch đầu tiên khác = None, max chênh = 0.000e+00`.
+- Dòng cuối `PROBLEMS: 0`.
+
+Thêm `--skip-train` vào cuối lệnh để bỏ bước 4 (chạy vài giây). Mở `report/section_1_intro.md`, Ctrl+Shift+V: mục 1.5 có Bảng 1.3 và không còn ô `[Điền sau 03/11...]`.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Nhóm chọn mô hình cuối thế nào?* Xếp 27 cấu hình theo val MSE trung bình ba seed, lấy cấu hình thấp nhất (A/2000), rồi lấy seed có val MSE thấp nhất trong cấu hình đó (seed 1). Không bước nào đọc cột test.
+- *Vì sao mô hình cuối không phải mạng 4 tầng hay 64 nơ-ron?* C và B dùng 1000 mẫu train, A/2000 dùng 2000 mẫu. Val MSE của A/2000 (`1.68e-07`) thấp hơn C/4 (`4.10e-07`) và B/64 (`2.81e-06`). Kết quả A cho thấy thêm mẫu giảm sai số rõ hơn thêm tầng hay thêm nơ-ron trong thiết lập này.
+- *Test đã bị xem trước rồi, số test cuối còn ý nghĩa không?* Runner C tính test cho 12 lượt vì đề yêu cầu, nhưng nhóm không dùng số đó để chọn. Số test cuối vẫn là đánh giá trên dữ liệu không tham gia train, early stopping hay chọn cấu hình, chỉ không phải tập "chưa ai nhìn thấy". Báo cáo ghi rõ giới hạn này.
+- *Vì sao val MSE của checkpoint khác log A?* Checkpoint train trên máy Khang, log A train trên máy Trung. Train lại trên máy Trúc ra trùng log A từng epoch, nên code tái lập được. Sai khác float ở chữ số thứ 8 từ epoch 1 dồn qua 1000 epoch thành best epoch 980 thay vì 999.
+- *Sao không train lại checkpoint trên máy chuẩn cho khớp log A?* Làm vậy phải đánh giá test thêm một lần nữa. Nhóm giữ nguyên lần đánh giá test duy nhất và ghi rõ nguồn gốc chênh lệch.
+
+### Còn treo
+
+- [ ] Ngày 04/11 (việc kế hoạch): ghép báo cáo bản 1 từ `section_1` đến `section_4_3`, đánh số lại hình/bảng (Bảng 1.3 mới thêm).
+- [ ] Ngày 05/11 (README, việc của Trúc): cân nhắc ghim phiên bản trong `requirements.txt` (máy Trúc: `torch==2.15.0`, `numpy==2.4.6`) để buổi chạy lại trên máy sạch ngày 07/11 ra trùng log. Cần hỏi Trung, Khang đang dùng phiên bản nào trước khi ghim.
+- [ ] Báo Khang: `final_metrics.json` ghi đường dẫn kiểu Windows (`final\\selected_model.pt`). Nếu muốn sửa thì dùng `.as_posix()` trong `run_final.py`, nhưng không chạy lại script (script sẽ từ chối vì JSON đã có, và chạy lại là đánh giá test lần hai).
+- [ ] Báo Khang, Nhân: mục 3 và mục 4.3 nếu nhắc mô hình cuối thì dùng đúng số ở Bảng 1.3 và câu về test như mục 1.2 mới.
