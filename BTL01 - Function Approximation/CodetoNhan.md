@@ -73,3 +73,18 @@ Script kiểm tra các dữ kiện trước khi xuất bảng, dùng helper tổ
 - 04/11: viết thảo luận C, hạn chế/cải tiến; dựng khung slide.
 - 05–07/11: đưa hình/bảng vào slide, tập trình bày, xuất PPTX/PDF.
 - Nếu cần bổ sung checkpoint hoặc tính lại metric từ trọng số của 12 lượt C, trình phương án chạy lại để Nhân duyệt trước; việc xuất bảng ngày 02/11 không cần bước này.
+
+## Bàn giao ngày 03/11/2026
+
+Đã cập nhật repo đến `2f395e0`, đối chiếu lại đủ 12 log C bằng `python -m experiments.export_C` và thống nhất cách trình bày chú thích bảng/hình với mục 4.2 của Trung. [Mục 4.3 để Trúc ghép báo cáo](report/section_4_3_experiment_C.md).
+
+Bảng dành cho Trúc và Khang khi đối chiếu các cấu hình C. Mỗi ô là trung bình ± độ lệch chuẩn mẫu của ba seed.
+
+| Tầng ẩn | Validation MSE | Thời gian train (giây) |
+| ---: | ---: | ---: |
+| 1 | 1.193230e-05 ± 4.160528e-06 | 15.24 ± 1.60 |
+| 2 | 4.350545e-07 ± 2.451342e-08 | 21.55 ± 1.98 |
+| 3 | 5.502185e-07 ± 1.332506e-07 | 21.90 ± 6.17 |
+| 4 | 4.098433e-07 ± 1.852259e-07 | 25.72 ± 4.08 |
+
+C=4 có validation MSE trung bình thấp nhất trong C. C=2 có độ lệch chuẩn và thời gian trung bình thấp hơn. Bảng này dùng để đối chiếu khi nhóm chọn mô hình cuối. [Số liệu từng lượt](results/C/summary.csv) · [Bảng đầy đủ](results/C/table_C_mean_std.md).

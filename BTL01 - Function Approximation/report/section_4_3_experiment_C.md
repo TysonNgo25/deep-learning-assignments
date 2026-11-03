@@ -1,12 +1,12 @@
 # 4.3. Kết quả thực nghiệm C: ảnh hưởng của số tầng ẩn
 
-Nháp ngày 02/11/2026, phần phụ trách của Ngô Nguyễn Thành Nhân. Số liệu lấy từ `results/C/summary.csv`; bảng đầy đủ nằm trong [table_C_mean_std.md](../results/C/table_C_mean_std.md). Ký hiệu bảng/hình 4.3.x dưới đây là tạm thời, cần đánh số lại khi ghép báo cáo chung.
+Nháp ngày 02/11/2026, rà lại ngày 03/11/2026. Người phụ trách: Ngô Nguyễn Thành Nhân. Bảng và hình dùng số 4.3.x, theo cách đánh số của mục 4.2 trong báo cáo nhóm. [Bảng kết quả và nguồn log](../results/C/table_C_mean_std.md).
 
 ## 4.3.1. Thiết lập thực nghiệm
 
 Thực nghiệm C khảo sát mạng MLP có 1, 2, 3 và 4 tầng ẩn, mỗi tầng 16 nơ-ron. Mục tiêu là quan sát sự thay đổi của sai số xấp xỉ hàm Gaussian hai chiều, quá trình hội tụ và chi phí huấn luyện khi tăng độ sâu. Mỗi cấu hình được chạy với ba seed 0, 1, 2, tổng cộng 12 lượt. Các tham số còn lại giữ theo baseline đã chốt.
 
-Bảng 4.3.1. Thiết lập dùng chung cho thực nghiệm C.
+**Bảng 4.3.1.** Thiết lập dùng chung cho thực nghiệm C.
 
 | Thành phần | Thiết lập |
 | --- | --- |
@@ -26,7 +26,7 @@ MSE, MAE và RMSE được tính lại trên mô hình đã khôi phục checkpo
 
 ## 4.3.2. Sai số trên train, validation và test
 
-Bảng 4.3.2. MSE theo số tầng ẩn, trung bình ± độ lệch chuẩn qua ba seed.
+**Bảng 4.3.2.** MSE theo số tầng ẩn, trung bình ± độ lệch chuẩn qua ba seed.
 
 | Số tầng ẩn | Train MSE | Validation MSE | Test MSE |
 | ---: | ---: | ---: | ---: |
@@ -41,9 +41,9 @@ Từ hai đến bốn tầng, sai số không giảm đơn điệu. Mạng ba t�
 
 ![MSE test theo số tầng ẩn](../results/C/figures/C_test_mse.png)
 
-Hình 4.3.1. MSE test trung bình theo số tầng ẩn; thanh sai số biểu diễn độ lệch chuẩn mẫu qua ba seed, trục y dùng thang log.
+**Hình 4.3.1.** MSE test trung bình theo số tầng ẩn. Thanh sai số biểu diễn độ lệch chuẩn mẫu qua ba seed. Trục y dùng thang log.
 
-Bảng 4.3.3. MAE và RMSE trên test, trung bình ± độ lệch chuẩn qua ba seed.
+**Bảng 4.3.3.** MAE và RMSE trên test, trung bình ± độ lệch chuẩn qua ba seed.
 
 | Số tầng ẩn | Test MAE | Test RMSE |
 | ---: | ---: | ---: |
@@ -58,7 +58,7 @@ MAE và RMSE xác nhận khoảng cách lớn giữa C=1 và các mạng sâu h�
 
 ![Loss train và validation theo epoch](../results/C/figures/C_loss_curves.png)
 
-Hình 4.3.2. Đường train loss (nét đứt) và validation loss (nét liền), trung bình các seed ở từng epoch. Trục y dùng thang log, không làm trơn số liệu.
+**Hình 4.3.2.** Đường train loss (nét đứt) và validation loss (nét liền), trung bình các seed ở từng epoch. Trục y dùng thang log, không làm trơn số liệu.
 
 Trong giai đoạn đầu, các mạng nhiều tầng giảm loss nhanh hơn theo số epoch; đường C=1 giảm chậm hơn và vẫn ở mức loss cao hơn vào cuối lượt chạy. Các đường C=2, C=3 và C=4 về sau có dao động, nên checkpoint tốt nhất không nhất thiết nằm ở epoch cuối. Mạng được đánh giá bằng trọng số có validation loss thấp nhất, tránh sử dụng một epoch cuối có sai số cao hơn.
 
@@ -68,7 +68,7 @@ Khi một seed dừng sớm, đường trung bình ở các epoch tiếp theo ch
 
 ## 4.3.4. Thời gian huấn luyện
 
-Bảng 4.3.4. Thời gian vòng huấn luyện và best epoch, trung bình ± độ lệch chuẩn qua ba seed.
+**Bảng 4.3.4.** Thời gian vòng huấn luyện và best epoch, trung bình ± độ lệch chuẩn qua ba seed.
 
 | Số tầng ẩn | Thời gian train (giây) | Best epoch |
 | ---: | ---: | ---: |
@@ -79,7 +79,7 @@ Bảng 4.3.4. Thời gian vòng huấn luyện và best epoch, trung bình ± đ
 
 ![Thời gian huấn luyện theo số tầng](../results/C/figures/C_train_time.png)
 
-Hình 4.3.3. Thời gian train trung bình và độ lệch chuẩn theo số tầng ẩn.
+**Hình 4.3.3.** Thời gian train trung bình và độ lệch chuẩn theo số tầng ẩn.
 
 Thời gian trung bình tăng từ 15.24 giây ở C=1 lên 25.72 giây ở C=4 trong lượt đo này. C=3 và C=2 có thời gian trung bình gần nhau, dù mạng ba tầng có nhiều phép tính hơn mỗi epoch. Điều này phù hợp với việc một số lượt C=3 dừng sớm. Không thể dùng riêng tổng thời gian để kết luận chi phí mỗi epoch hoặc tốc độ hội tụ trên máy khác.
 
