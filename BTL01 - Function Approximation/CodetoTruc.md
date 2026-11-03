@@ -734,7 +734,8 @@ Văn bản viết theo bộ quy tắc "viết văn không rập khuôn": không 
 
 ### Còn treo
 
-- [ ] Ngày 3/11: xuất bảng và đồ thị B cho báo cáo; chọn mô hình cuối theo validation loss, phối hợp đánh giá một lần trên test.
+- [x] Trung (ngày 3/11): đưa bảng và đồ thị B vào nháp mục 4.2 (xem mục 03/11 bên dưới).
+- [ ] Trúc/Khang (ngày 3/11): chọn mô hình cuối theo validation loss và phối hợp đánh giá test theo kế hoạch.
 - [ ] Trúc commit nháp mục 1 + sửa nhật ký, rồi điền hash vào dòng `_(điền sau)_` trong bảng commit mục này.
 - [ ] Sau 03/11: điền mục 1.5 (mô hình chọn, sai số test). Ngày 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
 - [x] Việc kế hoạch 02/11 của Trúc ("Kiểm tra log và hình A, C khớp với config"): xong, xem tiểu mục ngay dưới.
@@ -786,3 +787,39 @@ Kết quả đúng: 7 dòng `... giống từng byte` và dòng cuối `PROBLEMS
 - *Làm sao chứng minh hình trong báo cáo đúng là từ log?* Vẽ lại từ `summary.csv` bằng đúng hàm của runner ra giống từng byte với hình đã nộp, và `summary.csv` tính lại được từ log từng lần chạy.
 - *Lần chạy nào dừng sớm thì kiểm thế nào là đúng?* Số epoch đã chạy phải bằng best epoch + 100 (patience). Cả 20 lần dừng sớm đều đúng luật này.
 - *Vì sao mạng 1 tầng có sai số lớn hơn hẳn?* Hình loss C cho thấy C = 1 hội tụ chậm hơn nhiều và chưa xong ở epoch 1000, trong khi cùng 16 nơ-ron nhưng 2 tầng thì xuống dưới 1e−5 từ khoảng epoch 200.
+
+---
+
+## T3 03/11/2026 – Xuất bảng, hình B; viết nháp mục 4.2
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), Trung xuất bảng và đồ thị B cho báo cáo, viết nháp mục 4.2 về kết quả thực nghiệm A và B. Kết quả chạy đủ 39 lượt B đã có từ ngày 2/11; hôm nay kiểm tra lại đầu ra và đưa số liệu vào một bản nháp báo cáo có thể ghép.
+
+### Commit trong ngày
+
+Chưa có commit ngày 3/11 trong lịch sử Git tại thời điểm ghi mục này. Trúc tự commit; bổ sung hash và message sau khi commit.
+
+### Kết quả
+
+- Tạo [report/section_4_2_experiments_AB.md](report/section_4_2_experiments_AB.md), gồm thiết lập A/B, bảng mean ± std cho MSE/MAE/RMSE trên train và validation, nhận xét kết quả và liên kết ngược tới config, summary, logs.
+- Đưa đồ thị A `results/A/figures/A_validation_metrics.png` và đồ thị B `results/B/figures/B_metrics_vs_neurons.png` vào bản nháp.
+- Dùng summary hiện có từ 30 lượt A và 39 lượt B; không chạy lại thí nghiệm hoặc thay đổi dữ liệu. Task "xuất bảng và hình B" được hoàn tất bằng cách đưa bảng số liệu và hình đã kiểm chứng vào báo cáo, giữ CSV summary làm nguồn số liệu máy đọc.
+
+### Đã kiểm tra
+
+- Summary A có 10 cấu hình, summary B có 13; mỗi cấu hình gồm ba seed. Hai hình được mở xem và đường dẫn trong Markdown trỏ đúng file.
+- Số trong bảng báo cáo lấy từ các cột mean/std tương ứng của `results/A/summary.csv` và `results/B/summary.csv`; các bảng summary đã được đối chiếu với log trong ngày 2/11.
+- Nhận xét B không kết luận quá khớp chỉ dựa vào dao động ở width 9–10; train error cũng không giảm so với width 8. Cấu hình width 64 có validation MSE trung bình thấp nhất trong nhóm B (`2.810769e-06`).
+- `git diff --check` đạt. Tập test không được dùng cho kết quả A/B.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao Bảng 4.2.1 có train lẫn validation?* Train cho biết độ khớp trên dữ liệu đã học; validation phản ánh khả năng tổng quát hóa trên dữ liệu không tham gia cập nhật trọng số. So sánh hai tập giúp phát hiện dấu hiệu thiếu khớp/quá khớp.
+- *RMSE trung bình có bằng căn bậc hai của MSE trung bình không?* Không nhất thiết. Mỗi lượt tính RMSE trước, rồi mới lấy trung bình và độ lệch chuẩn qua seed.
+- *Width 64 có phải mô hình cuối được chọn không?* Đây mới là cấu hình có validation MSE thấp nhất trong nhóm B; chọn mô hình cuối phải so với các cấu hình A/C và quy tắc chung trên validation.
+
+### Còn treo
+
+- [ ] Ngày 4/11: Trung viết thảo luận A/B về ảnh hưởng số mẫu, thiếu khớp/quá khớp.
+- [ ] Trúc/Khang chọn mô hình cuối theo validation loss và phối hợp đánh giá test theo kế hoạch; khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn.
