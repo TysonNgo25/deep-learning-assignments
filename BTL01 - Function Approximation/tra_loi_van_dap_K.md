@@ -365,7 +365,7 @@ plot_surface_comparison(
 
 **Câu 5: Hàm evaluate tự biết dữ liệu nào là test không?**
 
-**Trả lời:** Không. Hàm tính metric trên dữ liệu được truyền vào. Script gọi hàm phải bảo đảm không dùng test để chọn mô hình; test chỉ dùng sau khi đã chọn cấu hình bằng validation.
+**Trả lời:** Không. Hàm tính metric trên dữ liệu được truyền vào. Quy tắc chọn mô hình là dùng validation, không dùng test. Trong project này, runner C đã tính metric test cho 12 lượt để báo cáo thực nghiệm C trước khi chốt mô hình; vì vậy phải công bố test đã được truy vấn trước, không gọi đó là test hoàn toàn độc lập.
 
 ### 8.5. Kiểm thử ngày 31/10 và số tham chiếu
 
@@ -392,12 +392,12 @@ Kiểm thử xác nhận shape dự đoán `(100, 1)`, các metric hữu hạn, 
 
 Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo vẫn thuộc phần Khang:
 
-| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 3/11 |
+| Ngày | Việc được giao | Trạng thái sau khi hoàn thành 4/11 |
 |---|---|---|
 | **1/11** | Vẽ bề mặt xấp xỉ và đồ thị \(y\)–\(\hat y\); hỗ trợ Trung/Nhân khi gặp lỗi. | Đã tạo hai hình baseline tham khảo trên validation tại `results/diagnostics/figures/`; rà log A/B/C thấy đủ số lần chạy và không phát hiện lỗi đang chặn. Chưa phải mô hình cuối. |
 | **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Đã tạo `report/section_3_model.md`; đây là bản nháp phương pháp, chưa ghép vào báo cáo cuối. |
 | **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Đã chọn A/2000, `hidden=[16,16]`, seed 1 theo validation; lưu checkpoint và đánh giá test theo quyết định Trúc. Test đã được xem trước trong thực nghiệm C nên phải công bố giới hạn này. |
-| **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Chưa làm theo lịch; cần dùng hình/số liệu mô hình cuối. |
+| **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Đã tạo hai hình validation/bề mặt từ checkpoint cuối, viết nháp `report/section_5_final_model_evaluation.md` và ghi rõ giới hạn test đã được truy vấn ở C. |
 | **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Chưa làm theo lịch; phụ thuộc log/bảng A/B. |
 | **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Chưa làm theo lịch; chuẩn bị sau khi nhóm có đủ kết quả. |
 | **7/11** | Chạy lại toàn bộ từ đầu trên máy sạch theo README. | Chưa làm theo lịch; cần đợi pipeline và runner A/B/C hoàn tất. |
@@ -458,7 +458,7 @@ Rà soát số file/log và summary không phát hiện thiếu cấu hình, gi�
 
 ### Câu 16: Validation và test khác nhau thế nào trong quy trình này?
 
-**Trả lời:** Sau mỗi epoch, validation loss được tính để theo dõi quá trình học và chọn trọng số ở epoch tốt nhất; nếu validation không cải thiện đủ lâu thì dừng sớm. Tập test không được đưa vào hàm huấn luyện, không quyết định epoch hay cấu hình. Test chỉ dùng để đánh giá cuối sau khi mô hình được chọn theo validation.
+**Trả lời:** Sau mỗi epoch, validation loss được tính để theo dõi quá trình học và chọn trọng số ở epoch tốt nhất; nếu validation không cải thiện đủ lâu thì dừng sớm. Tập test không được đưa vào hàm huấn luyện và không quyết định epoch hay cấu hình. Thực tế runner C đã tính test cho cả 12 lượt theo yêu cầu báo cáo; sau đó nhóm còn tính metric cho checkpoint cuối. Vì test C đã được xem trước khi chốt cuối, phải nêu giới hạn đó.
 
 ### Câu 17: Vì sao trả về checkpoint ở epoch tốt nhất thay vì epoch cuối?
 
@@ -466,17 +466,13 @@ Rà soát số file/log và summary không phát hiện thiếu cấu hình, gi�
 
 ### Câu 18: Mục 3 đã chứng minh mô hình nào là tốt nhất chưa?
 
-**Trả lời:** Chưa. Mục 3 mô tả phương pháp và cấu hình. Muốn kết luận phải đối chiếu kết quả validation của các thí nghiệm A/B/C theo tiêu chí nhóm đã thống nhất; sau đó đánh giá test một lần cho mô hình được chọn. Hình baseline tham khảo chỉ chứng minh pipeline chạy và hỗ trợ quan sát, không thay thế phép so sánh cuối.
+**Trả lời:** Chưa. Mục 3 mô tả phương pháp và cấu hình. Muốn kết luận phải đối chiếu kết quả validation của các thí nghiệm A/B/C theo tiêu chí nhóm đã thống nhất; sau đó tính metric cho mô hình được chọn trên test. Tuy nhiên, do runner C đã đánh giá các lượt C trên cùng tập test trước đó, kết quả cuối phải được trình bày kèm giới hạn này. Hình baseline tham khảo chỉ chứng minh pipeline chạy và hỗ trợ quan sát, không thay thế phép so sánh cuối.
 
 ### Đã kiểm tra và cách tự kiểm tra
 
 - Đối chiếu mô tả kiến trúc, loss, batch size, optimizer, seed, epoch và patience với `src/model.py`, `src/train.py` và `configs/baseline.yaml`.
 - Đọc lại mục 3 để đảm bảo tách rõ baseline với các biến thể A/B/C, validation với test, và kết quả minh họa với kết quả chọn cuối.
 - Mở file `report/section_3_model.md` để rà sơ đồ, công thức và bảng cấu hình; đây là tài liệu Markdown nên không có lệnh chạy riêng.
-
-### Còn treo
-
-- [ ] Ngày 4/11: viết phần đánh giá chung bằng hình/số liệu của mô hình cuối.
 
 ---
 
@@ -534,4 +530,34 @@ Kết quả đúng phải in cấu hình A/2000, seed 1, best epoch 980, các me
 
 ### Còn treo
 
-- [ ] Ngày 4/11: viết phần đánh giá chung y–ŷ và bề mặt bằng checkpoint đã chọn; không gọi test hiện tại là hoàn toàn chưa từng được xem.
+- [x] Ngày 4/11: viết phần đánh giá chung y–ŷ và bề mặt bằng checkpoint đã chọn; không gọi test hiện tại là hoàn toàn chưa từng được xem.
+
+---
+
+## 13. Đánh giá chung mô hình cuối — công việc ngày 4/11
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), phần Khang ngày 4/11 là đánh giá chung bằng đồ thị \(y\)–\(\hat y\) và bề mặt xấp xỉ. Đã tạo bản nháp [section_5_final_model_evaluation.md](report/section_5_final_model_evaluation.md) để ghép vào báo cáo, dựa trên checkpoint đã chốt ngày 3/11.
+
+### Hình và số liệu
+
+- [selected_model_validation_y_yhat.png](results/final/figures/selected_model_validation_y_yhat.png): scatter 500 điểm validation với đường tham chiếu \(y=\hat y\). Các điểm nằm sát đường chéo; nhiều điểm nhỏ chồng sát gần gốc nên cần đọc cùng metric.
+- [selected_model_surface_comparison.png](results/final/figures/selected_model_surface_comparison.png): hai bề mặt Gaussian thật và MLP trên cùng miền \([-2,2]\times[-4,4]\), dùng lưới \(80\times80\).
+- Validation của checkpoint: MSE \(1.08195385\times10^{-7}\), MAE \(2.45049751\times10^{-4}\), RMSE \(3.28930669\times10^{-4}\).
+- Sai số trên lưới đều so với hàm Gaussian giải tích: MSE \(1.10056953\times10^{-7}\), MAE \(2.49988858\times10^{-4}\), RMSE \(3.31748327\times10^{-4}\). Đây là chẩn đoán trên lưới, không phải một tập kiểm thử độc lập.
+
+### Cách tạo lại và kiểm tra
+
+Chạy `python -m scripts.plot_final_evaluation` từ thư mục BTL01. Script nạp `results/final/selected_model.pt`, chỉ dùng validation để tạo đồ thị \(y\)–\(\hat y\), và so sánh bề mặt với Gaussian trên lưới 6400 điểm. Script không đọc tập test. Đã chạy thành công, mở xem cả hai hình; scatter bám sát đường chéo và hai bề mặt có hình dạng tổng thể tương tự. `git diff --check` đạt.
+
+Đã sửa câu ở mục 3 để không khẳng định test chỉ được đánh giá sau khi chọn mô hình: thực tế runner C đã tính test cho cả 12 lượt. Báo cáo mục đánh giá cũng nêu rõ giới hạn này.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Đồ thị \(y\)–\(\hat y\) gần đường chéo nói lên điều gì?* Dự đoán trên validation nhìn chung gần giá trị thật; nhưng đồ thị cần được xem cùng MSE/MAE/RMSE, vì các điểm có mật độ thấp tập trung sát gốc và có thể chồng lấp.
+- *Hai bề mặt giống nhau có chứng minh mô hình đúng mọi nơi không?* Không. Đó là trực quan trên miền và lưới được vẽ. Validation bổ sung đánh giá trên 500 điểm; chưa kết luận ngoài miền hoặc trên phân phối khác.
+- *Sai số trên lưới 80×80 có phải test score không?* Không. Lưới được tạo đều trong miền và nhãn tính trực tiếp từ Gaussian đã biết. Đây là chẩn đoán xấp xỉ trên miền, không phải dữ liệu test độc lập.
+- *Vì sao phải nhắc test đã được xem?* Vì runner C đã tính metric test trước khi chốt mô hình cuối; báo cáo cần nói thật hạn chế này thay vì gọi test là hoàn toàn chưa từng được dùng.
+
+### Còn treo
+
+- [ ] Ngày 5/11: đối chiếu metric, bảng/hình trong báo cáo với log của Trung; bảo đảm số của checkpoint cuối và giới hạn test được ghi đúng.

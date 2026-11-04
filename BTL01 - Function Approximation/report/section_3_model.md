@@ -85,7 +85,7 @@ Thời gian vòng lặp được đo bằng `time.perf_counter()`: bao gồm cá
 
 ## 3.4. Validation, test và đánh giá
 
-Validation được dùng trong giai đoạn phát triển để theo dõi khả năng tổng quát hóa, dừng sớm và chọn checkpoint. Tập test độc lập không tham gia cập nhật trọng số hoặc chọn epoch/cấu hình; test chỉ được đánh giá sau khi mô hình cuối đã được chọn theo validation.
+Validation được dùng để theo dõi quá trình học, dừng sớm và chọn checkpoint/cấu hình. Tập test không tham gia cập nhật trọng số hoặc lựa chọn mô hình. Riêng trong repo này, runner C đã tính metric test cho cả 12 lượt theo yêu cầu báo cáo thực nghiệm C trước khi chốt mô hình cuối; vì vậy kết quả test của checkpoint cuối phải được trình bày với lưu ý rằng tập test đã được truy vấn trước, không mô tả là một đánh giá hoàn toàn độc lập.
 
 Module `src/evaluate.py` cung cấp MSE, MAE và RMSE:
 

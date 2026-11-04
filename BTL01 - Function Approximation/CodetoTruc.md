@@ -848,7 +848,7 @@ Khi huấn luyện lại seed 1 để tạo checkpoint cuối, validation MSE l�
 
 ---
 
-## T4 04/11/2026 – Rà soát độc lập việc chọn mô hình cuối, điền mục 1.5, sửa nhật ký 02/11 và 03/11
+## T4 04/11/2026 – Rà chọn mô hình, đánh giá chung, thảo luận A/B và sửa mục 1.5
 
 ### Việc theo kế hoạch
 
@@ -865,6 +865,7 @@ Việc kế hoạch ngày 04/11 của Trúc ("Ghép báo cáo bản 1, đánh s�
 | Hash | Người | Message | Làm gì |
 | --- | --- | --- | --- |
 | `d783f30` | Trúc | `Rà soát chọn mô hình cuối, điền mục 1.5, sửa nhật ký 2/11 và 3/11` | Mục 1.2, 1.5 của `report/section_1_intro.md`, sửa nhật ký 02/11, 03/11, thêm mục này. |
+| `3c98131` | Trung (`trungboro116`) | `viết bản nháp mục 5 thảo luận A/B` | Tạo `report/section_5_discussion_AB.md` với thảo luận kết quả A/B. |
 
 ### Kết quả
 
@@ -933,6 +934,20 @@ Kết quả đúng (mất khoảng 45 giây vì bước 4 train lại):
 - Dòng cuối `PROBLEMS: 0`.
 
 Thêm `--skip-train` vào cuối lệnh để bỏ bước 4 (chạy vài giây). Mở `report/section_1_intro.md`, Ctrl+Shift+V: mục 1.5 có Bảng 1.3 và không còn ô `[Điền sau 03/11...]`.
+
+### Bổ sung phần Khang ngày 04/11: đánh giá chung mô hình cuối
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), Khang viết phần đánh giá chung dựa trên đồ thị \(y\)–\(\hat y\) và bề mặt xấp xỉ. Dùng checkpoint đã chốt `A/2000`, `[16,16]`, `tanh`, seed 1; hình scatter dùng validation 500 mẫu, hình bề mặt so sánh Gaussian với MLP trên lưới \(80\times80\) trong miền đề bài.
+
+- Bản nháp: [report/section_5_final_model_evaluation.md](report/section_5_final_model_evaluation.md), sẵn để ghép vào báo cáo mục đánh giá chung.
+- Hình validation \(y\)–\(\hat y\): `results/final/figures/selected_model_validation_y_yhat.png`.
+- Hình so sánh bề mặt: `results/final/figures/selected_model_surface_comparison.png`.
+- Validation MSE/MAE/RMSE: `1.08195385e-07`, `2.45049751e-04`, `3.28930669e-04`.
+- Lưới giải tích \(80\times80\): MSE/MAE/RMSE `1.10056953e-07`, `2.49988858e-04`, `3.31748327e-04`. Đây là chẩn đoán trên miền đã biết, không phải test score.
+- Đã kiểm tra bằng cách nạp `selected_model.pt`, tạo lại hai hình với `python -m scripts.plot_final_evaluation`, mở xem hình; scatter nằm sát đường \(y=\hat y\), bề mặt dự đoán gần hình dạng Gaussian. Script không nạp test.
+- Đã chỉnh mục 3 để ghi đúng rằng test C đã được tính cho 12 lượt trước khi chốt mô hình; không gọi metric test hiện tại là đánh giá độc lập hoàn toàn.
+
+Lệnh tự chạy từ thư mục BTL01: `conda activate btl01` rồi `python -m scripts.plot_final_evaluation`. Không cần chạy lại huấn luyện hoặc đánh giá test.
 
 ### Câu hỏi vấn đáp có thể gặp
 
