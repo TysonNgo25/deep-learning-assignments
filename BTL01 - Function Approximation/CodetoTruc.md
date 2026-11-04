@@ -842,7 +842,7 @@ Khi huấn luyện lại seed 1 để tạo checkpoint cuối, validation MSE l�
 
 ### Còn treo
 
-- [ ] Ngày 4/11: Trung viết thảo luận A/B về ảnh hưởng số mẫu, thiếu khớp/quá khớp.
+- [x] Ngày 4/11: Trung viết thảo luận A/B về ảnh hưởng số mẫu, thiếu khớp/quá khớp; bản nháp ở `report/section_5_discussion_AB.md`.
 - [x] Trúc/Khang chọn mô hình cuối theo validation loss, lưu checkpoint và đánh giá test; kết quả kèm cảnh báo test đã được truy vấn trong thực nghiệm C.
 - [ ] Khi ghép báo cáo, đánh lại số thứ tự bảng/hình cho khớp toàn văn và đưa metric của checkpoint cuối vào đúng mục. *(04/11: đã đưa vào mục 1.5. Còn mục đánh giá chung của Khang.)*
 
@@ -864,7 +864,7 @@ Việc kế hoạch ngày 04/11 của Trúc ("Ghép báo cáo bản 1, đánh s�
 
 | Hash | Người | Message | Làm gì |
 | --- | --- | --- | --- |
-| _(Trúc điền ở mục ngày sau)_ | Trúc | _(commit tối 04/11)_ | Mục 1.2, 1.5 của `report/section_1_intro.md`, sửa nhật ký 02/11, 03/11, thêm mục này. |
+| `d783f30` | Trúc | `Rà soát chọn mô hình cuối, điền mục 1.5, sửa nhật ký 2/11 và 3/11` | Mục 1.2, 1.5 của `report/section_1_intro.md`, sửa nhật ký 02/11, 03/11, thêm mục này. |
 
 ### Kết quả
 
@@ -891,6 +891,17 @@ Script tạm `check_day3.py` (không đưa vào repo) làm bốn bước:
 Kết luận bước 3–4: code `run_final.py` và runner A cho cùng kết quả khi cùng môi trường. Chênh lệch `1.08e-07` so với `1.05e-07` đến từ môi trường máy Khang (nhiều khả năng khác phiên bản torch, vì `requirements.txt` chỉ ghi `torch>=2.3`), không phải lỗi code hay lỗi chọn mô hình. Câu "Nguyên nhân chênh lệch nhỏ chưa xác minh" ở mục 03/11 giờ đã có câu trả lời.
 
 `git status` sau khi chạy script: không có file nào trong `results/` bị đổi.
+
+### Bổ sung việc Trung ngày 04/11: thảo luận A/B
+
+Đối chiếu [Kế hoạch.md](Kế%20hoạch.md), phần thảo luận A/B thuộc mục 5 của báo cáo đã được viết riêng để khi ghép bản 1 không lặp nguyên văn phần kết quả mục 4.2.
+
+- File mới: [report/section_5_discussion_AB.md](report/section_5_discussion_AB.md), gồm ảnh hưởng của số mẫu A, năng lực/underfitting và dấu hiệu overfitting của B, cùng giới hạn diễn giải.
+- A: validation MSE trung bình giảm từ `1.219636e-05` (200 mẫu) xuống `1.681281e-07` (2000 mẫu), khoảng 72.5 lần; ghi nhận biến động qua ba seed và không kết luận đã bão hòa.
+- B: validation MSE giảm từ `2.915716e-03` (width 1) xuống `2.810769e-06` (width 64). Thảo luận width nhỏ thiếu năng lực; riêng width 8–10 không kết luận quá khớp vì train MSE cũng không giảm ở width 9 và kết quả width 9 dao động lớn giữa seed.
+- Dùng summary A/B làm nguồn số liệu; không chạy lại thí nghiệm và không dùng test để lựa chọn cấu hình.
+- Đã kiểm tra các số được trích dẫn với `results/A/summary.csv` và `results/B/summary.csv`; kiểm tra định dạng bằng `git diff --check`.
+- Tự kiểm tra trong Anaconda Prompt: `cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"` rồi mở `report/section_5_discussion_AB.md`; đối chiếu các giá trị đã nêu với hai file `summary.csv`. Kết quả đúng là các điểm cuối A (200, 2000) và B (width 1, 8, 9, 10, 64) khớp số liệu trong nhật ký.
 
 ### Số liệu cho báo cáo
 
