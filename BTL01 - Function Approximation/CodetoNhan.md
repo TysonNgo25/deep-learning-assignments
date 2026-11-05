@@ -88,3 +88,10 @@ Bảng dành cho Trúc và Khang khi đối chiếu các cấu hình C. Mỗi ô
 | 4 | 4.098433e-07 ± 1.852259e-07 | 25.72 ± 4.08 |
 
 C=4 có validation MSE trung bình thấp nhất trong C. C=2 có độ lệch chuẩn và thời gian trung bình thấp hơn. Bảng này dùng để đối chiếu khi nhóm chọn mô hình cuối. [Số liệu từng lượt](results/C/summary.csv) · [Bảng đầy đủ](results/C/table_C_mean_std.md).
+
+## Bàn giao công việc 04–05/11/2026
+
+- Hoàn thành phần thảo luận C cho mục 5, gồm nhận xét về độ sâu, dừng sớm, giới hạn của ba seed và hướng cải tiến. [Bản thảo mục 5](report/section_5_discussion_C.md).
+- Dựng bản PowerPoint nháp 14 slide theo phân công. Slide 1–9 dựa trên tài liệu của Trúc, Khang và Trung. Slide 10–14 trình bày thiết lập C, loss, bảng sai số, thời gian và mô hình cuối. Có ghi chú thuyết trình và nguồn theo slide. [Bản PowerPoint nháp](slides/BTL01_Nhom05_nhap_05-11_v2.pptx).
+- Đối chiếu bảng validation với 30 log A, 39 log B và 12 log C. Số liệu test của mô hình cuối lấy từ báo cáo đánh giá đã lưu. Kiểm tra bố cục qua ảnh render của cả 14 slide. [Metric checkpoint cuối](results/final/final_metrics.json).
+- Ngày 06/11, nhóm duyệt slide, tập trình bày và ghi nhận các điểm cần sửa trước khi xuất bản nộp.

@@ -89,7 +89,7 @@ Thời gian được đo bằng `time.perf_counter()` quanh vòng train, gồm �
 
 Kết quả cho thấy thêm tầng từ C=1 lên C=2 cải thiện mạnh khả năng xấp xỉ trong baseline đang xét. Tăng thêm độ sâu không bảo đảm giảm sai số: C=3 kém hơn C=2 ở các sai số trung bình, còn C=4 có validation MSE trung bình thấp hơn nhưng biến động lớn hơn. C=2 là cấu hình có độ dao động thấp trong ba seed và thời gian trung bình thấp hơn C=4; C=4 cần được cân nhắc cùng độ ổn định và chi phí khi nhóm chọn mô hình bằng validation.
 
-Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Chưa thể quy mọi biến động cho độ sâu do số tham số cũng thay đổi, số seed ít và early stopping làm số epoch khác nhau. Việc chọn mô hình cuối sẽ phối hợp với nhóm, dựa trên validation và tiêu chí đã thống nhất, không chốt từ bảng test trong mục này.
+Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Số tham số tăng cùng độ sâu, số seed ít và early stopping làm số epoch khác nhau. Nhóm đã chọn cấu hình A với 2.000 mẫu train theo validation MSE. [Đánh giá mô hình cuối](section_5_final_model_evaluation.md).
 
 Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghiệm C. Vì kết quả test đã được xem, báo cáo cần mô tả đúng quy trình này; không mô tả tập test hiện tại là một tập hoàn toàn chưa từng được xem trước bước đánh giá mô hình cuối. Nếu cần một đánh giá cuối độc lập hơn, nhóm cần duyệt protocol riêng trước khi thực hiện.
 
