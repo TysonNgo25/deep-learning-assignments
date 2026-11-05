@@ -22,13 +22,13 @@ Hàm đạt cực đại tại μ = (0, 0) với f(μ) = 1 / (2π√0.35) ≈ 0.
 
 Hệ số tương quan giữa x₁ và x₂ trong C là ρ = −0.5 / √(0.3 · 2) ≈ −0.645. Dấu âm làm các đường đồng mức là elip nghiêng: đi lên theo x₂ thì tâm elip lệch sang phía x₁ âm. Hai trị riêng của C là 0.164 và 2.136, ứng với độ lệch chuẩn 0.405 theo trục ngắn và 1.462 theo trục dài. Trục dài có hướng (−0.263, 0.965), lệch khoảng 15° so với trục x₂. Hình 2.2b cho thấy đúng hình dạng này.
 
-Nhóm tự viết hàm `gaussian_2d` trong `src/data.py` theo công thức trên bằng NumPy, không gọi `scipy.stats.multivariate_normal`. Dạng toàn phương (x − μ)ᵀC⁻¹(x − μ) được tính cho cả n điểm một lúc bằng `np.einsum("ni,ij,nj->n", d, C⁻¹, d)`. Để kiểm tra, nhóm tính tay tại điểm (1, 1): dạng toàn phương bằng 3.3 / 0.35 = 9.4286, f = e^(−4.7143) / (2π√0.35) = 0.0024121140460877. Hàm trả về 0.002412114046087728, khớp đến chữ số thứ 15.
+Nhóm tự viết hàm `gaussian_2d` trong `src/data.py` theo công thức trên bằng NumPy [7], không gọi `scipy.stats.multivariate_normal`. Dạng toàn phương (x − μ)ᵀC⁻¹(x − μ) được tính cho cả n điểm một lúc bằng `np.einsum("ni,ij,nj->n", d, C⁻¹, d)`. Để kiểm tra, nhóm tính tay tại điểm (1, 1): dạng toàn phương bằng 3.3 / 0.35 = 9.4286, f = e^(−4.7143) / (2π√0.35) = 0.0024121140460877. Hàm trả về 0.002412114046087728, khớp đến chữ số thứ 15.
 
 ## 2.2. Lấy mẫu và chia tập
 
 x₁ lấy đều trong [−2, 2], x₂ lấy đều trong [−4, 4], độc lập với nhau, rồi gắn nhãn y = f(x₁, x₂). Dữ liệu không có nhiễu, nên sai số của mô hình chỉ đến từ việc xấp xỉ chưa đúng hàm.
 
-Toàn bộ dữ liệu sinh một lần với seed 42 và lưu thành CSV. Từ seed này, `np.random.default_rng(42).spawn(3)` tách ra ba bộ sinh số ngẫu nhiên độc lập, mỗi tập dùng một bộ. Nhờ vậy, nếu sau này đổi kích thước pool train thì tập validation và test vẫn giữ nguyên từng điểm, và kết quả các lần chạy vẫn so được với nhau. Các tham số (seed, miền, μ, C, số mẫu) đọc từ `configs/baseline.yaml`, code không ghi cứng giá trị nào.
+Toàn bộ dữ liệu sinh một lần với seed 42 và lưu thành CSV. Từ seed này, `np.random.default_rng(42).spawn(3)` tách ra ba bộ sinh số ngẫu nhiên độc lập, mỗi tập dùng một bộ. Nhờ vậy, nếu sau này đổi kích thước pool train thì tập validation và test vẫn giữ nguyên từng điểm, và kết quả các lần chạy vẫn so được với nhau. Các tham số (seed, miền, μ, C, số mẫu) đọc từ `configs/baseline.yaml`, code không ghi cứng giá trị nào. Bảng 2.1 ghi kích thước và vai trò của ba tập.
 
 Bảng 2.1. Ba tập dữ liệu và vai trò.
 
@@ -51,6 +51,8 @@ Trước khi ghi file, hàm `check()` dừng chương trình nếu một trong c
 
 ## 2.3. Trực quan hóa
 
+Các hình trong báo cáo vẽ bằng Matplotlib [8]. Hình 2.1 đặt cả ba tập lên cùng một hệ trục để xem chúng có phủ đều miền không. Hình 2.2 vẽ hàm thật trên lưới dày, và Hình 2.3 so phân bố của x₁, x₂, y giữa ba tập.
+
 ![Hình 2.1](figures/fig_data_scatter3d.png)
 
 Hình 2.1. Scatter 3D của 2600 mẫu: train pool (chấm tròn xanh dương), validation (tam giác cam), test (ô vuông xanh lục).
@@ -66,6 +68,8 @@ Hình 2.3. Phân bố x₁, x₂, y của từng tập. Trục tung là phần t
 Ở Hình 2.1, các mẫu phủ kín miền chữ nhật và ba tập trộn lẫn nhau, không tập nào dồn vào một vùng riêng. Phần lớn điểm nằm sát mặt phẳng y = 0, chỉ một dải hẹp quanh gốc tọa độ nhô lên thành đỉnh. Hình 2.2 cho thấy rõ hơn rằng đỉnh này hẹp theo x₁ và dài theo x₂: đường mức 0.01 trải từ x₂ ≈ −3.6 đến 3.6, còn trên đường x₂ = 0 nó chỉ chiếm x₁ từ −1.07 đến 1.07.
 
 ## 2.4. Thống kê mô tả
+
+Bảng 2.2 ghi thống kê mô tả của x₁, x₂, y theo từng tập. Bảng 2.3 đếm tỷ lệ mẫu theo ba mức giá trị của y.
 
 Bảng 2.2. Thống kê x₁, x₂, y của từng tập (trích từ `data/stats.csv`).
 
@@ -93,8 +97,8 @@ Với phân bố đều trên đoạn dài L, độ lệch chuẩn lý thuyết 
 
 Phân bố của y lệch hẳn về 0. Trung vị chỉ khoảng 0.003, trong khi giá trị lớn nhất là 0.27. Hơn 60% mẫu ở mọi tập có y < 0.01, và chỉ 2.8% đến 5% số mẫu có y > 0.2. Hệ quả cho các mục sau:
 
-1. MSE sẽ rất nhỏ (dự kiến cỡ 10⁻⁵ hoặc thấp hơn), nên các bảng kết quả ghi số dạng mũ và báo thêm RMSE, đơn vị giống y, để đọc được tương đối so với đỉnh 0.269.
-2. Vùng đỉnh, nơi hàm thay đổi nhanh nhất, lại có ít mẫu nhất. Nhóm dự đoán sai số lớn nhất của mô hình sẽ nằm quanh μ và sẽ kiểm tra dự đoán này bằng bề mặt xấp xỉ và đồ thị y–ŷ ở mục 4.
+1. MSE rất nhỏ (trong 81 lượt chạy, val MSE trung bình từ cỡ 10⁻³ ở mạng 1 nơ-ron xuống cỡ 10⁻⁷ ở cấu hình tốt nhất), nên các bảng kết quả ghi số dạng mũ và báo thêm RMSE, đơn vị giống y, để đọc được tương đối so với đỉnh 0.269.
+2. Vùng đỉnh, nơi hàm thay đổi nhanh nhất, lại có ít mẫu nhất. Nhóm dự đoán sai số lớn nhất của mô hình sẽ nằm quanh μ và kiểm tra dự đoán này bằng bề mặt xấp xỉ và đồ thị y–ŷ của mô hình cuối ở mục 5.3.
 3. Một mô hình luôn dự đoán ŷ = 0 vẫn có MSE trên test bằng trung bình của y², tức khoảng 0.005. Mô hình nào không thấp hơn mức này nhiều thì chưa học được hàm.
 
 Nhóm không chuẩn hóa y (`normalize_y: false` trong yaml) vì Adam tự điều chỉnh bước cập nhật theo độ lớn gradient, và giữ y gốc thì MSE, MAE, RMSE trong báo cáo tính thẳng trên thang của đề, không cần đổi ngược.

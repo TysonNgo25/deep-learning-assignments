@@ -959,7 +959,195 @@ Lệnh tự chạy từ thư mục BTL01: `conda activate btl01` rồi `python -
 
 ### Còn treo
 
-- [ ] Ngày 04/11 (việc kế hoạch): ghép báo cáo bản 1 từ `section_1` đến `section_4_3`, đánh số lại hình/bảng (Bảng 1.3 mới thêm).
+- [x] Ngày 04/11 (việc kế hoạch): ghép báo cáo bản 1 từ `section_1` đến `section_4_3`, đánh số lại hình/bảng (Bảng 1.3 mới thêm). Xong ngày 06/11, xem mục 06/11.
 - [ ] Ngày 05/11 (README, việc của Trúc): cân nhắc ghim phiên bản trong `requirements.txt` (máy Trúc: `torch==2.15.0`, `numpy==2.4.6`) để buổi chạy lại trên máy sạch ngày 07/11 ra trùng log. Cần hỏi Trung, Khang đang dùng phiên bản nào trước khi ghim.
 - [ ] Báo Khang: `final_metrics.json` ghi đường dẫn kiểu Windows (`final\\selected_model.pt`). Nếu muốn sửa thì dùng `.as_posix()` trong `run_final.py`, nhưng không chạy lại script (script sẽ từ chối vì JSON đã có, và chạy lại là đánh giá test lần hai).
 - [ ] Báo Khang, Nhân: mục 3 và mục 4.3 nếu nhắc mô hình cuối thì dùng đúng số ở Bảng 1.3 và câu về test như mục 1.2 mới.
+
+---
+
+## T6 06/11/2026 – Làm bù 04/11 và 05/11: viết mục 6, mục 4.1, ghép báo cáo bản 1, sửa README
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), việc của Trúc ba ngày gần đây là:
+
+| Ngày | Việc theo kế hoạch | Tình trạng |
+| --- | --- | --- |
+| T4 04/11 | Ghép báo cáo bản 1, đánh số hình/bảng | Treo từ 04/11, **làm hôm nay** |
+| T5 05/11 (Mốc 3) | Viết mục 6, tài liệu tham khảo; viết README | Chưa làm hôm 05/11, **làm hôm nay** |
+| T6 06/11 | Sửa báo cáo theo góp ý | Chờ góp ý của buổi tập; muốn sửa thì trước hết phải có bản ghép |
+
+Hôm 05/11 Trúc không có commit nên không có mục 05/11. Nhật ký này chỉ ghi phần Trúc làm.
+
+### Commit trong ngày
+
+| Hash | Message | Làm gì |
+| --- | --- | --- |
+| (điền sau khi commit) | `Viết mục 6, mục 4.1, ghép báo cáo bản 1, sửa README — 6/11` | Thêm `section_6_conclusion.md`, `section_4_1_setup.md`, `scripts/build_report.py`, `BTL01_Nhom05.md`; sửa mục 1, 2, README, nhật ký. |
+
+### Kết quả
+
+File mới:
+
+- [report/section_6_conclusion.md](report/section_6_conclusion.md): mục 6 gồm 6.1 Kết quả đạt được, 6.2 Hạn chế, 6.3 Hướng cải tiến, 6.4 Nguồn số liệu, Tài liệu tham khảo (8 mục), Phụ lục lệnh tái lập (Bảng 6.1).
+- [report/section_4_1_setup.md](report/section_4_1_setup.md): tiêu đề "4. Thực nghiệm" và mục 4.1 Thiết lập chung và quy trình đánh giá. Theo kế hoạch 4.1 là phần của Trung, nhưng chưa ai viết, nên Trúc viết lúc ghép. Cần báo Trung đọc lại.
+- [scripts/build_report.py](scripts/build_report.py): script ghép 10 file mục thành một báo cáo.
+- [report/BTL01_Nhom05.md](report/BTL01_Nhom05.md): **báo cáo bản ghép 1**, do script sinh ra. Không sửa tay file này, sửa ở file mục rồi chạy lại script.
+
+File đã sửa:
+
+- `report/section_1_intro.md`: thêm trích dẫn [1], [2], [4]; thêm câu nhắc Bảng 1.1, 1.2, 1.3 trước khi bảng xuất hiện; "bảng đầy đủ ở mục 3.3" thành "Bảng 3.1 ở mục 3.3".
+- `report/section_2_data.md`: thêm đoạn dẫn vào Hình 2.1 đến 2.3; câu nhắc Bảng 2.1, 2.2, 2.3; "MSE dự kiến cỡ 10⁻⁵" thay bằng số thật (10⁻³ đến 10⁻⁷); "kiểm tra ở mục 4" sửa thành "mục 5.3" (đồ thị y–ŷ và bề mặt của mô hình cuối nằm ở 5.3).
+- `README.md`: cấu trúc thư mục ghi đúng chỗ checkpoint thật (`results/final/selected_model.pt`, không phải `models/best_model.pt`); thêm `run_final`, `plot_final_evaluation`, `export_C`, `build_report`; ghi rõ runner C có tính test và vì sao.
+
+Không sửa file mục của Khang, Trung, Nhân. Không sửa code thực nghiệm, không chạy lại thực nghiệm, không đụng `results/`, không đánh giá test.
+
+Lệnh chạy:
+
+```bat
+python -m scripts.build_report
+```
+
+### Bố cục bản ghép
+
+Đề (mục 6 của `MLP_Exercise - Yeu Cau.pdf`) yêu cầu 6 mục. Bản ghép xếp như sau:
+
+| Mục | Lấy từ file | Người viết |
+| --- | --- | --- |
+| 1. Giới thiệu | `section_1_intro.md` | Trúc |
+| 2. Dữ liệu | `section_2_data.md` | Trúc |
+| 3. Mô hình và cài đặt | `section_3_model.md` | Khang |
+| 4. Thực nghiệm, 4.1 Thiết lập chung | `section_4_1_setup.md` | Trúc (lúc ghép) |
+| 4.2 Kết quả A, B | `section_4_2_experiments_AB.md` | Trung |
+| 4.3 Kết quả C | `section_4_3_experiment_C.md` | Nhân |
+| 5. Thảo luận, 5.1 A và B | `section_5_discussion_AB.md` | Trung |
+| 5.2 C | `section_5_discussion_C.md` | Nhân |
+| 5.3 Đánh giá chung mô hình cuối | `section_5_final_model_evaluation.md` | Khang |
+| 6. Kết luận, TLTK, phụ lục | `section_6_conclusion.md` | Trúc |
+
+Bản ghép có **18 bảng, 11 hình**, khoảng 12 500 từ (đếm theo âm tiết).
+
+Đánh số lại theo mục, đúng quy ước "Bảng 4.1, Hình 4.1":
+
+| Trong file gốc | Trong bản ghép |
+| --- | --- |
+| Bảng thiết lập A/B (chưa có số) | Bảng 4.1 |
+| Bảng 4.2.1, 4.2.2 (Trung) | Bảng 4.2, 4.3 |
+| Hình 4.2.1, 4.2.2 (Trung) | Hình 4.1, 4.2 |
+| Bảng 4.3.1 → 4.3.4 (Nhân) | Bảng 4.4 → 4.7 |
+| Hình 4.3.1 → 4.3.3 (Nhân) | Hình 4.3 → 4.5 |
+| Bảng baseline, bảng module ở mục 3 (chưa có số) | Bảng 3.1, 3.2 |
+| Sơ đồ ASCII ở mục 3 | Hình 3.1 |
+| Hai bảng sai số ở mục đánh giá chung (chưa có số) | Bảng 5.1, 5.2 |
+
+### Giải thích từng hàm trong `scripts/build_report.py`
+
+Ý chính: **file mục của từng người giữ nguyên, mọi chỉnh sửa chỉ áp lên bản ghép.** Như vậy Khang, Trung, Nhân vẫn sửa file của mình sau buổi tập, rồi Trúc chạy lại script là có bản ghép mới, không phải ghép tay lại từ đầu.
+
+- `PARTS`: danh sách 10 phần theo đúng thứ tự trong báo cáo. Mỗi phần có `file`, `subs` (các cặp regex → thay bằng, áp lần lượt), `renumber` (bảng đổi số bảng/hình), `demote` (số cấp tiêu đề cần hạ). Viết thành dữ liệu để nhìn vào là biết bản ghép khác file gốc chỗ nào.
+- `DRAFT_NOTE`: regex bắt dòng "Nháp ngày …, người viết: …". Dòng này có ích khi làm nhóm, nhưng không được có trong báo cáo nộp.
+- `VN_NUMBERS`: Nhân viết số kiểu Việt ("1.000 mẫu", "27,4 lần"), các mục khác dùng dấu chấm thập phân. Trong cùng một báo cáo, "1.000" dễ bị đọc thành 1.0, nên bản ghép đổi về "1000" và "27.4". Chỉ áp cho hai file của Nhân.
+- `demote(text, levels)`: thêm dấu `#` vào mọi tiêu đề. File 4.2 và 4.3 bắt đầu bằng `# 4.2.` (cấp 1), mà trong báo cáo 4.2 phải là cấp 2 dưới "4. Thực nghiệm". Hàm bỏ qua dòng trong khối code, vì `# ...` trong code Python là comment, không phải tiêu đề.
+- `rewrite_link(match)`: link kiểu `[mục 4.2](./section_4_2_experiments_AB.md)` vô nghĩa trong file Word, nên đổi thành chữ "mục 4.2". Link tới file kết quả (`../results/C/summary.csv`) đổi thành đường dẫn tính từ gốc project, `` `results/C/summary.csv` ``, để thầy vẫn biết số lấy từ file nào. Link `http` giữ nguyên.
+- `build_part(part)`: đọc một file mục, hạ cấp tiêu đề, áp `subs`, đổi số bảng/hình, đổi link. Nếu một regex không khớp chỗ nào thì **dừng và báo lỗi**. Lý do: nếu một bạn sửa câu mà script đang tìm, script phải báo ngay, không được im lặng bỏ qua rồi ra bản ghép thiếu chú thích.
+- Đổi số dùng một lần `re.sub` với từ điển tra cứu, không gọi `replace` nhiều lần nối nhau. Nếu nối nhau thì "Bảng 4.2.1 → 4.2" xong, bước sau có thể đổi tiếp "4.2" thành số khác.
+- `check(lines)`: kiểm tra trên bản ghép, mỗi loại lỗi là một quy tắc của skill viết báo cáo:
+  1. Số bảng/hình trong mỗi mục chạy liên tục 1, 2, 3, không trùng, không nhảy số.
+  2. Mỗi bảng/hình được nhắc trong văn **trước** khi xuất hiện. Với hình, "trước" nghĩa là trước ảnh, vì chú thích hình nằm dưới ảnh.
+  3. Không nhắc tới bảng/hình không tồn tại.
+  4. Mọi ảnh `![...](...)` có file thật.
+  5. Không còn link tới `section_*.md` và không còn dòng "Nháp ngày".
+- `main()`: ghép, ghi file, in số bảng/hình/từ, in từng lỗi, dòng cuối `PROBLEMS: n`. Có lỗi thì trả mã thoát 1.
+
+### Nội dung mục 6 và mục 4.1, vì sao viết vậy
+
+- **6.1** tóm mỗi nhóm A, B, C bằng một ý và một con số, rồi nêu mô hình cuối với số test lấy đúng Bảng 1.3. Câu kết luận chung "thêm dữ liệu giảm sai số nhiều hơn thêm nơ-ron hay thêm tầng" có kèm giới hạn: A/2000 dùng 2000 mẫu, còn B/64 và C/4 dùng 1000 mẫu, và nhóm chưa chạy 4 tầng với 2000 mẫu. Vì vậy đây chỉ là thứ hạng giữa các cấu hình đã chạy, chưa tách được từng yếu tố.
+- **6.2 Hạn chế**: ba seed, test đã được xem ở C, nhiều lượt chạm 1000 epoch, dữ liệu không nhiễu, chỉ đánh giá trong miền, môi trường máy khác nhau. Hạn chế nào cũng có căn cứ trong log hoặc nhật ký trước.
+- **6.3 Hướng cải tiến**: mỗi hướng ứng với một hạn chế ở 6.2.
+- **Tài liệu tham khảo**: đề bài [1], PyTorch [2], dừng sớm Prechelt [3], Adam [4], sách Deep Learning [5], định lý xấp xỉ vạn năng Hornik [6], NumPy [7], Matplotlib [8]. Rubric "Báo cáo viết" có 5 điểm cho "trình bày, tài liệu tham khảo". Mỗi tài liệu được trích ít nhất một lần trong văn: [1], [2], [4] ở mục 1.1; [3], [4] ở 4.1; [7] (NumPy) và [8] (Matplotlib) ở mục 2; [2], [3], [5], [6] ở 6.1. Tài liệu nào không trích trong văn thì không đưa vào danh sách.
+- **Phụ lục lệnh tái lập (Bảng 6.1)**: đề mục 6 ghi "phụ lục/lệnh tái lập nếu cần". 9 lệnh theo thứ tự, mỗi lệnh ghi file sinh ra. Có câu nhắc `run_final` từ chối chạy khi JSON đã có.
+- **4.1**: đề mục 4 yêu cầu "bảng siêu tham số, quy trình đánh giá công bằng". 4.1 trỏ về Bảng 3.1 (siêu tham số), liệt kê 4 bước đánh giá chung, và đưa thêm một bằng chứng mới: hai cặp cấu hình trùng nhau giữa các nhóm cho log giống hệt nhau (xem dưới).
+
+### Đã kiểm tra
+
+1. **Cấu hình trùng nhau giữa các nhóm.** B = 16 nơ-ron và C = 1 tầng là cùng một mạng `[16]` với 1000 mẫu. A = 1000 và C = 2 là cùng mạng `[16, 16]` với 1000 mẫu. So 6 cặp log (2 cặp × 3 seed): cả 6 cặp dài 1000 epoch, **chênh val loss lớn nhất = 0.0**. Vậy runner A/B và runner C cho cùng kết quả khi cùng cấu hình, nên bảng A, B, C so được với nhau. Các ô trong bảng tổng hợp lệch nhau một đơn vị ở chữ số thứ 7 (`4.350544e-07` so với `4.350545e-07`) là do làm tròn khi tính trung bình.
+2. **Vị trí sai số của mô hình cuối, chỉ dùng validation** (script tạm `err_location.py`, không đưa vào repo, không nạp test):
+
+   | Vùng y | Số điểm val | MAE | RMSE | Phần trăm tổng bình phương sai số |
+   | --- | ---: | ---: | ---: | ---: |
+   | y < 0.01 | 326 | 2.05e-04 | 2.69e-04 | 43.5% |
+   | 0.01 ≤ y < 0.1 | 125 | 2.85e-04 | 3.75e-04 | 32.5% |
+   | y ≥ 0.1 | 49 | 4.10e-04 | 5.15e-04 | 24.0% |
+
+   Sai số tuyệt đối lớn nhất là 1.00e-03, bằng 0.37% đỉnh. Kết luận: dự đoán ở mục 2.4 ("sai số lớn nhất nằm quanh đỉnh") **đúng một phần**. Tính trên từng điểm, vùng đỉnh sai gấp đôi vùng phẳng (MAE 4.10e-4 so với 2.05e-4). Nhưng vùng phẳng có nhiều điểm hơn, nên vẫn đóng góp nhiều nhất vào MSE (43.5%). Năm điểm sai nhất nằm rải rác: hai điểm gần biên x₂ ≈ 4, hai điểm trên sườn elip, một điểm ngay đỉnh.
+3. **Hình bề mặt** `selected_model_surface_comparison.png`: đã mở xem. Hai bề mặt giống nhau bằng mắt, nên câu ở 6.1 chỉ nói "tái hiện đỉnh hẹp và mặt gần 0 ở xa đỉnh", không nói thêm.
+4. **Script ghép**: `PROBLEMS: 0`. Chạy hai lần cho cùng một file (md5 `235b38b2…` trùng nhau). `grep` không thấy `tensorflow`, `keras` hay đường dẫn tuyệt đối trong các file mới.
+5. **Đối chiếu số liệu** (agent `btl01-doi-chieu-so-lieu`, chỉ đọc, tính lại bằng pandas): kiểm khoảng 45 con số trong mục 4.1, 6 và các câu mới ở mục 1, 2. Không số nào sai nghiêm trọng. Không câu nào ngụ ý dùng test để chọn cấu hình, chọn seed hay dừng sớm. Đã sửa 5 chỗ nhỏ:
+   - "khoảng 72 lần" sửa thành "khoảng 72.5 lần" (thực tế 72.54, làm tròn thành 72 là hơi thấp), ở cả mục 1.5 và 6.1;
+   - mục 4.1: câu "lệch do làm tròn khi tính trung bình" không truy được. Agent tìm ra nguyên nhân thật: mỗi runner tính lại val MSE từ trọng số tốt nhất, hai lần tính lệch nhau cỡ 10⁻¹⁴ (seed 1: `4.6307300e-07` so với `4.6307298e-07`), đủ làm trung bình lệch một đơn vị ở chữ số thứ 7. Đã viết lại câu theo đúng nguyên nhân này;
+   - mục 4.1: "val loss trùng" sửa thành "train loss và val loss trùng" (agent kiểm cả hai cột, đều chênh 0);
+   - Bảng 6.1: câu "mỗi lệnh đọc YAML" sai với `build_report`, sửa thành "các bước sinh dữ liệu và huấn luyện". Bước 5 thêm file `summary_mean_std.csv`;
+   - mục 6.1: thêm "(Bảng 4.3)" sau câu "train và val MSE sát nhau".
+
+   Agent đếm được 61/81 log chạy đủ 1000 epoch, khớp với câu "nhiều lượt chạy đủ 1000 epoch" ở 6.2.
+
+### Cách tự kiểm tra lại
+
+Trong Anaconda Prompt:
+
+```bat
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+python -m scripts.build_report
+```
+
+Kết quả đúng:
+
+```text
+Đã ghi report/BTL01_Nhom05.md: 10 phần, 18 bảng, 11 hình, khoảng 12664 từ
+PROBLEMS: 0
+```
+
+(Số từ có thể khác nếu các bạn đã sửa file mục.) Mở `report/BTL01_Nhom05.md`, nhấn Ctrl+Shift+V để xem. Mục lục phải đi đúng 1 → 6, có 4.1, 4.2, 4.3 và 5.1, 5.2, 5.3. Công thức dạng `\( \)` có thể không hiện trong preview của VS Code, nhưng pandoc sẽ hiểu khi xuất Word.
+
+Muốn kiểm tra script có báo lỗi thật không: tạm sửa "Bảng 2.1 ghi kích thước" trong `section_2_data.md` thành "Bảng dưới ghi kích thước", chạy lại. Phải thấy `LỖI: Bảng 2.1: không được nhắc trong văn` và `PROBLEMS: 1`. Xong thì hoàn tác.
+
+Kiểm tra cặp log trùng nhau (khoảng 1 giây):
+
+```bat
+python -c "import pandas as pd; a=pd.read_csv('results/A/logs/A_1000_seed0.csv'); c=pd.read_csv('results/C/logs/C_2_seed0.csv'); print((a.val_loss-c.val_loss).abs().max())"
+```
+
+Kết quả đúng: `0.0`.
+
+### Số liệu cho báo cáo
+
+| Số liệu | Giá trị | Nguồn |
+| --- | --- | --- |
+| B/16 so với C/1, A/1000 so với C/2 | val loss trùng ở cả 1000 epoch, 3 seed, chênh 0 | `results/{A,B,C}/logs/` |
+| RMSE val của mạng 1 nơ-ron | 5.40e-02, khoảng 20% đỉnh | `results/B/summary.csv` |
+| C/4 thấp hơn C/2 | 2.5e-08, so với std của C/4 là 1.85e-07 | `results/C/summary_mean_std.csv` |
+| Bản ghép | 18 bảng, 11 hình, khoảng 12 500 từ | `python -m scripts.build_report` |
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Làm sao biết bảng A, B, C so được với nhau, khi các runner do các bạn khác nhau chạy?* Có hai cấu hình trùng nhau giữa các nhóm (B/16 với C/1, A/1000 với C/2). Log của mỗi cặp trùng nhau ở cả 1000 epoch, chênh bằng 0, với cả ba seed.
+- *Sao không kết luận "4 tầng tốt hơn 2 tầng"?* C/4 thấp hơn C/2 chỉ 2.5e-8, trong khi độ lệch chuẩn của C/4 qua ba seed là 1.85e-7, lớn gấp khoảng 7 lần mức chênh. Với ba seed, chênh lệch này nằm trong mức dao động.
+- *Mô hình cuối sai nhiều nhất ở đâu?* Tính trên từng điểm validation, vùng y ≥ 0.1 sai gấp đôi vùng y < 0.01 (MAE 4.1e-4 so với 2.0e-4). Nhưng vùng y < 0.01 có 326/500 điểm, nên vẫn chiếm 43.5% tổng bình phương sai số. Sai lớn nhất là 1.0e-3, bằng 0.37% đỉnh.
+- *Báo cáo ghép bằng cách nào? Có sửa số của bạn khác không?* Script `build_report.py` chỉ bỏ ghi chú nháp, đổi cấp tiêu đề, đánh số lại bảng/hình, đổi link. Không đổi con số nào, trừ cách viết "1.000" thành "1000" và "27,4" thành "27.4" để thống nhất dấu thập phân.
+- *Vì sao trích dẫn Prechelt và Adam?* Báo cáo dùng dừng sớm theo val loss với patience 100 (Prechelt [3] bàn cách chọn tiêu chí dừng) và bộ tối ưu Adam (bài gốc [4]).
+
+### Còn treo
+
+- [ ] Sửa báo cáo theo góp ý buổi tập 06/11 (việc kế hoạch hôm nay), sửa ở file mục rồi chạy lại `build_report`.
+- [ ] Báo Khang: mục 3 còn thiếu phần "PyTorch và môi trường chạy" mà đề yêu cầu (phiên bản Python, torch, CPU). Sơ đồ kiến trúc đang là ASCII (Hình 3.1), sang Word nên thay bằng hình vẽ.
+- [ ] Báo Khang: mục 5.3 chưa trả lời câu hỏi mục 2.4 đặt ra ("sai số lớn nhất có nằm quanh đỉnh không"). Trúc đã có số validation ở trên. Nếu đưa vào báo cáo thì cần đưa script tính vào repo để số truy được.
+- [ ] Báo Trung: mục 4.1 do Trúc viết khi ghép, Trung đọc lại.
+- [ ] Báo Nhân: `section_5_discussion_C.md` và `section_4_3_experiment_C.md` dùng "1.000" và dấu phẩy thập phân. Bản ghép đã tự đổi, nhưng nên sửa ở file gốc cho thống nhất.
+- [ ] Lưu ý khi các bạn sửa file mục: mục 4.1 và 6 nhắc bảng/hình theo **số của bản ghép** (Bảng 4.3, Hình 4.4...), còn file 4.2, 4.3 của Trung, Nhân vẫn dùng số cục bộ (Bảng 4.2.1...). Đọc số thì đọc ở `BTL01_Nhom05.md`. Nếu bạn nào thêm hoặc bớt bảng/hình thì phải sửa bảng `renumber` trong `build_report.py`.
+- [ ] Độ dài: khoảng 12 500 từ, 18 bảng, 11 hình, có nguy cơ vượt 20 trang. Bảng 4.2 và 4.3 có 7 cột "mean ± std" rất rộng. Khi xuất Word ngày 07/11 thì đếm trang, nếu dài quá thì cân nhắc chuyển cột MAE ra phụ lục.
+- [ ] 07/11: máy chưa có pandoc. Cài pandoc (hoặc `pip install pypandoc_binary`) rồi xuất `.docx` theo lệnh trong docstring của `build_report.py` (cần `+tex_math_single_backslash` cho công thức `\( \)`).
+- [ ] 07/11: thư mục `models/` đang rỗng trong khi checklist ghi `best_model.pt`. Chọn một trong hai cách: chép `results/final/selected_model.pt` sang `models/best_model.pt`, hoặc xóa `models/` và sửa checklist.
+- [ ] 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
+- [ ] Còn từ 04/11: ghim phiên bản trong `requirements.txt` (cần hỏi phiên bản của Trung, Khang).

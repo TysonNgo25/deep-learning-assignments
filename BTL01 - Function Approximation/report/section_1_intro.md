@@ -1,12 +1,12 @@
 # 1. Giới thiệu
 
-Nháp ngày 02/11/2026 (việc theo kế hoạch ngày 01/11), cập nhật ngày 04/11/2026 (mục 1.2 và 1.5), người viết: Huỳnh Ngọc Trúc. Chỗ ghi [...] là tỷ lệ đóng góp, chốt ngày 07/11.
+Nháp ngày 02/11/2026 (việc theo kế hoạch ngày 01/11), cập nhật ngày 04/11/2026 (mục 1.2 và 1.5) và 06/11/2026 (trích dẫn, tham chiếu bảng), người viết: Huỳnh Ngọc Trúc. Chỗ ghi [...] là tỷ lệ đóng góp, chốt ngày 07/11.
 
 ## 1.1. Mục tiêu
 
 Nhóm 5 dùng mạng perceptron nhiều tầng (MLP) viết bằng PyTorch để học lại một hàm mật độ Gaussian hai chiều từ các điểm lấy mẫu, rồi đo sai số thay đổi ra sao khi đổi số mẫu train, số nơ-ron và số tầng ẩn. Công thức của hàm đã biết trước, nên tại bất kỳ điểm nào trong miền nhóm cũng tính được giá trị đúng để đặt cạnh dự đoán của mạng. Dữ liệu không có nhiễu, vì vậy mọi chênh lệch giữa hai bề mặt là sai số của mạng.
 
-Đề bài bắt buộc tự viết mô hình và vòng huấn luyện bằng PyTorch (`nn.Module`, `nn.Linear`, `DataLoader`, `MSELoss`, Adam) và không chấp nhận TensorFlow hay Keras. Code mẫu và báo cáo mẫu đi kèm đề viết bằng TensorFlow/Keras, dùng ma trận hiệp phương sai đơn vị và lấy tập test làm validation. Nhóm chỉ tham khảo cách chia hàm của chúng (sinh dữ liệu, đọc dữ liệu, vẽ 3D), phần mô hình và vòng train viết lại từ đầu.
+Đề bài [1] bắt buộc tự viết mô hình và vòng huấn luyện bằng PyTorch [2] (`nn.Module`, `nn.Linear`, `DataLoader`, `MSELoss`, Adam [4]) và không chấp nhận TensorFlow hay Keras. Code mẫu và báo cáo mẫu đi kèm đề viết bằng TensorFlow/Keras, dùng ma trận hiệp phương sai đơn vị và lấy tập test làm validation. Nhóm chỉ tham khảo cách chia hàm của chúng (sinh dữ liệu, đọc dữ liệu, vẽ 3D), phần mô hình và vòng train viết lại từ đầu.
 
 ## 1.2. Phát biểu bài toán
 
@@ -16,6 +16,8 @@ Hàm đạt đỉnh f(μ) ≈ 0.269 tại gốc tọa độ rồi giảm nhanh k
 
 Dữ liệu gồm ba tập độc lập, sinh một lần với seed 42 và lưu thành CSV: pool train 2000 điểm, validation 500 điểm, test 100 điểm. Validation quyết định khi nào dừng sớm, giữ checkpoint nào và cấu hình nào tốt hơn. Tập test không tham gia lựa chọn nào trong số đó, vì đề cấm dùng test để chọn siêu tham số. Nhóm chỉ tính sai số test ở hai chỗ. Chỗ thứ nhất là từng lượt chạy của thực nghiệm C, vì đề yêu cầu báo test error theo số tầng. Chỗ thứ hai là mô hình cuối, sau khi đã chọn xong theo validation.
 
+Bảng 1.1 liệt kê ba nhóm thực nghiệm và số lần chạy của mỗi nhóm.
+
 Bảng 1.1. Ba nhóm thực nghiệm. Mỗi nhóm chỉ đổi một yếu tố, các tham số khác giữ theo baseline.
 
 | Nhóm | Yếu tố thay đổi | Giá trị | Số lần chạy (3 seed) |
@@ -24,7 +26,7 @@ Bảng 1.1. Ba nhóm thực nghiệm. Mỗi nhóm chỉ đổi một yếu tố,
 | B | Số nơ-ron của mạng 1 tầng ẩn | 1 đến 10, thêm 16, 32, 64 | 39 |
 | C | Số tầng ẩn, mỗi tầng 16 nơ-ron | 1, 2, 3, 4 | 12 |
 
-Baseline là mạng 2 tầng ẩn × 16 nơ-ron, kích hoạt tanh, đầu ra tuyến tính, Adam với learning rate 10⁻³, batch 32, tối đa 1000 epoch, dừng sớm khi val loss 100 epoch liên tiếp không giảm, và 1000 mẫu train cho B, C (bảng đầy đủ ở mục 3.3). Đề gợi ý B từ 1 đến 10 và cho phép mở rộng. Nhóm thêm 16, 32 và 64 nơ-ron để có những mạng đủ rộng mà xét chuyện quá khớp, vì với tối đa 10 nơ-ron mạng có thể chỉ thiếu khớp.
+Baseline là mạng 2 tầng ẩn × 16 nơ-ron, kích hoạt tanh, đầu ra tuyến tính, Adam với learning rate 10⁻³, batch 32, tối đa 1000 epoch, dừng sớm khi val loss 100 epoch liên tiếp không giảm, và 1000 mẫu train cho B, C (Bảng 3.1 ở mục 3.3). Đề gợi ý B từ 1 đến 10 và cho phép mở rộng. Nhóm thêm 16, 32 và 64 nơ-ron để có những mạng đủ rộng mà xét chuyện quá khớp, vì với tối đa 10 nơ-ron mạng có thể chỉ thiếu khớp.
 
 ## 1.3. Cách nhóm giữ cho phép so sánh công bằng
 
@@ -36,7 +38,7 @@ Mỗi cấu hình chạy với ba seed huấn luyện 0, 1, 2. Seed quyết đ�
 
 ## 1.4. Phân công và đóng góp
 
-Mỗi thành viên giữ một phần code, tự chạy phần thực nghiệm của mình và viết phần báo cáo tương ứng. Người viết số liệu cũng là người có log sinh ra số liệu đó. Ngày 31/10 nhóm review chéo toàn bộ code, sửa lỗi runner ghi đè bảng tổng hợp khi chạy một phần cấu hình và lỗi chồng nhãn trục ở hình bề mặt.
+Mỗi thành viên giữ một phần code, tự chạy phần thực nghiệm của mình và viết phần báo cáo tương ứng. Người viết số liệu cũng là người có log sinh ra số liệu đó. Ngày 31/10 nhóm review chéo toàn bộ code, sửa lỗi runner ghi đè bảng tổng hợp khi chạy một phần cấu hình và lỗi chồng nhãn trục ở hình bề mặt. Bảng 1.2 ghi phần việc và tỷ lệ đóng góp của từng người.
 
 Bảng 1.2. Thành viên, nhiệm vụ và tỷ lệ đóng góp.
 
@@ -51,7 +53,7 @@ Bảng 1.2. Thành viên, nhiệm vụ và tỷ lệ đóng góp.
 
 ## 1.5. Kết quả chính
 
-Nhóm xếp hạng cả 27 cấu hình của A, B, C theo val MSE trung bình qua ba seed. Đứng đầu là baseline 2 tầng ẩn × 16 nơ-ron train với đủ 2000 mẫu của pool (A = 2000), val MSE 1.68 × 10⁻⁷ ± 5.89 × 10⁻⁸. Cấu hình tốt nhất của B (64 nơ-ron) chỉ đạt 2.81 × 10⁻⁶, của C (4 tầng) đạt 4.10 × 10⁻⁷ với 1000 mẫu train. Trong ba seed của A = 2000, seed 1 có val MSE thấp nhất (1.05 × 10⁻⁷). Nhóm train lại đúng cấu hình và seed này, lưu trọng số ở epoch có val loss nhỏ nhất vào `results/final/selected_model.pt` (337 tham số), rồi nạp lại file đó để tính sai số trên test một lần.
+Nhóm xếp hạng cả 27 cấu hình của A, B, C theo val MSE trung bình qua ba seed. Đứng đầu là baseline 2 tầng ẩn × 16 nơ-ron train với đủ 2000 mẫu của pool (A = 2000), val MSE 1.68 × 10⁻⁷ ± 5.89 × 10⁻⁸. Cấu hình tốt nhất của B (64 nơ-ron) chỉ đạt 2.81 × 10⁻⁶, của C (4 tầng) đạt 4.10 × 10⁻⁷ với 1000 mẫu train. Trong ba seed của A = 2000, seed 1 có val MSE thấp nhất (1.05 × 10⁻⁷). Nhóm train lại đúng cấu hình và seed này, lưu trọng số ở epoch có val loss nhỏ nhất vào `results/final/selected_model.pt` (337 tham số), rồi nạp lại file đó để tính sai số trên test một lần. Bảng 1.3 ghi sai số của checkpoint này trên validation và test.
 
 Bảng 1.3. Sai số của mô hình cuối (checkpoint ở epoch 980). Nguồn: `results/final/final_metrics.json`.
 
@@ -64,7 +66,7 @@ RMSE trên test bằng khoảng 0.11% giá trị đỉnh 0.269 của hàm. Con s
 
 Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code.
 
-Ở A, val MSE giảm đều qua cả mười cỡ mẫu, từ 1.22 × 10⁻⁵ với 200 mẫu xuống 1.68 × 10⁻⁷ với 2000 mẫu, khoảng 72 lần. Ở B, val MSE giảm từ 2.92 × 10⁻³ với 1 nơ-ron xuống 2.81 × 10⁻⁶ với 64 nơ-ron và chững lại ở 9, 10 nơ-ron. Train và val MSE của B sát nhau ở mọi độ rộng, chưa cho thấy quá khớp rõ ràng. Ở C, tầng ẩn thứ hai đưa val MSE từ 1.19 × 10⁻⁵ xuống 4.35 × 10⁻⁷. Tầng thứ ba và thứ tư không giảm thêm rõ rệt, trong khi thời gian train trung bình tăng từ 15.2 lên 25.7 giây.
+Ở A, val MSE giảm đều qua cả mười cỡ mẫu, từ 1.22 × 10⁻⁵ với 200 mẫu xuống 1.68 × 10⁻⁷ với 2000 mẫu, khoảng 72.5 lần. Ở B, val MSE giảm từ 2.92 × 10⁻³ với 1 nơ-ron xuống 2.81 × 10⁻⁶ với 64 nơ-ron và chững lại ở 9, 10 nơ-ron. Train và val MSE của B sát nhau ở mọi độ rộng, chưa cho thấy quá khớp rõ ràng. Ở C, tầng ẩn thứ hai đưa val MSE từ 1.19 × 10⁻⁵ xuống 4.35 × 10⁻⁷. Tầng thứ ba và thứ tư không giảm thêm rõ rệt, trong khi thời gian train trung bình tăng từ 15.2 lên 25.7 giây.
 
 ## 1.6. Bố cục báo cáo
 

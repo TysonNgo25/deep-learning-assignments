@@ -54,3 +54,7 @@ anaconda_projects/
 Thumbs.db
 tempCodeRunnerFile.py
 
+
+# Claude Code: file cá nhân, không commit (agents/ và skills/ thì commit)
+.claude/settings.local.json
+CLAUDE.local.md
