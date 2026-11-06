@@ -966,6 +966,24 @@ Lệnh tự chạy từ thư mục BTL01: `conda activate btl01` rồi `python -
 
 ---
 
+## T5 05/11/2026 – Ghi nhận kết quả C và slide nháp của Nhân
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), việc của Trung ngày 05/11 là đối chiếu số liệu báo cáo với log của Nhân. Việc này chưa được thực hiện trong ngày 05/11, được làm bù ngày 06/11 và ghi ở mục ngày đó.
+
+### Commit trong ngày
+
+| Hash | Người | Message | Làm gì |
+| --- | --- | --- | --- |
+| `9a85af3` | Nhân (`TysonNgo25`) | `Hoàn thiện thảo luận C và PowerPoint nháp nhóm 05` | Cập nhật mục 4.3, thêm thảo luận C, làm slide nháp 14 trang và ghi lại việc đối chiếu các log. |
+
+### Kết quả
+
+Commit của Nhân sửa [report/section_4_3_experiment_C.md](report/section_4_3_experiment_C.md), thêm [report/section_5_discussion_C.md](report/section_5_discussion_C.md) và tạo PowerPoint nháp. Phần kiểm tra chéo mục 4.3 theo phân công của Trung được hoàn tất muộn hơn vào ngày 06/11, không ghi ngược thành kết quả của ngày 05/11.
+
+---
+
 ## T6 06/11/2026 – Làm bù 04/11 và 05/11: viết mục 6, mục 4.1, ghép báo cáo bản 1, sửa README
 
 ### Việc theo kế hoạch
@@ -978,13 +996,13 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), việc của Trúc ba ngày gần đ�
 | T5 05/11 (Mốc 3) | Viết mục 6, tài liệu tham khảo; viết README | Chưa làm hôm 05/11, **làm hôm nay** |
 | T6 06/11 | Sửa báo cáo theo góp ý | Chờ góp ý của buổi tập; muốn sửa thì trước hết phải có bản ghép |
 
-Hôm 05/11 Trúc không có commit nên không có mục 05/11. Nhật ký này chỉ ghi phần Trúc làm.
+Ngày 05/11 Trúc không có commit, nhưng Nhân có commit `9a85af3`; đã bổ sung mục nhật ký ngày đó. Mục hiện tại ghi commit của Trúc ngày 06/11 và phần việc Trung làm bù trong ngày 06/11.
 
 ### Commit trong ngày
 
 | Hash | Message | Làm gì |
 | --- | --- | --- |
-| (điền sau khi commit) | `Viết mục 6, mục 4.1, ghép báo cáo bản 1, sửa README — 6/11` | Thêm `section_6_conclusion.md`, `section_4_1_setup.md`, `scripts/build_report.py`, `BTL01_Nhom05.md`; sửa mục 1, 2, README, nhật ký. |
+| `52d2583` | `Viết mục 6, mục 4.1, ghép báo cáo bản 1, sửa README — 6/11` | Thêm `section_6_conclusion.md`, `section_4_1_setup.md`, `scripts/build_report.py`, `BTL01_Nhom05.md`; sửa mục 1, 2, README, nhật ký. |
 
 ### Kết quả
 
@@ -1137,6 +1155,24 @@ Kết quả đúng: `0.0`.
 - *Mô hình cuối sai nhiều nhất ở đâu?* Tính trên từng điểm validation, vùng y ≥ 0.1 sai gấp đôi vùng y < 0.01 (MAE 4.1e-4 so với 2.0e-4). Nhưng vùng y < 0.01 có 326/500 điểm, nên vẫn chiếm 43.5% tổng bình phương sai số. Sai lớn nhất là 1.0e-3, bằng 0.37% đỉnh.
 - *Báo cáo ghép bằng cách nào? Có sửa số của bạn khác không?* Script `build_report.py` chỉ bỏ ghi chú nháp, đổi cấp tiêu đề, đánh số lại bảng/hình, đổi link. Không đổi con số nào, trừ cách viết "1.000" thành "1000" và "27,4" thành "27.4" để thống nhất dấu thập phân.
 - *Vì sao trích dẫn Prechelt và Adam?* Báo cáo dùng dừng sớm theo val loss với patience 100 (Prechelt [3] bàn cách chọn tiêu chí dừng) và bộ tối ưu Adam (bài gốc [4]).
+
+### Làm bù task Trung ngày 05/11 và chuẩn bị trình bày ngày 06/11
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 05/11 Trung đối chiếu phần C của Nhân; ngày 06/11 Trung tập phần trình bày. Hai việc được làm bù ngày 06/11:
+
+1. **Đối chiếu phần C:** kiểm tra 12 log `C_<tầng>_seed<seed>.csv` với `results/C/summary.csv`. Best epoch lấy từ epoch có validation loss nhỏ nhất trong từng log và khớp cả 12 dòng summary; số epoch thực chạy khớp số dòng log. Tính lại mean và độ lệch chuẩn mẫu từ 12 dòng summary, khớp `summary_mean_std.csv` cho bốn cấu hình và các cột train MSE, validation MSE, test MSE/MAE/RMSE, thời gian, best epoch. Các bảng trong [report/section_4_3_experiment_C.md](report/section_4_3_experiment_C.md) khớp với số đã tổng hợp.
+2. **Giới hạn đối chiếu:** log C chỉ có loss theo epoch; không có checkpoint hoặc dự đoán của từng lượt để tính độc lập lại metric train/test. Vì vậy kiểm tra này xác nhận tính nhất quán giữa log, summary và báo cáo, không xác nhận lại metric train/test từ trọng số. Không chạy lại thí nghiệm và không đánh giá test thêm.
+3. **Hoàn tất đối chiếu train–validation A còn thiếu từ ngày 04/11:** bổ sung vào [report/section_5_discussion_AB.md](report/section_5_discussion_AB.md). Ở 200 mẫu, train MSE `7.712946e-06 ± 4.706737e-06`, validation MSE `1.219636e-05 ± 7.144094e-06`; ở 2000 mẫu lần lượt là `1.696409e-07 ± 6.641334e-08` và `1.681281e-07 ± 5.886715e-08`. Cả hai cùng giảm; khoảng cách train–validation không nới rộng theo hướng validation xấu đi.
+
+**Bài nói tham khảo phần A/B (khoảng một phút):**
+
+> Tiếp theo, em xin trình bày hai thực nghiệm A và B do nhóm em phụ trách. Mỗi cấu hình được chạy với ba seed; nhóm dùng validation để theo dõi quá trình train và so sánh kết quả.
+>
+> Ở thực nghiệm A, nhóm thay đổi số mẫu train từ 200 đến 2000, còn validation được giữ cố định ở 500 mẫu. Khi tăng số mẫu train, train MSE giảm từ khoảng `7.71e-06` xuống `1.70e-07`, còn validation MSE giảm từ `1.22e-05` xuống `1.68e-07`, tức giảm khoảng 72.5 lần. Hai tập cùng giảm và khoảng cách không nới rộng theo hướng validation xấu đi. Trong khoảng đã thử, kết quả cho thấy thêm dữ liệu giúp mô hình khớp tốt hơn.
+>
+> Ở thực nghiệm B, nhóm giữ 1000 mẫu train và thay đổi số nơ-ron của một tầng ẩn. Validation MSE giảm từ `2.92e-03` ở width 1 xuống `2.81e-06` ở width 64. Width nhỏ có dấu hiệu thiếu năng lực biểu diễn. Riêng width 8 đến 10, sai số validation tăng nhẹ và kết quả width 9 dao động nhiều giữa các seed. Vì train MSE ở width 9 cũng không giảm so với width 8, nhóm chưa đủ căn cứ kết luận đây là quá khớp.
+>
+> Tóm lại, trong các cấu hình đã thử, tăng số mẫu giúp giảm sai số rõ rệt; tăng width nhìn chung cũng cải thiện kết quả nhưng xu hướng không hoàn toàn đơn điệu. Nhóm chỉ dùng validation để so sánh A/B, không dùng test để chọn cấu hình.
 
 ### Còn treo
 
