@@ -200,11 +200,7 @@ Bài toán nhận hai đặc trưng \(x_1,x_2\) và dự đoán một giá trị
 
 Hình 3.1 là sơ đồ kiến trúc baseline.
 
-```text
-Đầu vào              Tầng ẩn 1       Tầng ẩn 2       Đầu ra
-(x₁, x₂)  ─────────►  16 nơ-ron ───►  16 nơ-ron ───►  ŷ
-                         tanh             tanh         tuyến tính
-```
+![Sơ đồ MLP baseline gồm hai đầu vào, hai tầng ẩn 16 nơ-ron và một đầu ra](../report/figures/mlp_baseline_architecture.png)
 
 Hình 3.1. Sơ đồ MLP baseline: 2 đầu vào, hai tầng ẩn 16 nơ-ron dùng tanh, 1 đầu ra tuyến tính (337 tham số).
 
@@ -314,6 +310,10 @@ Bảng 3.2. Các module mã nguồn.
 | `configs/baseline.yaml` | Lưu baseline và danh sách cấu hình thí nghiệm để các lần chạy dùng nhất quán. |
 
 Các script A/B/C gọi lại lõi huấn luyện với cấu hình tương ứng; việc tổng hợp bảng, biểu đồ và phân tích kết quả từng thực nghiệm được trình bày riêng ở mục 4.
+
+## 3.6. Môi trường thực thi
+
+Môi trường kiểm tra của Khang dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.
 
 # 4. Thực nghiệm
 
@@ -626,6 +626,17 @@ Bảng 5.2. Sai số trên lưới 80 × 80.
 
 Đây là chẩn đoán trên lưới đều so với hàm sinh nhãn đã biết, không phải một tập dữ liệu độc lập và không thay thế validation/test. Nó bổ sung cho hình bề mặt bằng cách tính sai số tại nhiều vị trí trong toàn miền.
 
+**Sai số theo vùng mật độ và điểm sai lớn nhất.** Mục 2.4 đặt câu hỏi liệu sai số lớn có tập trung quanh đỉnh Gaussian hay không. Để xem điều này, validation được chia theo nhãn thật: vùng mật độ thấp \(y<0.01\) và vùng mật độ cao \(y\geq0.1\). Các ngưỡng được dùng như mô tả vùng, không phải tham số để chọn mô hình.
+
+| Vùng trên validation | Số điểm | MAE | Tỷ lệ tổng bình phương sai số |
+|---|---:|---:|---:|
+| \(y<0.01\) | 326 | \(2.04779077\times10^{-4}\) | 43.47% |
+| \(y\geq0.1\) | 49 | \(4.10411885\times10^{-4}\) | 23.99% |
+
+Sai số tuyệt đối trung bình ở vùng mật độ cao khoảng gấp đôi vùng mật độ thấp, nhưng sai số lớn nhất không nằm ở đỉnh: điểm sai nhất có \(y\approx0.0832\), thuộc vùng trung gian \(0.01\leq y<0.1\). Sai số tuyệt đối lớn nhất là \(1.00407004\times10^{-3}\), khoảng 0.37% giá trị đỉnh \(f(0,0)\approx0.269\). Vùng \(y<0.01\) có nhiều điểm hơn và vẫn chiếm 43.47% tổng bình phương sai số validation; vì thế không thể kết luận toàn bộ sai số tập trung quanh đỉnh.
+
+Các số theo vùng và tọa độ điểm sai lớn nhất được tính từ checkpoint cuối trên validation, lưu tại `results/final/validation_error_analysis.json`; có thể tái tạo bằng script ở cuối mục. Tập test không được dùng cho phân tích này.
+
 ### 5.3.3. Kết luận và giới hạn
 
 Trên dữ liệu validation, đồ thị phân tán gần đường \(y=\hat y\); bề mặt MLP cũng gần với bề mặt Gaussian trên miền khảo sát. Các metric validation và chẩn đoán trên lưới giải tích nhất quán với quan sát trực quan. Kết luận chỉ áp dụng cho hàm, miền đầu vào và cấu hình thí nghiệm của bài này; chưa chứng minh chất lượng ngoài miền hoặc với phân phối dữ liệu khác.
@@ -641,7 +652,7 @@ conda activate btl01
 python -m scripts.plot_final_evaluation
 ```
 
-Script chỉ đọc checkpoint, cấu hình và validation; nó không nạp test. Hình được ghi vào `results/final/figures/`.
+Script chỉ đọc checkpoint, cấu hình và validation; nó không nạp test. Hình được ghi vào `results/final/figures/`, số liệu sai số theo vùng vào `results/final/validation_error_analysis.json`.
 
 # 6. Kết luận
 

@@ -1056,7 +1056,7 @@ Bản ghép có **18 bảng, 11 hình**, khoảng 12 500 từ (đếm theo âm t
 | Bảng 4.3.1 → 4.3.4 (Nhân) | Bảng 4.4 → 4.7 |
 | Hình 4.3.1 → 4.3.3 (Nhân) | Hình 4.3 → 4.5 |
 | Bảng baseline, bảng module ở mục 3 (chưa có số) | Bảng 3.1, 3.2 |
-| Sơ đồ ASCII ở mục 3 | Hình 3.1 |
+| Sơ đồ MLP baseline dạng ảnh ở mục 3 | Hình 3.1 |
 | Hai bảng sai số ở mục đánh giá chung (chưa có số) | Bảng 5.1, 5.2 |
 
 ### Giải thích từng hàm trong `scripts/build_report.py`
@@ -1176,9 +1176,9 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 05/11 Trung đối chiếu ph�
 
 ### Còn treo
 
-- [ ] Sửa báo cáo theo góp ý buổi tập 06/11 (việc kế hoạch hôm nay), sửa ở file mục rồi chạy lại `build_report`.
-- [ ] Báo Khang: mục 3 còn thiếu phần "PyTorch và môi trường chạy" mà đề yêu cầu (phiên bản Python, torch, CPU). Sơ đồ kiến trúc đang là ASCII (Hình 3.1), sang Word nên thay bằng hình vẽ.
-- [ ] Báo Khang: mục 5.3 chưa trả lời câu hỏi mục 2.4 đặt ra ("sai số lớn nhất có nằm quanh đỉnh không"). Trúc đã có số validation ở trên. Nếu đưa vào báo cáo thì cần đưa script tính vào repo để số truy được.
+- [x] Sửa các góp ý liên quan đến phần Khang sau buổi tập 06/11: bổ sung môi trường và hình kiến trúc ở mục 3; trả lời câu hỏi sai số quanh đỉnh ở mục 5.3, có JSON/script để truy nguồn; chạy lại `build_report`.
+- [x] Báo Khang: mục 3 đã ghi Python/PyTorch/CPU và dùng hình PNG cho kiến trúc baseline (Hình 3.1).
+- [x] Báo Khang: mục 5.3 đã trả lời điểm sai số lớn nhất có nằm gần đỉnh hay không, dựa trên validation; script và JSON phân tích được lưu trong repo.
 - [ ] Báo Trung: mục 4.1 do Trúc viết khi ghép, Trung đọc lại.
 - [ ] Báo Nhân: `section_5_discussion_C.md` và `section_4_3_experiment_C.md` dùng "1.000" và dấu phẩy thập phân. Bản ghép đã tự đổi, nhưng nên sửa ở file gốc cho thống nhất.
 - [ ] Lưu ý khi các bạn sửa file mục: mục 4.1 và 6 nhắc bảng/hình theo **số của bản ghép** (Bảng 4.3, Hình 4.4...), còn file 4.2, 4.3 của Trung, Nhân vẫn dùng số cục bộ (Bảng 4.2.1...). Đọc số thì đọc ở `BTL01_Nhom05.md`. Nếu bạn nào thêm hoặc bớt bảng/hình thì phải sửa bảng `renumber` trong `build_report.py`.
@@ -1187,3 +1187,38 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 05/11 Trung đối chiếu ph�
 - [ ] 07/11: thư mục `models/` đang rỗng trong khi checklist ghi `best_model.pt`. Chọn một trong hai cách: chép `results/final/selected_model.pt` sang `models/best_model.pt`, hoặc xóa `models/` và sửa checklist.
 - [ ] 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
 - [ ] Còn từ 04/11: ghim phiên bản trong `requirements.txt` (cần hỏi phiên bản của Trung, Khang).
+
+---
+
+## CN 08/11/2026 – Hoàn tất phần Khang và rà trạng thái nộp
+
+### Việc theo kế hoạch
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), Khang được giao ngày 05/11 đối chiếu số liệu báo cáo với log của Trung, ngày 06/11 hỏi xoáy nhóm về train/validation/test, ngày 07/11 chạy lại toàn bộ từ đầu trên máy sạch theo README; ngày 08/11 là ngày dự phòng/hạn nộp.
+
+### Kết quả
+
+- Đối chiếu 10 cấu hình A và 13 cấu hình B trong báo cáo với `results/A/summary.csv` và `results/B/summary.csv`: 23 dòng, 12 giá trị mean/std mỗi dòng, tổng 276 giá trị; các số khớp sau khi làm tròn theo định dạng báo cáo.
+- Chuẩn bị bộ câu hỏi liên phần train/validation/test trong [tra_loi_van_dap_K.md](tra_loi_van_dap_K.md), gồm cách phân biệt vai trò của ba tập và giới hạn do runner C đã truy vấn test.
+- Bổ sung phân tích sai số theo vùng trên validation, lưu tại `results/final/validation_error_analysis.json`; thêm sơ đồ baseline `report/figures/mlp_baseline_architecture.png`. Không nạp tập test để sinh các nội dung này.
+- Hoàn thiện mục 3 về môi trường Python/PyTorch/CPU và sơ đồ; mục 5.3 trả lời sai số lớn nhất có nằm gần đỉnh hay không. Cập nhật [scripts/build_report.py](scripts/build_report.py) để tự chèn chú thích cho hình PNG thay cho sơ đồ ASCII cũ.
+- Chạy `python -m scripts.build_report`: tạo bản ghép có 10 phần, 18 bảng, 11 hình, khoảng 13,106 từ; `PROBLEMS: 0`.
+- Chạy `git diff --check`: không phát hiện lỗi whitespace.
+
+### Rà checklist nộp
+
+Chạy checker không tạo ZIP bằng lệnh:
+
+```powershell
+$env:PYTHONIOENCODING = "utf-8"
+.\.venv\Scripts\python.exe ..\.claude\skills\dong-goi-btl01\check_submission.py --root .
+```
+
+Checker trả mã thoát 1, tổng cộng **85 lỗi và 306 cảnh báo**. Hai lỗi nộp trực tiếp là chưa có `report/*.docx` và `report/*.pdf`. Nhiều lỗi đường dẫn tuyệt đối phát sinh do checker quét cả `.venv/Lib/site-packages`, trong đó có ví dụ/đường dẫn nằm trong package cài sẵn; đây không phải bằng chứng rằng các file mã nguồn của nhóm đều chứa đường dẫn tuyệt đối. Cảnh báo còn có các package trong `requirements.txt` chưa ghim phiên bản và thư mục `__pycache__`. Không tạo ZIP vì báo cáo Word/PDF còn thiếu và preflight chưa đạt.
+
+### Việc chưa hoàn tất
+
+- [ ] Ngày 07/11: chưa chạy toàn bộ từ đầu trên máy sạch. README hiện dẫn tới sinh dữ liệu/thực nghiệm và `run_final`, có nguy cơ ghi đè kết quả hoặc đánh giá test lại; không chạy các lệnh đó khi chưa có quyết định của Trúc.
+- [ ] Ngày 08/11: Trúc cần xuất DOCX/PDF và cả nhóm cần rà checklist cuối, xác nhận bảng tỉ lệ đóng góp rồi mới nén/nộp.
+- [ ] Chưa ghim phiên bản trong `requirements.txt`; cần thống nhất phiên bản với nhóm trước.
+- [ ] Không sửa README chung, không chạy lại A/B/C, không chạy `run_final`, không tạo ZIP, không commit/push.

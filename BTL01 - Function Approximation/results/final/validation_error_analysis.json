@@ -1,0 +1,31 @@
+{
+  "split": "validation",
+  "n_samples": 500,
+  "thresholds": {
+    "low_density": "y < 0.01",
+    "high_density": "y >= 0.1"
+  },
+  "regions": {
+    "y_below_0_01": {
+      "count": 326,
+      "mae": 0.00020477907673921436,
+      "mse": 7.213143504714026e-08,
+      "sum_squared_error_share": 0.4346737563610077
+    },
+    "y_at_least_0_1": {
+      "count": 49,
+      "mae": 0.00041041188524104655,
+      "mse": 2.64897835222655e-07,
+      "sum_squared_error_share": 0.23993618786334991
+    }
+  },
+  "max_absolute_error": {
+    "index": 364,
+    "x1": 0.5632054805755615,
+    "x2": -2.1651837825775146,
+    "y": 0.08321374654769897,
+    "y_hat": 0.08220967650413513,
+    "absolute_error": 0.0010040700435638428
+  },
+  "protocol": "Computed on validation only from the selected checkpoint; no test samples are read."
+}

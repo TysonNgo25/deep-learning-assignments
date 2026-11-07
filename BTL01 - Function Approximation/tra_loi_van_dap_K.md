@@ -398,9 +398,10 @@ Theo bảng lịch từng ngày trong `Kế hoạch.md`, các việc tiếp theo
 | **2/11** | Viết nháp mục 3 báo cáo: sơ đồ MLP, công thức forward và loss. | Đã tạo `report/section_3_model.md`; đây là bản nháp phương pháp, chưa ghép vào báo cáo cuối. |
 | **3/11** | Cùng Trúc chốt mô hình theo validation, lưu `.pt` mô hình được chọn và đánh giá test cuối. | Đã chọn A/2000, `hidden=[16,16]`, seed 1 theo validation; lưu checkpoint và đánh giá test theo quyết định Trúc. Test đã được xem trước trong thực nghiệm C nên phải công bố giới hạn này. |
 | **4/11** | Viết phần đánh giá chung: y–ŷ và bề mặt. | Đã tạo hai hình validation/bề mặt từ checkpoint cuối, viết nháp `report/section_5_final_model_evaluation.md` và ghi rõ giới hạn test đã được truy vấn ở C. |
-| **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Chưa làm theo lịch; phụ thuộc log/bảng A/B. |
-| **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Chưa làm theo lịch; chuẩn bị sau khi nhóm có đủ kết quả. |
-| **7/11** | Chạy lại toàn bộ từ đầu trên máy sạch theo README. | Chưa làm theo lịch; cần đợi pipeline và runner A/B/C hoàn tất. |
+| **5/11** | Đối chiếu số liệu báo cáo với log của Trung (theo lịch ghi chéo phần Trung). | Đã đối chiếu toàn bộ mean/std của 10 cấu hình A và 13 cấu hình B với summary CSV; không thấy sai khác sau làm tròn. |
+| **6/11** | Hỏi xoáy cả nhóm về vòng train/validation/test. | Đã chuẩn bị bộ câu hỏi liên phần trong mục 14; bài nói A/B và báo cáo ghép đã có. |
+| **7/11** | Chạy lại toàn bộ từ đầu trên máy sạch theo README. | Chưa thể chạy toàn bộ an toàn: các script full A/B/C ghi đè kết quả và run_final bị khóa để tránh chấm lại test; đã kiểm tra môi trường, dựng lại báo cáo và chạy kiểm tra validation-only. |
+| **8/11** | Ngày dự phòng, hạn nộp. | Đã chạy preflight checker bằng UTF-8; lệnh trả mã lỗi 1 với 85 lỗi và 306 cảnh báo. Checker xác nhận thiếu DOCX/PDF, đồng thời quét cả `.venv` nên báo nhiều đường dẫn tuyệt đối từ mã của package cài sẵn. Không tạo ZIP; cần Trúc xuất báo cáo và cả nhóm rà checklist/tỉ lệ đóng góp. |
 
 Ngày 1/11 đã có hình baseline tham khảo; ngày 2/11 và 4/11 có thể tiếp tục chuẩn bị nội dung với mô hình hiện có. Các việc chốt mô hình, kiểm tra số liệu toàn bài và chạy lại sạch phụ thuộc tiến độ của cả nhóm. Danh sách này phân biệt **mã lõi đã hoàn thành** với **các deliverable sau đó vẫn còn phải thực hiện**.
 
@@ -544,6 +545,8 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), phần Khang ngày 4/11 là đánh gi
 - [selected_model_surface_comparison.png](results/final/figures/selected_model_surface_comparison.png): hai bề mặt Gaussian thật và MLP trên cùng miền \([-2,2]\times[-4,4]\), dùng lưới \(80\times80\).
 - Validation của checkpoint: MSE \(1.08195385\times10^{-7}\), MAE \(2.45049751\times10^{-4}\), RMSE \(3.28930669\times10^{-4}\).
 - Sai số trên lưới đều so với hàm Gaussian giải tích: MSE \(1.10056953\times10^{-7}\), MAE \(2.49988858\times10^{-4}\), RMSE \(3.31748327\times10^{-4}\). Đây là chẩn đoán trên lưới, không phải một tập kiểm thử độc lập.
+- Phân tích vùng validation lưu trong `results/final/validation_error_analysis.json`: vùng \(y<0.01\) có 326 điểm, MAE \(2.04779\times10^{-4}\), đóng góp 43.47% tổng bình phương sai số; vùng \(y\geq0.1\) có 49 điểm, MAE \(4.10412\times10^{-4}\), đóng góp 23.99%.
+- Điểm sai tuyệt đối lớn nhất có \(y=0.08321\), \((x_1,x_2)=(0.56321,-2.16518)\), sai \(1.00407\times10^{-3}\). Nó nằm ở vùng trung gian, không phải ngay đỉnh; tỷ lệ so với giá trị đỉnh 0.269 là khoảng 0.37%.
 
 ### Cách tạo lại và kiểm tra
 
@@ -556,8 +559,49 @@ Chạy `python -m scripts.plot_final_evaluation` từ thư mục BTL01. Script n
 - *Đồ thị \(y\)–\(\hat y\) gần đường chéo nói lên điều gì?* Dự đoán trên validation nhìn chung gần giá trị thật; nhưng đồ thị cần được xem cùng MSE/MAE/RMSE, vì các điểm có mật độ thấp tập trung sát gốc và có thể chồng lấp.
 - *Hai bề mặt giống nhau có chứng minh mô hình đúng mọi nơi không?* Không. Đó là trực quan trên miền và lưới được vẽ. Validation bổ sung đánh giá trên 500 điểm; chưa kết luận ngoài miền hoặc trên phân phối khác.
 - *Sai số trên lưới 80×80 có phải test score không?* Không. Lưới được tạo đều trong miền và nhãn tính trực tiếp từ Gaussian đã biết. Đây là chẩn đoán xấp xỉ trên miền, không phải dữ liệu test độc lập.
+- *Sai số lớn nhất có nằm quanh đỉnh Gaussian không?* Không theo điểm có sai số tuyệt đối lớn nhất: điểm đó có nhãn thật khoảng 0.0832, không thuộc vùng \(y\geq0.1\). Tuy vậy MAE vùng \(y\geq0.1\) khoảng gấp đôi MAE vùng \(y<0.01\). Vùng mật độ thấp có nhiều điểm nên vẫn chiếm 43.47% tổng bình phương sai số. Nguồn là phép tính trên validation trong `results/final/validation_error_analysis.json`.
 - *Vì sao phải nhắc test đã được xem?* Vì runner C đã tính metric test trước khi chốt mô hình cuối; báo cáo cần nói thật hạn chế này thay vì gọi test là hoàn toàn chưa từng được dùng.
 
 ### Còn treo
 
-- [ ] Ngày 5/11: đối chiếu metric, bảng/hình trong báo cáo với log của Trung; bảo đảm số của checkpoint cuối và giới hạn test được ghi đúng.
+- [x] Ngày 5/11: đối chiếu bảng A/B trong báo cáo với summary CSV của Trung; các mean/std sau làm tròn khớp.
+- [x] Ngày 6/11: chuẩn bị câu hỏi hỏi xoáy cho cả nhóm về train/validation/test.
+- [ ] Ngày 7/11: chạy lại toàn bộ từ đầu trên máy sạch theo README. Chưa thực hiện đầy đủ vì các runner A/B/C có thể ghi đè kết quả và `run_final` sẽ chấm test lại; chỉ chạy kiểm tra an toàn không dùng test.
+- [x] Ngày 8/11: chạy preflight checker ở chế độ không tạo ZIP, có đặt `PYTHONIOENCODING=utf-8`; ghi nhận mã thoát 1, thiếu DOCX/PDF và nhiều false positive đường dẫn tuyệt đối do checker quét `.venv`.
+- [ ] Ngày 8/11: Trúc xuất DOCX/PDF; cả nhóm rà lại các cảnh báo/lỗi checklist và xác nhận bảng tỉ lệ đóng góp trước khi nén.
+
+---
+
+## 14. Hỏi xoáy nhóm: dữ liệu, train/validation/test và chọn mô hình
+
+### Câu 19: Vì sao không đưa test vào `train_model()`?
+
+**Trả lời:** `train_model()` nhận riêng train và validation. Train cập nhật trọng số; validation theo dõi loss, early stopping và chọn checkpoint. Nếu test ảnh hưởng cập nhật hoặc chọn mô hình thì sai số cuối bị lạc quan. Tuy nhiên, runner C có lưu test metrics cho 12 lượt theo yêu cầu báo cáo thực nghiệm C; test không được dùng chọn cấu hình và báo cáo phải công khai việc test đã được truy vấn. Tham khảo `src/train.py` và `experiments/run_C.py`.
+
+### Câu 20: Tập train pool, validation và test được tạo ra thế nào?
+
+**Trả lời:** `src/data.py` tính nhãn theo Gaussian đã biết cho các điểm lấy đều trong miền; ba split có kích thước 2000, 500 và 100, được sinh với seed dữ liệu 42 rồi lưu CSV. Train pool cung cấp tiền tố 200–2000 điểm cho A, còn validation cố định 500 điểm cho việc chọn. Test 100 điểm được dùng trong bảng C và lần đánh giá checkpoint cuối.
+
+### Câu 21: Dừng sớm và chọn checkpoint khác nhau thế nào?
+
+**Trả lời:** Mỗi epoch tính validation loss. Nếu không cải thiện trong 100 epoch liên tiếp thì dừng; song song, code giữ bản sao trọng số tại epoch có validation loss tốt nhất. Có thể dừng ở epoch cuối mà checkpoint tốt nhất nằm trước đó. Cấu hình cuối dừng ở giới hạn 1000 epoch, checkpoint được lưu ở best epoch 980 (`results/final/final_metrics.json`).
+
+### Câu 22: Nhóm chọn A/2000 seed 1 dựa trên số liệu nào?
+
+**Trả lời:** Xếp 27 cấu hình A/B/C theo mean validation MSE của ba seed; A/2000 đứng đầu với \(1.681281\times10^{-7}\). Sau đó chọn seed 1 vì trong ba seed của A/2000, nó có validation MSE thấp nhất trong log A. Không dùng test MSE để chọn. So sánh giữa A và B/C cũng cần nhớ rằng A dùng 2000 mẫu, B/C dùng 1000.
+
+### Câu 23: A/2000 có tốt hơn C/4 trong mọi ý nghĩa không?
+
+**Trả lời:** A/2000 có mean validation MSE thấp hơn trong các cấu hình đã thử, nhưng hai cấu hình khác cả số mẫu train lẫn kiến trúc. Vì vậy không thể quy toàn bộ chênh lệch cho một yếu tố hoặc kết luận A/2000 tốt hơn trong mọi môi trường. C/4 còn có độ lệch chuẩn validation lớn hơn qua ba seed.
+
+### Câu 24: Làm sao đọc MSE, MAE và RMSE cùng nhau?
+
+**Trả lời:** MSE bình phương sai số nên nhạy với sai số lớn và có đơn vị bình phương; MAE là sai số tuyệt đối trung bình; RMSE là căn MSE và cùng đơn vị với nhãn. Với checkpoint cuối, validation MSE là \(1.08195\times10^{-7}\), MAE \(2.45050\times10^{-4}\), RMSE \(3.28931\times10^{-4}\). Cần ghi rõ tập và checkpoint, không trộn metric qua tập.
+
+### Câu 25: Sai số lớn nhất có nằm đúng quanh đỉnh Gaussian?
+
+**Trả lời:** Không nhất thiết. Trên validation, điểm sai tuyệt đối lớn nhất có \(y\approx0.0832\), thấp hơn ngưỡng vùng \(y\geq0.1\), với sai số khoảng \(1.004\times10^{-3}\). MAE ở vùng mật độ cao vẫn khoảng gấp đôi vùng \(y<0.01\), nhưng vùng thấp có nhiều điểm hơn và đóng góp 43.47% tổng bình phương sai số. Số được tính từ checkpoint cuối, validation và lưu trong `results/final/validation_error_analysis.json`.
+
+### Câu 26: Nếu ngày 7 chạy README từ đầu thì lệnh nào cần tránh để không làm hỏng kết quả?
+
+**Trả lời:** Không chạy `python -m src.data` vì dữ liệu đã chốt; không chạy đủ runner A/B/C vì chúng có thể ghi đè summary, log và hình; tuyệt đối không chạy `python -m scripts.run_final` lại vì sẽ đánh giá test lần nữa. Khi chỉ kiểm tra báo cáo/hình có thể chạy `python -m scripts.build_report` và `python -m scripts.plot_final_evaluation`, trong đó script sau chỉ đọc validation.

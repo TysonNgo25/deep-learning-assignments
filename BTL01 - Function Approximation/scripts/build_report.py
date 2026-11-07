@@ -70,8 +70,8 @@ PARTS = [
             (DRAFT_NOTE, ""),
             (r"Kiến trúc baseline:\n", "Hình 3.1 là sơ đồ kiến trúc baseline.\n"),
             (
-                r"tuyến tính\n```\n",
-                "tuyến tính\n```\n\nHình 3.1. Sơ đồ MLP baseline: 2 đầu vào, hai tầng ẩn 16 nơ-ron "
+                r"(!\[[^\]]*\]\([^)]+\)\n)",
+                r"\1\nHình 3.1. Sơ đồ MLP baseline: 2 đầu vào, hai tầng ẩn 16 nơ-ron "
                 "dùng tanh, 1 đầu ra tuyến tính (337 tham số).\n",
             ),
             (

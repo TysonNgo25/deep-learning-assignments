@@ -8,11 +8,7 @@ Bài toán nhận hai đặc trưng \(x_1,x_2\) và dự đoán một giá trị
 
 Kiến trúc baseline:
 
-```text
-Đầu vào              Tầng ẩn 1       Tầng ẩn 2       Đầu ra
-(x₁, x₂)  ─────────►  16 nơ-ron ───►  16 nơ-ron ───►  ŷ
-                         tanh             tanh         tuyến tính
-```
+![Sơ đồ MLP baseline gồm hai đầu vào, hai tầng ẩn 16 nơ-ron và một đầu ra](../report/figures/mlp_baseline_architecture.png)
 
 Tổng quát, danh sách `hidden` quy định số nơ-ron của từng tầng ẩn. Ví dụ `[16, 16]` tạo hai tầng ẩn, còn `[16, 16, 16]` tạo ba tầng ẩn. Nhờ vậy, cùng một lớp mạng dùng được cho baseline, thực nghiệm B (thay độ rộng của một tầng ẩn) và C (thay số tầng ẩn). Tầng ẩn dùng activation theo cấu hình; baseline dùng `tanh`. Tầng đầu ra là tuyến tính, không ép \(\hat y\) vào một khoảng cố định.
 
@@ -114,3 +110,7 @@ Hình minh họa baseline dùng validation trong thư mục `results/diagnostics
 | `configs/baseline.yaml` | Lưu baseline và danh sách cấu hình thí nghiệm để các lần chạy dùng nhất quán. |
 
 Các script A/B/C gọi lại lõi huấn luyện với cấu hình tương ứng; việc tổng hợp bảng, biểu đồ và phân tích kết quả từng thực nghiệm được trình bày riêng ở mục 4.
+
+## 3.6. Môi trường thực thi
+
+Môi trường kiểm tra của Khang dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.
