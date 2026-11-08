@@ -37,7 +37,8 @@ REQUIRED = [
 ]
 REQUIRED_GLOBS = {
     "report/*.docx": "báo cáo Word",
-    "report/*.pdf": "báo cáo PDF",
+    "docs/*BaoCao*.pdf": "báo cáo PDF",
+    "docs/*Slide*.pdf": "slide PDF",
     "slides/*.pptx": "slide PowerPoint",
 }
 EXPECTED_LOGS = {"A": 30, "B": 39, "C": 12}

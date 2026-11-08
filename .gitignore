@@ -58,3 +58,6 @@ tempCodeRunnerFile.py
 # Claude Code: file cá nhân, không commit (agents/ và skills/ thì commit)
 .claude/settings.local.json
 CLAUDE.local.md
+
+# File nén để nộp, không đưa lên repo
+BTL01_Nhom05_*.zip

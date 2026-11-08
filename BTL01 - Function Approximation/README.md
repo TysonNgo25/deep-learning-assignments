@@ -1,6 +1,6 @@
 # BTL01 – Xấp xỉ hàm Gaussian 2 chiều bằng MLP (PyTorch) · Nhóm 5
 
-Bài tập lớn 01, học phần Học sâu. Báo cáo: [report/BTL01_Nhom05.pdf](report/BTL01_Nhom05.pdf). Slide: [slides/BTL01_Nhom05.pptx](slides/BTL01_Nhom05.pptx).
+Bài tập lớn 01, học phần Học sâu. Bản PDF để đọc nằm trong `docs/`: [báo cáo](docs/BTL01_Nhom05_BaoCao.pdf), [slide](docs/BTL01_Nhom05_Slide.pdf).
 
 ## Cài môi trường
 
@@ -34,9 +34,10 @@ experiments/            run_A.py, run_B.py, run_C.py, common.py, export_C.py
 results/A|B|C/          logs/*.csv, figures/*.png, summary.csv
 results/final/          selected_model.pt (trọng số mô hình được chọn), final_metrics.json,
                         logs/, figures/
-report/                 BTL01_Nhom05.docx, .pdf (báo cáo nộp), section_*.md (từng mục),
+docs/                   BTL01_Nhom05_BaoCao.pdf, BTL01_Nhom05_Slide.pdf (bản PDF để đọc)
+report/                 BTL01_Nhom05.docx (báo cáo Word), section_*.md (từng mục),
                         BTL01_Nhom05.md (bản ghép), figures/
-slides/                 BTL01_Nhom05.pptx, .pdf
+slides/                 BTL01_Nhom05.pptx
 ```
 
 Mô hình được chọn (theo val MSE): 2 tầng ẩn × 16 nơ-ron, tanh, 2000 mẫu train, seed 1.

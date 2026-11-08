@@ -1231,14 +1231,16 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), việc ngày 07/11 của Trúc là xu
 
 | Hash | Message | Làm gì |
 | --- | --- | --- |
-| (điền sau khi commit) | `Xuất báo cáo và slide nộp, chốt đóng góp, ghim phiên bản — 8/11` | Báo cáo Word/PDF, slide 15 trang, `requirements.txt` ghim phiên bản, script xuất báo cáo, sửa mục 1, 2, 6, README, checklist, nhật ký. |
+| `a6b0897` | `Xuất báo cáo và slide nộp, chốt đóng góp, ghim phiên bản — 8/11` | Báo cáo Word/PDF, slide 15 trang, `requirements.txt` ghim phiên bản, script xuất báo cáo, sửa mục 1, 2, 6, README, checklist, nhật ký. |
+| (điền sau khi commit) | `Chuyển PDF sang docs/, bỏ zip và bản nháp slide khỏi git — 8/11` | Gom hai PDF vào `docs/`, sửa README, checklist, script kiểm; gỡ file zip và bản nháp slide khỏi git. |
 
 #### Kết quả
 
 File nộp:
 
-- `report/BTL01_Nhom05.docx`, `.pdf`: 24 trang gồm bìa, mục lục, nội dung chính khoảng 20 trang (trang 3 đến đầu trang 23), tài liệu tham khảo và phụ lục ở trang 23–24. 19 bảng, 11 hình trong báo cáo, 57 công thức.
-- `slides/BTL01_Nhom05.pptx`, `.pdf`: 15 slide, dựng từ bản nháp 05/11 của Nhân.
+- `report/BTL01_Nhom05.docx`, `docs/BTL01_Nhom05_BaoCao.pdf`: 24 trang gồm bìa, mục lục, nội dung chính khoảng 20 trang (trang 3 đến đầu trang 23), tài liệu tham khảo và phụ lục ở trang 23–24. 19 bảng, 11 hình trong báo cáo, 57 công thức.
+- `slides/BTL01_Nhom05.pptx`, `docs/BTL01_Nhom05_Slide.pdf`: 15 slide, dựng từ bản nháp 05/11 của Nhân.
+- Thư mục `docs/` do Trúc yêu cầu, gom hai bản PDF một chỗ để thầy dễ kiểm tra. Hai file vốn trùng tên `BTL01_Nhom05.pdf` nên đổi tên.
 - `BTL01_Nhom05_HuynhNgocTruc_3123411312.zip`: ở gốc repo, không commit file này.
 
 Quyết định của Trúc:
@@ -1321,7 +1323,7 @@ python "..\.claude\skills\dong-goi-btl01\check_submission.py"
 python -c "import pandas as pd; a=pd.read_csv('results/final/logs/rerun_A_2000_seed1.csv'); b=pd.read_csv('results/A/logs/A_2000_seed1.csv'); print((a.val_loss-b.val_loss).abs().max())"
 ```
 
-Kết quả đúng: `Tổng: 0 lỗi, 2 cảnh báo` và `0.0`. Mở `report/BTL01_Nhom05.pdf`: trang 4 có Bảng 1.2 ghi 25% mỗi người.
+Kết quả đúng: `Tổng: 0 lỗi, 2 cảnh báo` và `0.0`. Mở `docs/BTL01_Nhom05_BaoCao.pdf`: trang 4 có Bảng 1.2 ghi 25% mỗi người.
 
 #### Câu hỏi vấn đáp có thể gặp
 

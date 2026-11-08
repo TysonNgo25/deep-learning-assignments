@@ -16,7 +16,7 @@ Từ thư mục `BTL01 - Function Approximation`:
 Script [check_submission.py](check_submission.py) kiểm:
 
 - Có đủ file bắt buộc: README, requirements, config, 3 file dữ liệu, code `src/` và `experiments/`, summary A/B/C, checkpoint và `final_metrics.json`.
-- Có báo cáo `.docx` + `.pdf` trong `report/` và slide `.pptx` trong `slides/`.
+- Có báo cáo `.docx` trong `report/`, slide `.pptx` trong `slides/`, và hai bản PDF trong `docs/`.
 - Đủ số log: A 30, B 39, C 12.
 - Không còn `import tensorflow`/`keras`, không còn đường dẫn tuyệt đối trong `.py`, `.yaml`, `.ipynb`.
 - Dòng code nào vừa nhắc `test` vừa có `min`/`argmin`/`sort`/`best` thì in ra để người kiểm đọc lại (có thể là rò rỉ test).
