@@ -1,6 +1,6 @@
 # 2. Dữ liệu
 
-Nháp ngày 31/10/2026, người viết: Huỳnh Ngọc Trúc. Mọi số trong mục này lấy từ `data/stats.csv` và các hình trong `report/figures/`, sinh lại bằng `python -m src.data` rồi `python -m scripts.plot_data`.
+Mọi số trong mục này lấy từ `data/stats.csv` và các hình trong `report/figures/`, sinh lại bằng `python -m src.data` rồi `python -m scripts.plot_data`.
 
 ## 2.1. Hàm mục tiêu
 
@@ -36,7 +36,7 @@ Bảng 2.1. Ba tập dữ liệu và vai trò.
 | --- | --- | --- | --- |
 | Train pool | `data/train_pool.csv` | 2000 | Cập nhật trọng số. Thực nghiệm A lấy n dòng đầu (n = 200, 400, ..., 2000), B và C lấy 1000 dòng đầu |
 | Validation | `data/val.csv` | 500 | Early stopping, chọn checkpoint, so sánh và chọn cấu hình |
-| Test | `data/test.csv` | 100 | Chỉ đánh giá mô hình cuối cùng, không tham gia bất kỳ lựa chọn nào |
+| Test | `data/test.csv` | 100 | Không tham gia lựa chọn nào. Chỉ tính sai số ở từng lượt C (đề yêu cầu) và ở mô hình cuối |
 
 Thực nghiệm A lấy tiền tố của cùng một pool, nên tập 200 mẫu nằm trọn trong tập 400 mẫu, tập 400 nằm trọn trong tập 600, và cứ thế. Hai cấu hình A liền nhau chỉ khác nhau ở số mẫu thêm vào, phần dữ liệu chung giữ nguyên. Validation và test cố định cho mọi cấu hình của cả A, B, C.
 

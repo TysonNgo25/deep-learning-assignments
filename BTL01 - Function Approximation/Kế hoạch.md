@@ -144,12 +144,12 @@ Quy ước làm việc:
 
 Checklist trước khi nén file (ngày 7/11):
 
-- [ ] Code chạy lại từ đầu trên máy khác chỉ bằng lệnh trong README
-- [ ] Không còn `import tensorflow` / `keras` và không còn đường dẫn tuyệt đối
-- [ ] Không có bước nào dùng tập test để chọn cấu hình
-- [ ] Báo cáo đủ 6 mục, 10–20 trang, hình/bảng có số và chú thích
-- [ ] Báo cáo có bảng baseline và bảng A, B, C ghi mean ± std
-- [ ] Slide 10–15 trang, trục đồ thị có nhãn
-- [ ] Có đủ .docx, .pdf, .pptx, `requirements.txt`, `README.md`, CSV, hình, `best_model.pt`
-- [ ] Bảng thành viên, nhiệm vụ, tỷ lệ đóng góp cộng đủ 100%
-- [ ] Tên file zip theo mẫu `BTL01_Nhom_HoTen_MSSV.zip`
+- [ ] Code chạy lại từ đầu trên máy khác chỉ bằng lệnh trong README (08/11 đã thử env mới theo README trên bản sao, 18/69 log A, B; chưa thử máy khác, xem CodetoTruc.md)
+- [x] Không còn `import tensorflow` / `keras` và không còn đường dẫn tuyệt đối
+- [x] Không có bước nào dùng tập test để chọn cấu hình
+- [x] Báo cáo đủ 6 mục, 10–20 trang, hình/bảng có số và chú thích
+- [x] Báo cáo có bảng baseline và bảng A, B, C ghi mean ± std
+- [x] Slide 10–15 trang, trục đồ thị có nhãn
+- [x] Có đủ .docx, .pdf, .pptx, `requirements.txt`, `README.md`, CSV, hình, trọng số (`results/final/selected_model.pt`, không dùng tên `best_model.pt`)
+- [x] Bảng thành viên, nhiệm vụ, tỷ lệ đóng góp cộng đủ 100%
+- [x] Tên file zip theo mẫu `BTL01_Nhom_HoTen_MSSV.zip`

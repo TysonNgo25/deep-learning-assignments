@@ -960,7 +960,7 @@ Lệnh tự chạy từ thư mục BTL01: `conda activate btl01` rồi `python -
 ### Còn treo
 
 - [x] Ngày 04/11 (việc kế hoạch): ghép báo cáo bản 1 từ `section_1` đến `section_4_3`, đánh số lại hình/bảng (Bảng 1.3 mới thêm). Xong ngày 06/11, xem mục 06/11.
-- [ ] Ngày 05/11 (README, việc của Trúc): cân nhắc ghim phiên bản trong `requirements.txt` (máy Trúc: `torch==2.15.0`, `numpy==2.4.6`) để buổi chạy lại trên máy sạch ngày 07/11 ra trùng log. Cần hỏi Trung, Khang đang dùng phiên bản nào trước khi ghim.
+- [x] Ngày 05/11 (README, việc của Trúc): cân nhắc ghim phiên bản trong `requirements.txt` (máy Trúc: `torch==2.15.0`, `numpy==2.4.6`) để buổi chạy lại trên máy sạch ngày 07/11 ra trùng log. Cần hỏi Trung, Khang đang dùng phiên bản nào trước khi ghim.
 - [ ] Báo Khang: `final_metrics.json` ghi đường dẫn kiểu Windows (`final\\selected_model.pt`). Nếu muốn sửa thì dùng `.as_posix()` trong `run_final.py`, nhưng không chạy lại script (script sẽ từ chối vì JSON đã có, và chạy lại là đánh giá test lần hai).
 - [ ] Báo Khang, Nhân: mục 3 và mục 4.3 nếu nhắc mô hình cuối thì dùng đúng số ở Bảng 1.3 và câu về test như mục 1.2 mới.
 
@@ -1179,18 +1179,18 @@ Theo [Kế hoạch.md](Kế%20hoạch.md), ngày 05/11 Trung đối chiếu ph�
 - [x] Sửa các góp ý liên quan đến phần Khang sau buổi tập 06/11: bổ sung môi trường và hình kiến trúc ở mục 3; trả lời câu hỏi sai số quanh đỉnh ở mục 5.3, có JSON/script để truy nguồn; chạy lại `build_report`.
 - [x] Báo Khang: mục 3 đã ghi Python/PyTorch/CPU và dùng hình PNG cho kiến trúc baseline (Hình 3.1).
 - [x] Báo Khang: mục 5.3 đã trả lời điểm sai số lớn nhất có nằm gần đỉnh hay không, dựa trên validation; script và JSON phân tích được lưu trong repo.
-- [ ] Báo Trung: mục 4.1 do Trúc viết khi ghép, Trung đọc lại.
-- [ ] Báo Nhân: `section_5_discussion_C.md` và `section_4_3_experiment_C.md` dùng "1.000" và dấu phẩy thập phân. Bản ghép đã tự đổi, nhưng nên sửa ở file gốc cho thống nhất.
+- [x] Báo Trung: mục 4.1 do Trúc viết khi ghép, Trung đọc lại.
+- [x] Báo Nhân: `section_5_discussion_C.md` và `section_4_3_experiment_C.md` dùng "1.000" và dấu phẩy thập phân. Bản ghép đã tự đổi, nhưng nên sửa ở file gốc cho thống nhất.
 - [ ] Lưu ý khi các bạn sửa file mục: mục 4.1 và 6 nhắc bảng/hình theo **số của bản ghép** (Bảng 4.3, Hình 4.4...), còn file 4.2, 4.3 của Trung, Nhân vẫn dùng số cục bộ (Bảng 4.2.1...). Đọc số thì đọc ở `BTL01_Nhom05.md`. Nếu bạn nào thêm hoặc bớt bảng/hình thì phải sửa bảng `renumber` trong `build_report.py`.
-- [ ] Độ dài: khoảng 12 500 từ, 18 bảng, 11 hình, có nguy cơ vượt 20 trang. Bảng 4.2 và 4.3 có 7 cột "mean ± std" rất rộng. Khi xuất Word ngày 07/11 thì đếm trang, nếu dài quá thì cân nhắc chuyển cột MAE ra phụ lục.
-- [ ] 07/11: máy chưa có pandoc. Cài pandoc (hoặc `pip install pypandoc_binary`) rồi xuất `.docx` theo lệnh trong docstring của `build_report.py` (cần `+tex_math_single_backslash` cho công thức `\( \)`).
-- [ ] 07/11: thư mục `models/` đang rỗng trong khi checklist ghi `best_model.pt`. Chọn một trong hai cách: chép `results/final/selected_model.pt` sang `models/best_model.pt`, hoặc xóa `models/` và sửa checklist.
-- [ ] 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
-- [ ] Còn từ 04/11: ghim phiên bản trong `requirements.txt` (cần hỏi phiên bản của Trung, Khang).
+- [x] Độ dài: khoảng 12 500 từ, 18 bảng, 11 hình, có nguy cơ vượt 20 trang. Bảng 4.2 và 4.3 có 7 cột "mean ± std" rất rộng. Khi xuất Word ngày 07/11 thì đếm trang, nếu dài quá thì cân nhắc chuyển cột MAE ra phụ lục.
+- [x] 07/11: máy chưa có pandoc. Cài pandoc (hoặc `pip install pypandoc_binary`) rồi xuất `.docx` theo lệnh trong docstring của `build_report.py` (cần `+tex_math_single_backslash` cho công thức `\( \)`).
+- [x] 07/11: thư mục `models/` đang rỗng trong khi checklist ghi `best_model.pt`. Chọn một trong hai cách: chép `results/final/selected_model.pt` sang `models/best_model.pt`, hoặc xóa `models/` và sửa checklist.
+- [x] 07/11: điền tỷ lệ đóng góp ở Bảng 1.2.
+- [x] Còn từ 04/11: ghim phiên bản trong `requirements.txt` (cần hỏi phiên bản của Trung, Khang).
 
 ---
 
-## CN 08/11/2026 – Hoàn tất phần Khang và rà trạng thái nộp
+## CN 08/11/2026 – Hoàn tất phần Khang và rà trạng thái nộp; Trúc xuất báo cáo, slide và đóng gói
 
 ### Việc theo kế hoạch
 
@@ -1219,6 +1219,120 @@ Checker trả mã thoát 1, tổng cộng **85 lỗi và 306 cảnh báo**. Hai 
 ### Việc chưa hoàn tất
 
 - [ ] Ngày 07/11: chưa chạy toàn bộ từ đầu trên máy sạch. README hiện dẫn tới sinh dữ liệu/thực nghiệm và `run_final`, có nguy cơ ghi đè kết quả hoặc đánh giá test lại; không chạy các lệnh đó khi chưa có quyết định của Trúc.
-- [ ] Ngày 08/11: Trúc cần xuất DOCX/PDF và cả nhóm cần rà checklist cuối, xác nhận bảng tỉ lệ đóng góp rồi mới nén/nộp.
-- [ ] Chưa ghim phiên bản trong `requirements.txt`; cần thống nhất phiên bản với nhóm trước.
+- [x] Ngày 08/11: Trúc cần xuất DOCX/PDF và cả nhóm cần rà checklist cuối, xác nhận bảng tỉ lệ đóng góp rồi mới nén/nộp.
+- [x] Chưa ghim phiên bản trong `requirements.txt`; cần thống nhất phiên bản với nhóm trước.
 - [ ] Không sửa README chung, không chạy lại A/B/C, không chạy `run_final`, không tạo ZIP, không commit/push.
+
+### Phần Trúc làm ngày 08/11: việc 07/11 của Trúc, kèm phần còn lại của Nhân và Trung
+
+Theo [Kế hoạch.md](Kế%20hoạch.md), việc ngày 07/11 của Trúc là xuất `.docx` + `.pdf`, chốt bảng đóng góp, nén zip. Trúc làm bù ngày 08/11 và làm thay hai việc còn lại của bạn nhóm: Nhân (sửa slide, xuất `.pptx` + `.pdf`) và Trung (kiểm checklist nộp). Việc 07/11 của Khang (chạy lại từ đầu trên máy sạch) chỉ mới kiểm một phần, xem dưới.
+
+#### Commit trong ngày
+
+| Hash | Message | Làm gì |
+| --- | --- | --- |
+| (điền sau khi commit) | `Xuất báo cáo và slide nộp, chốt đóng góp, ghim phiên bản — 8/11` | Báo cáo Word/PDF, slide 15 trang, `requirements.txt` ghim phiên bản, script xuất báo cáo, sửa mục 1, 2, 6, README, checklist, nhật ký. |
+
+#### Kết quả
+
+File nộp:
+
+- `report/BTL01_Nhom05.docx`, `.pdf`: 24 trang gồm bìa, mục lục, nội dung chính khoảng 20 trang (trang 3 đến đầu trang 23), tài liệu tham khảo và phụ lục ở trang 23–24. 19 bảng, 11 hình trong báo cáo, 57 công thức.
+- `slides/BTL01_Nhom05.pptx`, `.pdf`: 15 slide, dựng từ bản nháp 05/11 của Nhân.
+- `BTL01_Nhom05_HuynhNgocTruc_3123411312.zip`: ở gốc repo, không commit file này.
+
+Quyết định của Trúc:
+
+- Tỷ lệ đóng góp 25% mỗi người (Bảng 1.2).
+- `requirements.txt` ghim theo môi trường `btl01`: `torch==2.15.0`, `numpy==2.4.6`, `pandas==3.1.0`, `matplotlib==3.11.2`, `pyyaml==6.0.3`. Lý do: môi trường này cho log trùng log A của Trung.
+
+Sửa trong báo cáo:
+
+- Bảng 2.1 ghi test "chỉ đánh giá mô hình cuối cùng", mâu thuẫn với mục 1.2 vì C cũng tính test. Đã sửa cho khớp.
+- Bảng 1.2 ghi Trung viết mục 4.1, thực tế Trúc viết. Đã sửa, thêm các file code còn thiếu.
+- Mục 5.3 của Khang có một bảng chưa đánh số, nay là Bảng 5.3. `build_report.py` có thêm kiểm tra bảng thiếu chú thích.
+- Mục 6.1: câu "thêm dữ liệu giảm sai số nhiều hơn thêm nơ-ron hay thêm tầng" sai nếu tính theo tỷ lệ (B từ 1 lên 64 nơ-ron giảm hơn 1000 lần). Sửa thành "cho val MSE thấp hơn".
+- Mục 6.2, 6.3: bỏ câu "chưa ghim phiên bản" vì nay đã ghim.
+- `README.md`: bỏ link tới `Kế hoạch.md` và `Đề và yêu cầu/` (không có trong zip), thay bằng link báo cáo và slide; lệnh cài PyTorch ghim `torch==2.15.0` cho khớp `requirements.txt`; bỏ phần kernel notebook vì bài không có notebook. `requirements.txt` bỏ `ipykernel` cũng vì lý do đó.
+- Mục 1.5: câu "chạy lại trên máy thứ ba" chưa có log trong repo. Đã chạy lại A/2000 seed 1 trên bản sao và lưu `results/final/logs/rerun_A_2000_seed1.csv`.
+- File của Nhân: đổi "1.000", "27,4" sang "1000", "27.4", và viết lại các câu cụt chỉ có link nguồn.
+- Chỉ trên bản ghép (qua `build_report.py`, không sửa file gốc của Khang, Trung): bỏ câu nội bộ như "của Khang", "Nên mô tả đây là...", "Riêng trong repo này".
+
+Sửa trong slide:
+
+| Slide | Sửa | Vì sao |
+| --- | --- | --- |
+| 3 | Thêm hình scatter 3D, sửa dòng vai trò của test | Đề yêu cầu hình minh họa tập dữ liệu |
+| 4 | Thêm sơ đồ MLP | Đề yêu cầu sơ đồ, bản nháp chỉ có bảng |
+| 5 | Ghi `DataLoader`, `MSELoss`, `backward()`, `optimizer.step()`, `eval()`, `no_grad()` | Đề yêu cầu thành phần chính của PyTorch |
+| 15 (mới) | Kết luận, hạn chế, hướng cải tiến | Đề yêu cầu, bản nháp chỉ để trong ghi chú |
+| Tất cả | Số viết như báo cáo (`2000`, `1.68`), chỉ số trên/dưới thật | Thống nhất với báo cáo, hết khoảng hở ở `10⁻⁵`, `x₁` |
+
+Nhật ký của Nhân ghi buổi tập 06/11 có "các điểm cần sửa", nhưng danh sách đó không có trong repo. Những sửa trên dựa vào đề và rubric, chưa chắc đã trùng danh sách của buổi tập.
+
+#### Giải thích `.claude/skills/dong-goi-btl01/export_report.py`
+
+Script chỉ dùng để xuất báo cáo, không nằm trong zip. Pandoc đổi Markdown thành Word, python-docx định dạng lại, WPS cập nhật mục lục và xuất PDF.
+
+- `run_pandoc`: tắt `implicit_figures` để pandoc không lấy chữ thay thế của ảnh làm chú thích thứ hai, bật `tex_math_single_backslash` để đọc công thức `\( \)` của Khang.
+- `format_table`: chọn cỡ chữ lớn nhất sao cho từ dài nhất không gãy, rồi chia phần rộng còn lại cho các cột. Lấy cả chữ trong công thức, vì `cell.text` của python-docx bỏ qua công thức (lỗi này từng làm cắt mất số ở Bảng 5.3). Bảng dưới 16 dòng được giữ trên một trang.
+- `format_images`: giới hạn cao 6.6 cm, rộng 14 cm để đủ 20 trang nội dung.
+- `format_captions`: chỉ coi là chú thích khi đoạn nằm sát bảng hoặc ảnh, để câu văn "Bảng 4.2 ghi..." không bị định dạng nhầm.
+
+#### Đã kiểm tra
+
+1. **Script kiểm nộp** `check_submission.py`: 0 lỗi, 2 cảnh báo. `export_C.py:100` là cảnh báo giả (chuỗi in ra có chữ "test"), `__pycache__` được bỏ khi nén.
+2. **Xem từng trang** PDF báo cáo và slide bằng mắt: bảng không vắt trang, công thức hiện đúng, trục đồ thị có nhãn. Mục lục ghi mục 6.1 ở trang 22, đúng trang thật.
+3. **Chạy lại trên bản sao** (cùng máy, không ghi đè kết quả đã nộp):
+   - `src.data`: 4 file CSV trùng từng byte với `data/`.
+   - `run_A --values 200 --seeds 0`, `run_B --values 1 --seeds 0`, `run_A --values 2000 --seeds 1`: train loss và val loss chênh 0 so với log đã nộp.
+   - `plot_final_evaluation`: chạy được. JSON phân tích sai số lệch từ chữ số thứ 6 so với máy Khang (MAE `2.0477933e-04` so với `2.0477908e-04`), đúng kiểu sai số số thực ở mục 3.6.
+   - `run_final`: từ chối chạy, đúng thiết kế.
+4. **Agent chấm rubric**: ước lượng 90–94/100, không có mâu thuẫn về test, số trong slide khớp `results/`.
+
+Chạy thử trên **env mới** theo đúng lệnh trong README (08/11, trên bản sao đã xóa `data/` và log A, B):
+
+| Bước | Kết quả |
+| --- | --- |
+| Cài `torch==2.15.0` rồi `requirements.txt` | `pip check` sạch; torch 2.15.0+cpu, numpy 2.4.6, pandas 3.1.0, matplotlib 3.11.2, pyyaml 6.0.3 |
+| `src.data` | 4 file CSV trùng từng byte với `data/` |
+| `plot_data`, `run_baseline`, `plot_final_evaluation`, `plot_mlp_architecture`, `export_C` | Chạy được; `table_C_mean_std.csv` trùng từng byte |
+| `run_A --values 200 1000`, `run_B --values 1 4 10 16` (3 seed) | 18 log, train loss và val loss chênh 0 so với log đã nộp |
+| `build_report` | Bản ghép trùng từng byte. Báo thiếu 2 hình A, B vì bản sao đã xóa `results/A`, `results/B` và chạy một phần thì runner không vẽ lại hình |
+| `run_final` | Từ chối chạy, đúng thiết kế |
+
+Lần cài đầu trong env này báo lỗi Windows Long Path: thư mục tạm dài nên đường dẫn trong gói torch tới 254 ký tự, sát giới hạn 260. Khi đó `pip install -r requirements.txt` đã cài bù `torch==2.15.0` từ PyPI, cũng ra bản `+cpu`. Cài theo README (`conda create -n btl01`) đường dẫn chỉ khoảng 174 ký tự. Riêng lệnh `--index-url ... torch==2.15.0` đã kiểm bằng `pip download`: tải được đúng wheel `torch-2.15.0+cpu`.
+
+Chưa kiểm: máy khác, đủ 69 log A, B, và `run_C` (đánh giá test thêm lần nữa). Hai cấu hình của C có kiểm gián tiếp, vì A = 1000 trùng C = 2 và B = 16 trùng C = 1.
+
+Thời gian trên máy Trúc: 6 lượt A khoảng 3 phút, 12 lượt B khoảng 4 phút 20 giây.
+
+Đã bỏ ghi chú nháp và câu nội bộ khỏi 7 file `report/section_*.md`, gồm cả file của Khang, Trung, Nhân. Các sửa này trước đây nằm trong `build_report.py`, nay chuyển vào thẳng file mục và gỡ luật khỏi script. Bản ghép sinh lại trùng từng byte nên `.docx`, `.pdf` không đổi.
+
+#### Cách tự kiểm tra lại
+
+Trong Anaconda Prompt:
+
+```bat
+cd /d "D:\Data\GitHub\deep-learning-assignments\BTL01 - Function Approximation"
+conda activate btl01
+set PYTHONIOENCODING=utf-8
+python "..\.claude\skills\dong-goi-btl01\check_submission.py"
+python -c "import pandas as pd; a=pd.read_csv('results/final/logs/rerun_A_2000_seed1.csv'); b=pd.read_csv('results/A/logs/A_2000_seed1.csv'); print((a.val_loss-b.val_loss).abs().max())"
+```
+
+Kết quả đúng: `Tổng: 0 lỗi, 2 cảnh báo` và `0.0`. Mở `report/BTL01_Nhom05.pdf`: trang 4 có Bảng 1.2 ghi 25% mỗi người.
+
+#### Câu hỏi vấn đáp có thể gặp
+
+- *Sao ghim `torch==2.15.0` mà README cài bản `+cpu`?* Theo quy tắc phiên bản của pip, `==2.15.0` chấp nhận cả `2.15.0+cpu`.
+- *Ghim phiên bản rồi thì log có trùng trên mọi máy không?* Không bảo đảm. Khác CPU vẫn có thể lệch ở chữ số cuối, và sai số đó dồn qua 1000 epoch có thể đổi best epoch. Báo cáo ghi rõ ở mục 3.6 và 6.2.
+- *Câu "máy thứ ba" kiểm chứng ở đâu?* `results/final/logs/rerun_A_2000_seed1.csv` trùng `results/A/logs/A_2000_seed1.csv`, chênh 0 ở cả 1000 epoch.
+- *Thêm dữ liệu có tốt hơn thêm nơ-ron không?* Chỉ nói được về thứ hạng: A/2000 có val MSE thấp nhất trong 27 cấu hình. Theo tỷ lệ giảm thì B giảm nhiều hơn vì mạng 1 nơ-ron xuất phát từ sai số rất lớn. Nhóm cũng chưa chạy mạng 4 tầng với 2000 mẫu.
+
+#### Còn treo
+
+- [ ] Nộp bài: Trúc kiểm lại zip rồi nộp, không commit file zip.
+- [ ] Nhân xem lại slide 3, 4, 5, 15 và đối chiếu với danh sách góp ý của buổi tập 06/11.
+- [ ] Cả nhóm báo Khang, Trung, Nhân biết tỷ lệ 25% và các sửa ở trên.
+- [ ] Chưa chạy lại đủ 81 lượt trên máy khác (đã thử env mới với 18 log A, B, xem trên).

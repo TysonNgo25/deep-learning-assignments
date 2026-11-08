@@ -49,6 +49,7 @@ EXCLUDE = {
     "CodetoTruc.md",
     "CodetoNhan.md",
     "tra_loi_van_dap_K.md",
+    "models",  # rỗng; trọng số mô hình chọn nằm ở results/final/selected_model.pt
 }
 SKIP_PARTS = {"__pycache__", ".ipynb_checkpoints", ".git", ".claude"}
 SKIP_SUFFIXES = {".pyc", ".pyo", ".zip"}
@@ -143,6 +144,8 @@ def main() -> int:
                 continue
             rel = p.relative_to(root)
             if SKIP_PARTS.intersection(rel.parts) or p.suffix in SKIP_SUFFIXES:
+                continue
+            if rel.name.startswith("~$") or "_nhap_" in rel.name:
                 continue
             if rel.parts[0] in EXCLUDE:
                 continue

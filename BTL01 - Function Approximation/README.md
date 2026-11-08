@@ -1,6 +1,6 @@
 # BTL01 – Xấp xỉ hàm Gaussian 2 chiều bằng MLP (PyTorch) · Nhóm 5
 
-Kế hoạch và phân vai: [Kế hoạch.md](Kế%20hoạch.md). Đề bài: [Đề và yêu cầu/](Đề%20và%20yêu%20cầu/).
+Bài tập lớn 01, học phần Học sâu. Báo cáo: [report/BTL01_Nhom05.pdf](report/BTL01_Nhom05.pdf). Slide: [slides/BTL01_Nhom05.pptx](slides/BTL01_Nhom05.pptx).
 
 ## Cài môi trường
 
@@ -10,9 +10,8 @@ Dùng Anaconda Prompt (hoặc PowerShell đã `conda init`), đứng ở thư m�
 conda create -n btl01 python=3.11 -y
 conda activate btl01
 # Máy không có GPU NVIDIA: cài PyTorch bản CPU trước (nhẹ hơn nhiều)
-pip install --index-url https://download.pytorch.org/whl/cpu torch
+pip install --index-url https://download.pytorch.org/whl/cpu torch==2.15.0
 pip install -r requirements.txt
-python -m ipykernel install --user --name btl01 --display-name "Python (btl01)"
 ```
 
 Kiểm tra:
@@ -20,8 +19,6 @@ Kiểm tra:
 ```powershell
 python -c "import torch, numpy, pandas, matplotlib, yaml; print(torch.__version__)"
 ```
-
-Mở notebook thì chọn kernel **Python (btl01)**.
 
 ## Cấu trúc thư mục
 
@@ -37,8 +34,9 @@ experiments/            run_A.py, run_B.py, run_C.py, common.py, export_C.py
 results/A|B|C/          logs/*.csv, figures/*.png, summary.csv
 results/final/          selected_model.pt (trọng số mô hình được chọn), final_metrics.json,
                         logs/, figures/
-report/                 section_*.md (từng mục), BTL01_Nhom05.md (bản ghép), figures/
-slides/                 file .pptx của nhóm
+report/                 BTL01_Nhom05.docx, .pdf (báo cáo nộp), section_*.md (từng mục),
+                        BTL01_Nhom05.md (bản ghép), figures/
+slides/                 BTL01_Nhom05.pptx, .pdf
 ```
 
 Mô hình được chọn (theo val MSE): 2 tầng ẩn × 16 nơ-ron, tanh, 2000 mẫu train, seed 1.
@@ -60,8 +58,11 @@ python -m experiments.run_C             # 4 độ sâu x 3 seed -> results/C/
 python -m experiments.export_C          # kiểm 12 log C, xuất bảng mean ± std
 python -m scripts.run_final             # mô hình cuối -> results/final/ (xem lưu ý dưới)
 python -m scripts.plot_final_evaluation # hình y–ŷ và bề mặt -> results/final/figures/
+python -m scripts.plot_mlp_architecture # sơ đồ kiến trúc -> report/figures/
 python -m scripts.build_report          # ghép báo cáo -> report/BTL01_Nhom05.md
 ```
+
+Các lệnh sinh dữ liệu, runner A/B/C và `plot_final_evaluation` ghi đè file trong `data/` và `results/`. Bài nộp đã có sẵn kết quả, nên muốn thử chạy lại thì chép thư mục này sang chỗ khác rồi chạy trên bản sao. Bản ghim trong `requirements.txt` là môi trường đã kiểm cho log trùng với log A (Python 3.11, torch 2.15.0 bản CPU).
 
 `scripts/run_final.py` từ chối chạy nếu `results/final/final_metrics.json` đã có, để tập
 test không bị đánh giá lần thứ hai. `build_report.py` in `PROBLEMS: 0` khi số bảng/hình
@@ -86,4 +87,5 @@ cùng các hình của bản chạy đầy đủ:
 ```powershell
 python -m experiments.run_A --values 200 400 --seeds 0
 python -m experiments.run_B --values 1 4 10 --seeds 0
+python -m experiments.run_C --values 1 2 --seeds 0
 ```

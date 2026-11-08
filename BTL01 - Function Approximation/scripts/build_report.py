@@ -1,7 +1,6 @@
 """Ghép các file report/section_*.md thành một báo cáo report/BTL01_Nhom05.md.
 
 Các file mục của từng người giữ nguyên. Mọi chỉnh sửa chỉ áp lên bản ghép:
-- bỏ dòng ghi chú "Nháp ngày ..., người viết: ...",
 - đổi tiêu đề cho khớp bố cục 6 mục của đề,
 - đánh số lại bảng/hình theo mục (Bảng 4.1, Hình 4.1, ...), thêm chú thích còn thiếu,
 - đổi link giữa các file mục thành chữ ("mục 4.2"), link tới file kết quả thành đường dẫn.
@@ -31,7 +30,7 @@ author:
   - Phạm Trần Minh Khang (3123411143)
   - Tạ Quang Trung (3123411318)
   - Ngô Nguyễn Thành Nhân (3123411205)
-date: "Bản ghép 1, 06/11/2026"
+date: "Tháng 11 năm 2026"
 ---
 """
 
@@ -49,8 +48,6 @@ SECTION_NAMES = {
     "section_6_conclusion.md": "mục 6",
 }
 
-DRAFT_NOTE = r"^Nháp ngày [^\n]*?người viết: [^.\n]+(?:\([^)\n]*\))?\.[ ]?"
-
 # Nhân viết số kiểu "1.000 mẫu", "27,4 lần"; các mục khác dùng dấu chấm thập phân.
 VN_NUMBERS = [(r"\b(\d)\.000\b", r"\g<1>000"), (r"(\d),(\d)", r"\1.\2")]
 
@@ -58,16 +55,15 @@ VN_NUMBERS = [(r"\b(\d)\.000\b", r"\g<1>000"), (r"(\d),(\d)", r"\1.\2")]
 PARTS = [
     {
         "file": "section_1_intro.md",
-        "subs": [(r"^Nháp ngày [^\n]*\n\n", "")],
+        "subs": [],
     },
     {
         "file": "section_2_data.md",
-        "subs": [(DRAFT_NOTE, "")],
+        "subs": [],
     },
     {
         "file": "section_3_model.md",
         "subs": [
-            (DRAFT_NOTE, ""),
             (r"Kiến trúc baseline:\n", "Hình 3.1 là sơ đồ kiến trúc baseline.\n"),
             (
                 r"(!\[[^\]]*\]\([^)]+\)\n)",
@@ -87,13 +83,12 @@ PARTS = [
     },
     {
         "file": "section_4_1_setup.md",
-        "subs": [(DRAFT_NOTE, "")],
+        "subs": [],
     },
     {
         "file": "section_4_2_experiments_AB.md",
         "demote": 1,
         "subs": [
-            (r"^Nháp ngày 03/11/2026, phần phụ trách của Tạ Quang Trung\. ", ""),
             (
                 r"Các tham số khác giữ nguyên để so sánh tác động của biến đang khảo sát\.\n\n",
                 "Các tham số khác giữ nguyên để so sánh tác động của biến đang khảo sát. "
@@ -119,10 +114,6 @@ PARTS = [
         "file": "section_4_3_experiment_C.md",
         "demote": 1,
         "subs": [
-            (
-                r"^Nháp ngày [^\n]*\n",
-                "Bảng kết quả đầy đủ và liên kết tới 12 log nằm ở `results/C/table_C_mean_std.md`.\n",
-            ),
             *VN_NUMBERS,
             (
                 r"Các tham số còn lại giữ theo baseline đã chốt\.\n",
@@ -195,13 +186,18 @@ PARTS = [
                 "### 5.3.2. So sánh bề mặt\n\nHình 5.2 đặt hai bề mặt cạnh nhau trên cùng thang trục.\n\n",
             ),
             (r"tại 6400 tọa độ là:\n\n", "tại 6400 tọa độ ghi ở Bảng 5.2.\n\nBảng 5.2. Sai số trên lưới 80 × 80.\n\n"),
+            (
+                r"\n(\| Vùng trên validation)",
+                r"\nBảng 5.3 ghi sai số theo hai vùng mật độ.\n\n"
+                r"Bảng 5.3. Sai số của checkpoint cuối theo vùng mật độ trên validation.\n\n\1",
+            ),
             (r"^## Kết luận và giới hạn", "### 5.3.3. Kết luận và giới hạn"),
             (r"^## Tái tạo hình", "### 5.3.4. Tái tạo hình"),
         ],
     },
     {
         "file": "section_6_conclusion.md",
-        "subs": [(DRAFT_NOTE, "")],
+        "subs": [],
     },
 ]
 
@@ -283,6 +279,15 @@ def check(lines: list[str]) -> list[str]:
             problems.append(f"{kind} {label}: không được nhắc trong văn")
         elif mentions[0] > anchor:
             problems.append(f"{kind} {label}: lần nhắc đầu (dòng {mentions[0] + 1}) nằm sau hình/bảng (dòng {anchor + 1})")
+
+    in_code = False
+    for i, line in enumerate(lines):
+        if line.startswith("```"):
+            in_code = not in_code
+        if not in_code and line.startswith("|") and not lines[i - 1].startswith("|"):
+            prev = next((x for x in reversed(lines[:i]) if x.strip()), "")
+            if not CAPTION.match(prev):
+                problems.append(f"dòng {i + 1}: bảng chưa có chú thích đánh số ({line[:40]})")
 
     for i, line in enumerate(lines):
         for kind, label in LABEL.findall(line):

@@ -2,7 +2,7 @@
 
 ## 4.1. Thiết lập chung và quy trình đánh giá
 
-Nháp ngày 06/11/2026, người viết: Huỳnh Ngọc Trúc (khi ghép báo cáo bản 1). Phần thiết lập riêng của từng nhóm nằm ở đầu mục 4.2 (Bảng 4.1) và 4.3 (Bảng 4.4).
+Phần thiết lập riêng của từng nhóm nằm ở đầu mục 4.2 (Bảng 4.1) và 4.3 (Bảng 4.4).
 
 Cả ba nhóm thực nghiệm dùng chung baseline ở Bảng 3.1: Adam [4] với learning rate 10⁻³, batch 32, tối đa 1000 epoch, dừng sớm khi val loss 100 epoch liên tiếp không giảm [3], kích hoạt tanh, đầu ra tuyến tính. Các runner `run_A.py`, `run_B.py`, `run_C.py` đều đọc tham số từ `configs/baseline.yaml` và chỉ thay đúng yếu tố đang khảo sát (Bảng 1.1). Validation 500 điểm và test 100 điểm giữ nguyên cho mọi lượt chạy.
 

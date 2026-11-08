@@ -6,7 +6,7 @@ author:
   - Phạm Trần Minh Khang (3123411143)
   - Tạ Quang Trung (3123411318)
   - Ngô Nguyễn Thành Nhân (3123411205)
-date: "Bản ghép 1, 06/11/2026"
+date: "Tháng 11 năm 2026"
 ---
 
 # 1. Giới thiệu
@@ -53,12 +53,12 @@ Bảng 1.2. Thành viên, nhiệm vụ và tỷ lệ đóng góp.
 
 | Thành viên | MSSV | Vai trò | Code phụ trách | Phần báo cáo | Đóng góp |
 | --- | --- | --- | --- | --- | --- |
-| Huỳnh Ngọc Trúc | 3123411312 | Trưởng nhóm, dữ liệu, ghép báo cáo | `src/data.py`, `scripts/plot_data.py`, `scripts/run_baseline.py`, `README.md`, `requirements.txt` | 1, 2, 6 + ghép, định dạng | [...] |
-| Phạm Trần Minh Khang | 3123411143 | Lõi PyTorch | `src/model.py`, `src/train.py`, `src/evaluate.py` | 3 + đánh giá chung | [...] |
-| Tạ Quang Trung | 3123411318 | Thực nghiệm A, B | `experiments/run_A.py`, `experiments/run_B.py`, `experiments/common.py` | 4.1, 4.2 + thảo luận A, B | [...] |
-| Ngô Nguyễn Thành Nhân | 3123411205 | Thực nghiệm C, slide | `experiments/run_C.py`, `src/plots.py` | 4.3 + thảo luận C, hạn chế | [...] |
+| Huỳnh Ngọc Trúc | 3123411312 | Trưởng nhóm, dữ liệu, ghép báo cáo | `src/data.py`, `scripts/plot_data.py`, `scripts/run_baseline.py`, `scripts/build_report.py`, `README.md`, `requirements.txt` | 1, 2, 4.1, 6 + ghép, định dạng | 25% |
+| Phạm Trần Minh Khang | 3123411143 | Lõi PyTorch | `src/model.py`, `src/train.py`, `src/evaluate.py`, `scripts/run_final.py`, `scripts/plot_final_evaluation.py`, `scripts/plot_mlp_architecture.py` | 3 + đánh giá chung | 25% |
+| Tạ Quang Trung | 3123411318 | Thực nghiệm A, B | `experiments/run_A.py`, `experiments/run_B.py`, `experiments/common.py` | 4.2 + thảo luận A, B | 25% |
+| Ngô Nguyễn Thành Nhân | 3123411205 | Thực nghiệm C, slide | `experiments/run_C.py`, `experiments/export_C.py`, `src/plots.py` | 4.3 + thảo luận C, hạn chế; dựng slide | 25% |
 
-[Tỷ lệ đóng góp chốt ngày 07/11 theo việc thực tế, tổng 100%.]
+Tổng tỷ lệ đóng góp của bốn thành viên là 100%.
 
 ## 1.5. Kết quả chính
 
@@ -73,7 +73,7 @@ Bảng 1.3. Sai số của mô hình cuối (checkpoint ở epoch 980). Nguồn:
 
 RMSE trên test bằng khoảng 0.11% giá trị đỉnh 0.269 của hàm. Con số test cần đọc kèm một giới hạn. Runner C đã tính sai số trên chính 100 điểm test này trước khi nhóm chọn mô hình, nên đây là điểm đo trên một tập nhóm đã từng xem kết quả, không phải tập test hoàn toàn mới. Sai số test của C không tham gia vào việc chọn cấu hình.
 
-Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code.
+Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code. Log của lần chạy lại lưu ở `results/final/logs/rerun_A_2000_seed1.csv`.
 
 Ở A, val MSE giảm đều qua cả mười cỡ mẫu, từ 1.22 × 10⁻⁵ với 200 mẫu xuống 1.68 × 10⁻⁷ với 2000 mẫu, khoảng 72.5 lần. Ở B, val MSE giảm từ 2.92 × 10⁻³ với 1 nơ-ron xuống 2.81 × 10⁻⁶ với 64 nơ-ron và chững lại ở 9, 10 nơ-ron. Train và val MSE của B sát nhau ở mọi độ rộng, chưa cho thấy quá khớp rõ ràng. Ở C, tầng ẩn thứ hai đưa val MSE từ 1.19 × 10⁻⁵ xuống 4.35 × 10⁻⁷. Tầng thứ ba và thứ tư không giảm thêm rõ rệt, trong khi thời gian train trung bình tăng từ 15.2 lên 25.7 giây.
 
@@ -123,7 +123,7 @@ Bảng 2.1. Ba tập dữ liệu và vai trò.
 | --- | --- | --- | --- |
 | Train pool | `data/train_pool.csv` | 2000 | Cập nhật trọng số. Thực nghiệm A lấy n dòng đầu (n = 200, 400, ..., 2000), B và C lấy 1000 dòng đầu |
 | Validation | `data/val.csv` | 500 | Early stopping, chọn checkpoint, so sánh và chọn cấu hình |
-| Test | `data/test.csv` | 100 | Chỉ đánh giá mô hình cuối cùng, không tham gia bất kỳ lựa chọn nào |
+| Test | `data/test.csv` | 100 | Không tham gia lựa chọn nào. Chỉ tính sai số ở từng lượt C (đề yêu cầu) và ở mô hình cuối |
 
 Thực nghiệm A lấy tiền tố của cùng một pool, nên tập 200 mẫu nằm trọn trong tập 400 mẫu, tập 400 nằm trọn trong tập 600, và cứ thế. Hai cấu hình A liền nhau chỉ khác nhau ở số mẫu thêm vào, phần dữ liệu chung giữ nguyên. Validation và test cố định cho mọi cấu hình của cả A, B, C.
 
@@ -277,7 +277,7 @@ Thời gian vòng lặp được đo bằng `time.perf_counter()`: bao gồm cá
 
 ## 3.4. Validation, test và đánh giá
 
-Validation được dùng để theo dõi quá trình học, dừng sớm và chọn checkpoint/cấu hình. Tập test không tham gia cập nhật trọng số hoặc lựa chọn mô hình. Riêng trong repo này, runner C đã tính metric test cho cả 12 lượt theo yêu cầu báo cáo thực nghiệm C trước khi chốt mô hình cuối; vì vậy kết quả test của checkpoint cuối phải được trình bày với lưu ý rằng tập test đã được truy vấn trước, không mô tả là một đánh giá hoàn toàn độc lập.
+Validation được dùng để theo dõi quá trình học, dừng sớm và chọn checkpoint/cấu hình. Tập test không tham gia cập nhật trọng số hoặc lựa chọn mô hình. Riêng runner C đã tính metric test cho cả 12 lượt theo yêu cầu báo cáo thực nghiệm C trước khi chốt mô hình cuối; vì vậy kết quả test của checkpoint cuối phải được trình bày với lưu ý rằng tập test đã được truy vấn trước, không mô tả là một đánh giá hoàn toàn độc lập.
 
 Module `src/evaluate.py` cung cấp MSE, MAE và RMSE:
 
@@ -313,7 +313,7 @@ Các script A/B/C gọi lại lõi huấn luyện với cấu hình tương ứn
 
 ## 3.6. Môi trường thực thi
 
-Môi trường kiểm tra của Khang dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.
+Môi trường kiểm tra dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.
 
 # 4. Thực nghiệm
 
@@ -407,7 +407,7 @@ Thực nghiệm B giữ nguyên một tầng ẩn và 1000 mẫu train, chỉ th
 
 Validation MSE giảm rõ từ 2.915716e-03 ở width 1 xuống 2.810769e-06 ở width 64. Width 1 có sai số lớn trên cả train và validation, phù hợp với hiện tượng thiếu khả năng biểu diễn của tầng ẩn quá hẹp. Với các width 16, 32 và 64, metric tiếp tục cải thiện trong nhóm cấu hình đã thử.
 
-Trong khoảng width 1–10, xu hướng không đơn điệu: validation MSE tăng từ width 8 sang width 9 và 10. Các lượt width 9 có độ lệch chuẩn lớn giữa seed; do đó không nên kết luận biến động này là quá khớp chỉ từ một bảng. Train MSE của width 9 và 10 cũng không thấp hơn width 8, nên dữ liệu hiện tại chưa cho thấy mẫu hình điển hình “train error giảm nhưng validation error tăng”. Nên mô tả đây là biến động theo seed/huấn luyện và tránh khẳng định quá khớp nếu chưa có thêm bằng chứng.
+Trong khoảng width 1–10, xu hướng không đơn điệu: validation MSE tăng từ width 8 sang width 9 và 10. Các lượt width 9 có độ lệch chuẩn lớn giữa seed; do đó không nên kết luận biến động này là quá khớp chỉ từ một bảng. Train MSE của width 9 và 10 cũng không thấp hơn width 8, nên dữ liệu hiện tại chưa cho thấy mẫu hình điển hình “train error giảm nhưng validation error tăng”. Nhóm xem đây là biến động theo seed/huấn luyện và không khẳng định quá khớp khi chưa có thêm bằng chứng.
 
 ![MSE train/validation và metric validation theo độ rộng tầng ẩn](../results/B/figures/B_metrics_vs_neurons.png)
 
@@ -522,9 +522,9 @@ Thời gian được đo bằng `time.perf_counter()` quanh vòng train, gồm �
 
 Kết quả cho thấy thêm tầng từ C=1 lên C=2 cải thiện mạnh khả năng xấp xỉ trong baseline đang xét. Tăng thêm độ sâu không bảo đảm giảm sai số: C=3 kém hơn C=2 ở các sai số trung bình, còn C=4 có validation MSE trung bình thấp hơn nhưng biến động lớn hơn. C=2 là cấu hình có độ dao động thấp trong ba seed và thời gian trung bình thấp hơn C=4; C=4 cần được cân nhắc cùng độ ổn định và chi phí khi nhóm chọn mô hình bằng validation.
 
-Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Số tham số tăng cùng độ sâu, số seed ít và early stopping làm số epoch khác nhau. Nhóm đã chọn cấu hình A với 2000 mẫu train theo validation MSE. Đánh giá mô hình cuối (mục 5.3).
+Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Số tham số tăng cùng độ sâu, số seed ít và early stopping làm số epoch khác nhau. Nhóm đã chọn cấu hình A với 2000 mẫu train theo validation MSE. Đánh giá mô hình cuối nằm ở mục 5.3.
 
-Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghiệm C. Vì kết quả test đã được xem, báo cáo cần mô tả đúng quy trình này; không mô tả tập test hiện tại là một tập hoàn toàn chưa từng được xem trước bước đánh giá mô hình cuối. Nếu cần một đánh giá cuối độc lập hơn, nhóm cần duyệt protocol riêng trước khi thực hiện.
+Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghiệm C. Vì kết quả test đã được xem, tập test hiện tại không phải tập hoàn toàn chưa từng được xem trước bước đánh giá mô hình cuối. Muốn có đánh giá cuối độc lập hơn thì cần một protocol riêng, định trước khi thực hiện.
 
 ### Nguồn số liệu
 
@@ -532,9 +532,9 @@ Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghi�
 - Metric và thời gian từng lượt: `results/C/summary.csv`.
 - Bảng mean/std đầy đủ: `results/C/table_C_mean_std.csv`, tính lại bằng `python -m experiments.export_C`.
 - Log loss, config và best epoch: bảng liên kết 12 log (`results/C/table_C_mean_std.md`). Mỗi dòng cấu hình trong các bảng tổng hợp từ ba file `C_<tầng>_seed0.csv`, `C_<tầng>_seed1.csv`, `C_<tầng>_seed2.csv`.
-- Hình bổ sung để dùng khi ghép: test RMSE (`results/C/figures/C_test_rmse.png`), RMSE và thời gian (`results/C/figures/C_error_and_time.png`).
+- Hình bổ sung: test RMSE (`results/C/figures/C_test_rmse.png`), RMSE và thời gian (`results/C/figures/C_error_and_time.png`).
 
-Đã đối chiếu config và best validation epoch trong log, tính lại mean/std từ summary. Các lượt C gốc không lưu dự đoán/checkpoint từng mô hình, nên metric train/test trong summary chưa được tính lại độc lập từ trọng số trong bước viết nháp này.
+Đã đối chiếu config và best validation epoch trong log, tính lại mean/std từ summary. Các lượt C gốc không lưu dự đoán/checkpoint từng mô hình, nên metric train/test trong summary chưa được tính lại độc lập từ trọng số.
 
 # 5. Thảo luận
 
@@ -570,21 +570,21 @@ Việc so sánh và lựa chọn trong A/B chỉ dựa trên validation. Các s�
 
 ### 5.2.1. Ảnh hưởng của số tầng ẩn
 
-Khi tăng từ một lên hai tầng ẩn, MSE trung bình trên train giảm từ 9.281 × 10⁻⁶ xuống 4.136 × 10⁻⁷ và trên validation giảm từ 1.193 × 10⁻⁵ xuống 4.351 × 10⁻⁷. Mức giảm khoảng 27.4 lần trên validation cho thấy thêm tầng thứ hai có ích rõ rệt trong thiết lập 1000 mẫu train và 16 nơ-ron mỗi tầng. Sai số cao đồng thời trên train và validation của mạng một tầng phù hợp với khả năng xấp xỉ còn hạn chế ở cấu hình này. Ba lượt đều chạm 1000 epoch, vì vậy giới hạn tối ưu cũng có thể góp phần vào kết quả. Bảng kết quả thực nghiệm C (`results/C/table_C_mean_std.md`).
+Khi tăng từ một lên hai tầng ẩn, MSE trung bình trên train giảm từ 9.281 × 10⁻⁶ xuống 4.136 × 10⁻⁷ và trên validation giảm từ 1.193 × 10⁻⁵ xuống 4.351 × 10⁻⁷. Mức giảm khoảng 27.4 lần trên validation cho thấy thêm tầng thứ hai có ích rõ rệt trong thiết lập 1000 mẫu train và 16 nơ-ron mỗi tầng. Sai số cao đồng thời trên train và validation của mạng một tầng phù hợp với khả năng xấp xỉ còn hạn chế ở cấu hình này. Ba lượt đều chạm 1000 epoch, vì vậy giới hạn tối ưu cũng có thể góp phần vào kết quả. Số liệu đầy đủ nằm ở bảng kết quả C (`results/C/table_C_mean_std.md`).
 
-Khi tăng tiếp độ sâu, validation MSE trung bình tăng ở ba tầng rồi giảm ở bốn tầng. Cấu hình bốn tầng đạt 4.098 × 10⁻⁷, thấp hơn khoảng 5.8% so với hai tầng. Độ lệch chuẩn của bốn tầng là 1.852 × 10⁻⁷, khoảng 7.6 lần so với hai tầng. Với ba seed, chênh lệch trung bình này chỉ mô tả các lượt đã chạy. Hai tầng ít dao động hơn giữa các seed và mất trung bình 21.55 giây, so với 25.72 giây ở bốn tầng trên máy chạy thí nghiệm. Kết quả từng seed (`results/C/summary.csv`).
+Khi tăng tiếp độ sâu, validation MSE trung bình tăng ở ba tầng rồi giảm ở bốn tầng. Cấu hình bốn tầng đạt 4.098 × 10⁻⁷, thấp hơn khoảng 5.8% so với hai tầng. Độ lệch chuẩn của bốn tầng là 1.852 × 10⁻⁷, khoảng 7.6 lần so với hai tầng. Với ba seed, chênh lệch trung bình này chỉ mô tả các lượt đã chạy. Hai tầng ít dao động hơn giữa các seed và mất trung bình 21.55 giây, so với 25.72 giây ở bốn tầng trên máy chạy thí nghiệm. Kết quả từng seed nằm ở `results/C/summary.csv`.
 
 ### 5.2.2. Hội tụ và dấu hiệu quá khớp
 
-Cấu hình một và hai tầng chạy đủ 1000 epoch ở cả ba seed. Hai lượt của cấu hình ba tầng và hai lượt của cấu hình bốn tầng dừng sớm. Chẳng hạn, cấu hình ba tầng ở seed 0 đạt validation loss tốt nhất tại epoch 437 rồi dừng tại epoch 537. Do số seed còn chạy thay đổi ở cuối đường loss, cần xem từng log khi so sánh các đoạn cuối của biểu đồ. Số epoch thực chạy cũng ảnh hưởng đến tổng thời gian, nên thời gian trong bảng không đo trực tiếp chi phí mỗi epoch. Đường loss (`results/C/figures/C_loss_curves.png`) · Đối chiếu 12 log (`results/C/table_C_mean_std.md`).
+Cấu hình một và hai tầng chạy đủ 1000 epoch ở cả ba seed. Hai lượt của cấu hình ba tầng và hai lượt của cấu hình bốn tầng dừng sớm. Chẳng hạn, cấu hình ba tầng ở seed 0 đạt validation loss tốt nhất tại epoch 437 rồi dừng tại epoch 537. Do số seed còn chạy thay đổi ở cuối đường loss, cần xem từng log khi so sánh các đoạn cuối của biểu đồ. Số epoch thực chạy cũng ảnh hưởng đến tổng thời gian, nên thời gian trong bảng không đo trực tiếp chi phí mỗi epoch. Đường loss ở Hình 4.4, đối chiếu 12 log nằm ở bảng kết quả C (`results/C/table_C_mean_std.md`).
 
-Từ hai lên ba tầng, cả train MSE và validation MSE trung bình cùng tăng. Từ ba lên bốn tầng, cả hai cùng giảm. Kết quả hiện có chưa cho thấy mẫu hình train MSE giảm trong khi validation MSE tăng dần theo độ sâu. Số tham số tăng từ 65 lên 881 khi giữ cố định độ rộng và tăng số tầng, nên chưa thể tách ảnh hưởng của độ sâu khỏi ảnh hưởng của năng lực biểu diễn và quá trình tối ưu. Mục 4.3.
+Từ hai lên ba tầng, cả train MSE và validation MSE trung bình cùng tăng. Từ ba lên bốn tầng, cả hai cùng giảm. Kết quả hiện có chưa cho thấy mẫu hình train MSE giảm trong khi validation MSE tăng dần theo độ sâu. Số tham số tăng từ 65 lên 881 khi giữ cố định độ rộng và tăng số tầng, nên chưa thể tách ảnh hưởng của độ sâu khỏi ảnh hưởng của năng lực biểu diễn và quá trình tối ưu. Xem thêm mục 4.3.
 
 ### 5.2.3. Giới hạn và hướng cải tiến
 
 Các kết quả mô tả bài toán Gaussian hai chiều trên miền và tập mẫu đã chọn. Một lượt khảo sát tiếp theo có thể tăng số seed để ước lượng biến động tốt hơn, so sánh các kiến trúc có số tham số gần nhau và ghi thời gian mỗi epoch bên cạnh tổng thời gian. Lưu checkpoint cùng dự đoán theo seed sẽ giúp đối chiếu trực tiếp những lượt có sai số khác biệt.
 
-Nhóm đã chốt checkpoint của thực nghiệm A với 2000 mẫu train dựa trên validation. Các chỉ số test trong mục C dùng để mô tả những lượt đã chạy. Tập test đó đã được truy vấn trong C, nên khi trình bày kết quả checkpoint cuối cần ghi rõ lịch sử sử dụng tập dữ liệu này. Kết quả checkpoint cuối (`results/final/final_metrics.json`) · Đánh giá mô hình cuối (mục 5.3).
+Nhóm đã chốt checkpoint của thực nghiệm A với 2000 mẫu train dựa trên validation. Các chỉ số test trong mục C dùng để mô tả những lượt đã chạy. Tập test đó đã được truy vấn trong C, nên khi trình bày kết quả checkpoint cuối cần ghi rõ lịch sử sử dụng tập dữ liệu này. Kết quả checkpoint cuối nằm ở `results/final/final_metrics.json`, đánh giá chi tiết ở mục 5.3.
 
 ## 5.3. Đánh giá chung mô hình cuối
 
@@ -628,6 +628,10 @@ Bảng 5.2. Sai số trên lưới 80 × 80.
 
 **Sai số theo vùng mật độ và điểm sai lớn nhất.** Mục 2.4 đặt câu hỏi liệu sai số lớn có tập trung quanh đỉnh Gaussian hay không. Để xem điều này, validation được chia theo nhãn thật: vùng mật độ thấp \(y<0.01\) và vùng mật độ cao \(y\geq0.1\). Các ngưỡng được dùng như mô tả vùng, không phải tham số để chọn mô hình.
 
+Bảng 5.3 ghi sai số theo hai vùng mật độ.
+
+Bảng 5.3. Sai số của checkpoint cuối theo vùng mật độ trên validation.
+
 | Vùng trên validation | Số điểm | MAE | Tỷ lệ tổng bình phương sai số |
 |---|---:|---:|---:|
 | \(y<0.01\) | 326 | \(2.04779077\times10^{-4}\) | 43.47% |
@@ -670,7 +674,7 @@ Với hàm Gaussian, miền và ngân sách 1000 epoch của bài này, ba nhóm
 
 Mô hình cuối được chọn chỉ theo val MSE: mạng baseline 2 tầng ẩn × 16 nơ-ron, tanh, train với 2000 mẫu, seed 1 (337 tham số). Trên 100 điểm test, checkpoint đạt MSE 8.65 × 10⁻⁸, MAE 2.16 × 10⁻⁴, RMSE 2.94 × 10⁻⁴ (Bảng 1.3). RMSE này bằng khoảng 0.11% đỉnh hàm. Đồ thị y–ŷ và bề mặt xấp xỉ ở mục 5.3 cho thấy mạng tái hiện được đỉnh hẹp quanh gốc tọa độ và phần mặt gần 0 ở xa đỉnh.
 
-Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơn thêm nơ-ron hay thêm tầng. Mạng 2 tầng × 16 nơ-ron với 2000 mẫu (val MSE 1.68 × 10⁻⁷) tốt hơn mạng 4 tầng (4.10 × 10⁻⁷) và mạng 64 nơ-ron (2.81 × 10⁻⁶), hai mạng này cùng train với 1000 mẫu. So sánh này chỉ là thứ hạng giữa các cấu hình đã chạy. Nhóm chưa chạy các tổ hợp như 4 tầng với 2000 mẫu, nên chưa tách được phần đóng góp của từng yếu tố.
+Trong các cấu hình đã thử, thêm dữ liệu cho val MSE thấp hơn thêm nơ-ron hay thêm tầng. Mạng 2 tầng × 16 nơ-ron với 2000 mẫu (val MSE 1.68 × 10⁻⁷) tốt hơn mạng 4 tầng (4.10 × 10⁻⁷) và mạng 64 nơ-ron (2.81 × 10⁻⁶), hai mạng này cùng train với 1000 mẫu. So sánh này chỉ là thứ hạng giữa các cấu hình đã chạy. Nhóm chưa chạy các tổ hợp như 4 tầng với 2000 mẫu, nên chưa tách được phần đóng góp của từng yếu tố.
 
 ## 6.2. Hạn chế
 
@@ -679,7 +683,7 @@ Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơ
 - **Ngân sách epoch.** Nhiều lượt chạy đủ 1000 epoch mà chưa kích hoạt dừng sớm, gồm cả ba seed của C = 1 và C = 2. Một phần sai số vì vậy có thể do mạng chưa hội tụ hết, không chỉ do kiến trúc hay số mẫu.
 - **Dữ liệu không nhiễu.** Nhãn tính đúng từ công thức, nên thực nghiệm không cho biết mạng chịu nhiễu đo đến đâu, và cũng ít có cơ hội quan sát quá khớp.
 - **Chỉ đánh giá trong miền.** Mọi điểm train, val, test và lưới vẽ bề mặt đều nằm trong [−2, 2] × [−4, 4]. Báo cáo không có kết luận nào về dự đoán ngoài miền.
-- **Môi trường tính toán.** Cùng cấu hình và seed, checkpoint train trên máy khác cho val MSE 1.08 × 10⁻⁷ thay vì 1.05 × 10⁻⁷ như log A (mục 1.5). File `requirements.txt` chỉ ghi phiên bản tối thiểu nên chưa bảo đảm trùng log đến từng chữ số giữa các máy.
+- **Môi trường tính toán.** Cùng cấu hình và seed, checkpoint train trên máy khác cho val MSE 1.08 × 10⁻⁷ thay vì 1.05 × 10⁻⁷ như log A (mục 1.5). Nhóm đã ghim phiên bản thư viện trong `requirements.txt` theo môi trường cho log trùng với log A, nhưng điều này không bảo đảm trùng đến từng chữ số trên mọi CPU.
 
 ## 6.3. Hướng cải tiến
 
@@ -689,7 +693,6 @@ Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơ
 - So sánh các mạng có cùng số tham số nhưng khác độ sâu, để tách ảnh hưởng của độ sâu khỏi ảnh hưởng của số tham số.
 - Chạy kết hợp số mẫu với kiến trúc (ví dụ 3 hoặc 4 tầng với 2000 mẫu) theo một protocol chọn bằng validation đã định trước.
 - Sinh một tập test mới với seed khác và chỉ đánh giá mô hình cuối trên đó, để có ước lượng test chưa bị xem trước.
-- Ghim phiên bản thư viện trong `requirements.txt` để log tái lập trùng nhau giữa các máy.
 
 ## 6.4. Nguồn số liệu
 
@@ -730,7 +733,8 @@ Bảng 6.1. Lệnh sinh lại dữ liệu, kết quả và hình của báo cáo
 | 5 | `python -m experiments.run_C` | `results/C/logs/`, `summary.csv`, `summary_mean_std.csv`, Hình 4.3 đến 4.5 |
 | 6 | `python -m experiments.export_C` | `results/C/table_C_mean_std.csv`, `.md` (kiểm 12 log rồi xuất bảng) |
 | 7 | `python -m scripts.run_final` | `results/final/selected_model.pt`, `final_metrics.json` |
-| 8 | `python -m scripts.plot_final_evaluation` | Hình 5.1, 5.2 trong `results/final/figures/` |
-| 9 | `python -m scripts.build_report` | `report/BTL01_Nhom05.md` (ghép các mục báo cáo) |
+| 8 | `python -m scripts.plot_final_evaluation` | Hình 5.1, 5.2 trong `results/final/figures/`, `results/final/validation_error_analysis.json` |
+| 9 | `python -m scripts.plot_mlp_architecture` | Hình 3.1 trong `report/figures/` |
+| 10 | `python -m scripts.build_report` | `report/BTL01_Nhom05.md` (ghép các mục báo cáo) |
 
-Bước 7 từ chối chạy nếu `results/final/final_metrics.json` đã tồn tại, để test không bị đánh giá lần thứ hai. Muốn chạy lại bước này thì phải xóa file JSON một cách có chủ ý. Các bước 3 đến 5 mất từ vài phút đến vài chục phút trên CPU tùy máy. Thời gian train ghi trong cột `elapsed_seconds_mean` của `results/A/summary.csv`, `results/B/summary.csv` và cột `train_time_s` của `results/C/summary.csv`.
+Các bước 1 và 3 đến 8 ghi đè kết quả đã nộp, nên muốn thử lại thì nên chạy trên bản sao thư mục. Bước 7 từ chối chạy nếu `results/final/final_metrics.json` đã tồn tại, để test không bị đánh giá lần thứ hai. Muốn chạy lại bước này thì phải xóa file JSON một cách có chủ ý. Các bước 3 đến 5 mất từ vài phút đến vài chục phút trên CPU tùy máy. Thời gian train ghi trong cột `elapsed_seconds_mean` của `results/A/summary.csv`, `results/B/summary.csv` và cột `train_time_s` của `results/C/summary.csv`.

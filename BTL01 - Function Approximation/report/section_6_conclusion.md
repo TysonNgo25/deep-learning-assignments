@@ -1,6 +1,6 @@
 # 6. Kết luận
 
-Nháp ngày 06/11/2026 (việc theo kế hoạch ngày 05/11), người viết: Huỳnh Ngọc Trúc. Mọi số trong mục này đã có ở mục 1.5, 4 và 5. Nguồn ghi ở cuối mục.
+Mọi số trong mục này đã có ở mục 1.5, 4 và 5. Nguồn ghi ở cuối mục.
 
 ## 6.1. Kết quả đạt được
 
@@ -14,7 +14,7 @@ Với hàm Gaussian, miền và ngân sách 1000 epoch của bài này, ba nhóm
 
 Mô hình cuối được chọn chỉ theo val MSE: mạng baseline 2 tầng ẩn × 16 nơ-ron, tanh, train với 2000 mẫu, seed 1 (337 tham số). Trên 100 điểm test, checkpoint đạt MSE 8.65 × 10⁻⁸, MAE 2.16 × 10⁻⁴, RMSE 2.94 × 10⁻⁴ (Bảng 1.3). RMSE này bằng khoảng 0.11% đỉnh hàm. Đồ thị y–ŷ và bề mặt xấp xỉ ở mục 5.3 cho thấy mạng tái hiện được đỉnh hẹp quanh gốc tọa độ và phần mặt gần 0 ở xa đỉnh.
 
-Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơn thêm nơ-ron hay thêm tầng. Mạng 2 tầng × 16 nơ-ron với 2000 mẫu (val MSE 1.68 × 10⁻⁷) tốt hơn mạng 4 tầng (4.10 × 10⁻⁷) và mạng 64 nơ-ron (2.81 × 10⁻⁶), hai mạng này cùng train với 1000 mẫu. So sánh này chỉ là thứ hạng giữa các cấu hình đã chạy. Nhóm chưa chạy các tổ hợp như 4 tầng với 2000 mẫu, nên chưa tách được phần đóng góp của từng yếu tố.
+Trong các cấu hình đã thử, thêm dữ liệu cho val MSE thấp hơn thêm nơ-ron hay thêm tầng. Mạng 2 tầng × 16 nơ-ron với 2000 mẫu (val MSE 1.68 × 10⁻⁷) tốt hơn mạng 4 tầng (4.10 × 10⁻⁷) và mạng 64 nơ-ron (2.81 × 10⁻⁶), hai mạng này cùng train với 1000 mẫu. So sánh này chỉ là thứ hạng giữa các cấu hình đã chạy. Nhóm chưa chạy các tổ hợp như 4 tầng với 2000 mẫu, nên chưa tách được phần đóng góp của từng yếu tố.
 
 ## 6.2. Hạn chế
 
@@ -23,7 +23,7 @@ Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơ
 - **Ngân sách epoch.** Nhiều lượt chạy đủ 1000 epoch mà chưa kích hoạt dừng sớm, gồm cả ba seed của C = 1 và C = 2. Một phần sai số vì vậy có thể do mạng chưa hội tụ hết, không chỉ do kiến trúc hay số mẫu.
 - **Dữ liệu không nhiễu.** Nhãn tính đúng từ công thức, nên thực nghiệm không cho biết mạng chịu nhiễu đo đến đâu, và cũng ít có cơ hội quan sát quá khớp.
 - **Chỉ đánh giá trong miền.** Mọi điểm train, val, test và lưới vẽ bề mặt đều nằm trong [−2, 2] × [−4, 4]. Báo cáo không có kết luận nào về dự đoán ngoài miền.
-- **Môi trường tính toán.** Cùng cấu hình và seed, checkpoint train trên máy khác cho val MSE 1.08 × 10⁻⁷ thay vì 1.05 × 10⁻⁷ như log A (mục 1.5). File `requirements.txt` chỉ ghi phiên bản tối thiểu nên chưa bảo đảm trùng log đến từng chữ số giữa các máy.
+- **Môi trường tính toán.** Cùng cấu hình và seed, checkpoint train trên máy khác cho val MSE 1.08 × 10⁻⁷ thay vì 1.05 × 10⁻⁷ như log A (mục 1.5). Nhóm đã ghim phiên bản thư viện trong `requirements.txt` theo môi trường cho log trùng với log A, nhưng điều này không bảo đảm trùng đến từng chữ số trên mọi CPU.
 
 ## 6.3. Hướng cải tiến
 
@@ -33,7 +33,6 @@ Trong các cấu hình đã thử, thêm dữ liệu giảm sai số nhiều hơ
 - So sánh các mạng có cùng số tham số nhưng khác độ sâu, để tách ảnh hưởng của độ sâu khỏi ảnh hưởng của số tham số.
 - Chạy kết hợp số mẫu với kiến trúc (ví dụ 3 hoặc 4 tầng với 2000 mẫu) theo một protocol chọn bằng validation đã định trước.
 - Sinh một tập test mới với seed khác và chỉ đánh giá mô hình cuối trên đó, để có ước lượng test chưa bị xem trước.
-- Ghim phiên bản thư viện trong `requirements.txt` để log tái lập trùng nhau giữa các máy.
 
 ## 6.4. Nguồn số liệu
 
@@ -74,7 +73,8 @@ Bảng 6.1. Lệnh sinh lại dữ liệu, kết quả và hình của báo cáo
 | 5 | `python -m experiments.run_C` | `results/C/logs/`, `summary.csv`, `summary_mean_std.csv`, Hình 4.3 đến 4.5 |
 | 6 | `python -m experiments.export_C` | `results/C/table_C_mean_std.csv`, `.md` (kiểm 12 log rồi xuất bảng) |
 | 7 | `python -m scripts.run_final` | `results/final/selected_model.pt`, `final_metrics.json` |
-| 8 | `python -m scripts.plot_final_evaluation` | Hình 5.1, 5.2 trong `results/final/figures/` |
-| 9 | `python -m scripts.build_report` | `report/BTL01_Nhom05.md` (ghép các mục báo cáo) |
+| 8 | `python -m scripts.plot_final_evaluation` | Hình 5.1, 5.2 trong `results/final/figures/`, `results/final/validation_error_analysis.json` |
+| 9 | `python -m scripts.plot_mlp_architecture` | Hình 3.1 trong `report/figures/` |
+| 10 | `python -m scripts.build_report` | `report/BTL01_Nhom05.md` (ghép các mục báo cáo) |
 
-Bước 7 từ chối chạy nếu `results/final/final_metrics.json` đã tồn tại, để test không bị đánh giá lần thứ hai. Muốn chạy lại bước này thì phải xóa file JSON một cách có chủ ý. Các bước 3 đến 5 mất từ vài phút đến vài chục phút trên CPU tùy máy. Thời gian train ghi trong cột `elapsed_seconds_mean` của `results/A/summary.csv`, `results/B/summary.csv` và cột `train_time_s` của `results/C/summary.csv`.
+Các bước 1 và 3 đến 8 ghi đè kết quả đã nộp, nên muốn thử lại thì nên chạy trên bản sao thư mục. Bước 7 từ chối chạy nếu `results/final/final_metrics.json` đã tồn tại, để test không bị đánh giá lần thứ hai. Muốn chạy lại bước này thì phải xóa file JSON một cách có chủ ý. Các bước 3 đến 5 mất từ vài phút đến vài chục phút trên CPU tùy máy. Thời gian train ghi trong cột `elapsed_seconds_mean` của `results/A/summary.csv`, `results/B/summary.csv` và cột `train_time_s` của `results/C/summary.csv`.

@@ -1,6 +1,6 @@
 # 4.3. Kết quả thực nghiệm C: ảnh hưởng của số tầng ẩn
 
-Nháp ngày 02/11/2026, rà lại ngày 03/11/2026. Người phụ trách: Ngô Nguyễn Thành Nhân. Bảng và hình dùng số 4.3.x, theo cách đánh số của mục 4.2 trong báo cáo nhóm. [Bảng kết quả và nguồn log](../results/C/table_C_mean_std.md).
+Bảng kết quả đầy đủ và liên kết tới 12 log nằm ở `results/C/table_C_mean_std.md`.
 
 ## 4.3.1. Thiết lập thực nghiệm
 
@@ -89,9 +89,9 @@ Thời gian được đo bằng `time.perf_counter()` quanh vòng train, gồm �
 
 Kết quả cho thấy thêm tầng từ C=1 lên C=2 cải thiện mạnh khả năng xấp xỉ trong baseline đang xét. Tăng thêm độ sâu không bảo đảm giảm sai số: C=3 kém hơn C=2 ở các sai số trung bình, còn C=4 có validation MSE trung bình thấp hơn nhưng biến động lớn hơn. C=2 là cấu hình có độ dao động thấp trong ba seed và thời gian trung bình thấp hơn C=4; C=4 cần được cân nhắc cùng độ ổn định và chi phí khi nhóm chọn mô hình bằng validation.
 
-Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Số tham số tăng cùng độ sâu, số seed ít và early stopping làm số epoch khác nhau. Nhóm đã chọn cấu hình A với 2.000 mẫu train theo validation MSE. [Đánh giá mô hình cuối](section_5_final_model_evaluation.md).
+Các số liệu hiện có chưa cho thấy bằng chứng rõ ràng về quá khớp tăng đều theo độ sâu. Số tham số tăng cùng độ sâu, số seed ít và early stopping làm số epoch khác nhau. Nhóm đã chọn cấu hình A với 2000 mẫu train theo validation MSE. Đánh giá mô hình cuối nằm ở [mục 5.3](section_5_final_model_evaluation.md).
 
-Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghiệm C. Vì kết quả test đã được xem, báo cáo cần mô tả đúng quy trình này; không mô tả tập test hiện tại là một tập hoàn toàn chưa từng được xem trước bước đánh giá mô hình cuối. Nếu cần một đánh giá cuối độc lập hơn, nhóm cần duyệt protocol riêng trước khi thực hiện.
+Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghiệm C. Vì kết quả test đã được xem, tập test hiện tại không phải tập hoàn toàn chưa từng được xem trước bước đánh giá mô hình cuối. Muốn có đánh giá cuối độc lập hơn thì cần một protocol riêng, định trước khi thực hiện.
 
 ## Nguồn số liệu để ghép báo cáo
 
@@ -99,6 +99,6 @@ Test đã được đánh giá cho cả 12 lượt để báo cáo thực nghi�
 - Metric và thời gian từng lượt: [summary.csv](../results/C/summary.csv).
 - Bảng mean/std đầy đủ: [table_C_mean_std.csv](../results/C/table_C_mean_std.csv), tính lại bằng `python -m experiments.export_C`.
 - Log loss, config và best epoch: [bảng liên kết 12 log](../results/C/table_C_mean_std.md#đối-chiếu-log). Mỗi dòng cấu hình trong các bảng tổng hợp từ ba file `C_<tầng>_seed0.csv`, `C_<tầng>_seed1.csv`, `C_<tầng>_seed2.csv`.
-- Hình bổ sung để dùng khi ghép: [test RMSE](../results/C/figures/C_test_rmse.png), [RMSE và thời gian](../results/C/figures/C_error_and_time.png).
+- Hình bổ sung: [test RMSE](../results/C/figures/C_test_rmse.png), [RMSE và thời gian](../results/C/figures/C_error_and_time.png).
 
-Đã đối chiếu config và best validation epoch trong log, tính lại mean/std từ summary. Các lượt C gốc không lưu dự đoán/checkpoint từng mô hình, nên metric train/test trong summary chưa được tính lại độc lập từ trọng số trong bước viết nháp này.
+Đã đối chiếu config và best validation epoch trong log, tính lại mean/std từ summary. Các lượt C gốc không lưu dự đoán/checkpoint từng mô hình, nên metric train/test trong summary chưa được tính lại độc lập từ trọng số.

@@ -1,6 +1,6 @@
 # 3. Mô hình và cài đặt
 
-Nháp ngày 02/11/2026, người viết: Phạm Trần Minh Khang. Mục này mô tả phần lõi PyTorch trong `src/model.py`, `src/train.py` và `src/evaluate.py`. Các tham số lấy từ `configs/baseline.yaml`; kết quả tổng hợp A/B/C được trình bày ở mục 4, không suy ra từ một lần chạy minh họa trong mục này.
+Mục này mô tả phần lõi PyTorch trong `src/model.py`, `src/train.py` và `src/evaluate.py`. Các tham số lấy từ `configs/baseline.yaml`; kết quả tổng hợp A/B/C được trình bày ở mục 4, không suy ra từ một lần chạy minh họa trong mục này.
 
 ## 3.1. Kiến trúc mạng
 
@@ -81,7 +81,7 @@ Thời gian vòng lặp được đo bằng `time.perf_counter()`: bao gồm cá
 
 ## 3.4. Validation, test và đánh giá
 
-Validation được dùng để theo dõi quá trình học, dừng sớm và chọn checkpoint/cấu hình. Tập test không tham gia cập nhật trọng số hoặc lựa chọn mô hình. Riêng trong repo này, runner C đã tính metric test cho cả 12 lượt theo yêu cầu báo cáo thực nghiệm C trước khi chốt mô hình cuối; vì vậy kết quả test của checkpoint cuối phải được trình bày với lưu ý rằng tập test đã được truy vấn trước, không mô tả là một đánh giá hoàn toàn độc lập.
+Validation được dùng để theo dõi quá trình học, dừng sớm và chọn checkpoint/cấu hình. Tập test không tham gia cập nhật trọng số hoặc lựa chọn mô hình. Riêng runner C đã tính metric test cho cả 12 lượt theo yêu cầu báo cáo thực nghiệm C trước khi chốt mô hình cuối; vì vậy kết quả test của checkpoint cuối phải được trình bày với lưu ý rằng tập test đã được truy vấn trước, không mô tả là một đánh giá hoàn toàn độc lập.
 
 Module `src/evaluate.py` cung cấp MSE, MAE và RMSE:
 
@@ -113,4 +113,4 @@ Các script A/B/C gọi lại lõi huấn luyện với cấu hình tương ứn
 
 ## 3.6. Môi trường thực thi
 
-Môi trường kiểm tra của Khang dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.
+Môi trường kiểm tra dùng Python 3.11.9 và PyTorch 2.15.0+cpu. Các lượt huấn luyện và đánh giá được chạy trên CPU; CUDA không khả dụng trong môi trường này. Do đó thời gian huấn luyện là kết quả của máy CPU đang dùng, không phải mốc so sánh GPU. Phiên bản thư viện và thiết bị có thể làm thay đổi thời gian, và sai số dấu phẩy động rất nhỏ có thể khiến chuỗi huấn luyện dài cho ra checkpoint khác nhẹ giữa các máy.

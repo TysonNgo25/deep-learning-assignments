@@ -1,7 +1,5 @@
 # 1. Giới thiệu
 
-Nháp ngày 02/11/2026 (việc theo kế hoạch ngày 01/11), cập nhật ngày 04/11/2026 (mục 1.2 và 1.5) và 06/11/2026 (trích dẫn, tham chiếu bảng), người viết: Huỳnh Ngọc Trúc. Chỗ ghi [...] là tỷ lệ đóng góp, chốt ngày 07/11.
-
 ## 1.1. Mục tiêu
 
 Nhóm 5 dùng mạng perceptron nhiều tầng (MLP) viết bằng PyTorch để học lại một hàm mật độ Gaussian hai chiều từ các điểm lấy mẫu, rồi đo sai số thay đổi ra sao khi đổi số mẫu train, số nơ-ron và số tầng ẩn. Công thức của hàm đã biết trước, nên tại bất kỳ điểm nào trong miền nhóm cũng tính được giá trị đúng để đặt cạnh dự đoán của mạng. Dữ liệu không có nhiễu, vì vậy mọi chênh lệch giữa hai bề mặt là sai số của mạng.
@@ -44,12 +42,12 @@ Bảng 1.2. Thành viên, nhiệm vụ và tỷ lệ đóng góp.
 
 | Thành viên | MSSV | Vai trò | Code phụ trách | Phần báo cáo | Đóng góp |
 | --- | --- | --- | --- | --- | --- |
-| Huỳnh Ngọc Trúc | 3123411312 | Trưởng nhóm, dữ liệu, ghép báo cáo | `src/data.py`, `scripts/plot_data.py`, `scripts/run_baseline.py`, `README.md`, `requirements.txt` | 1, 2, 6 + ghép, định dạng | [...] |
-| Phạm Trần Minh Khang | 3123411143 | Lõi PyTorch | `src/model.py`, `src/train.py`, `src/evaluate.py` | 3 + đánh giá chung | [...] |
-| Tạ Quang Trung | 3123411318 | Thực nghiệm A, B | `experiments/run_A.py`, `experiments/run_B.py`, `experiments/common.py` | 4.1, 4.2 + thảo luận A, B | [...] |
-| Ngô Nguyễn Thành Nhân | 3123411205 | Thực nghiệm C, slide | `experiments/run_C.py`, `src/plots.py` | 4.3 + thảo luận C, hạn chế | [...] |
+| Huỳnh Ngọc Trúc | 3123411312 | Trưởng nhóm, dữ liệu, ghép báo cáo | `src/data.py`, `scripts/plot_data.py`, `scripts/run_baseline.py`, `scripts/build_report.py`, `README.md`, `requirements.txt` | 1, 2, 4.1, 6 + ghép, định dạng | 25% |
+| Phạm Trần Minh Khang | 3123411143 | Lõi PyTorch | `src/model.py`, `src/train.py`, `src/evaluate.py`, `scripts/run_final.py`, `scripts/plot_final_evaluation.py`, `scripts/plot_mlp_architecture.py` | 3 + đánh giá chung | 25% |
+| Tạ Quang Trung | 3123411318 | Thực nghiệm A, B | `experiments/run_A.py`, `experiments/run_B.py`, `experiments/common.py` | 4.2 + thảo luận A, B | 25% |
+| Ngô Nguyễn Thành Nhân | 3123411205 | Thực nghiệm C, slide | `experiments/run_C.py`, `experiments/export_C.py`, `src/plots.py` | 4.3 + thảo luận C, hạn chế; dựng slide | 25% |
 
-[Tỷ lệ đóng góp chốt ngày 07/11 theo việc thực tế, tổng 100%.]
+Tổng tỷ lệ đóng góp của bốn thành viên là 100%.
 
 ## 1.5. Kết quả chính
 
@@ -64,7 +62,7 @@ Bảng 1.3. Sai số của mô hình cuối (checkpoint ở epoch 980). Nguồn:
 
 RMSE trên test bằng khoảng 0.11% giá trị đỉnh 0.269 của hàm. Con số test cần đọc kèm một giới hạn. Runner C đã tính sai số trên chính 100 điểm test này trước khi nhóm chọn mô hình, nên đây là điểm đo trên một tập nhóm đã từng xem kết quả, không phải tập test hoàn toàn mới. Sai số test của C không tham gia vào việc chọn cấu hình.
 
-Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code.
+Checkpoint cuối train trên một máy khác máy đã chạy A, nên val MSE của nó (1.08 × 10⁻⁷ ở epoch 980) lệch nhẹ so với log A (1.05 × 10⁻⁷ ở epoch 999). Hai log khác nhau ngay từ epoch 1, ở chữ số có nghĩa thứ tám. Nhóm chạy lại cấu hình này trên một máy thứ ba và thu được log trùng log A ở cả 1000 epoch, tức chênh lệch đến từ môi trường tính toán của máy train checkpoint, không đến từ code. Log của lần chạy lại lưu ở `results/final/logs/rerun_A_2000_seed1.csv`.
 
 Ở A, val MSE giảm đều qua cả mười cỡ mẫu, từ 1.22 × 10⁻⁵ với 200 mẫu xuống 1.68 × 10⁻⁷ với 2000 mẫu, khoảng 72.5 lần. Ở B, val MSE giảm từ 2.92 × 10⁻³ với 1 nơ-ron xuống 2.81 × 10⁻⁶ với 64 nơ-ron và chững lại ở 9, 10 nơ-ron. Train và val MSE của B sát nhau ở mọi độ rộng, chưa cho thấy quá khớp rõ ràng. Ở C, tầng ẩn thứ hai đưa val MSE từ 1.19 × 10⁻⁵ xuống 4.35 × 10⁻⁷. Tầng thứ ba và thứ tư không giảm thêm rõ rệt, trong khi thời gian train trung bình tăng từ 15.2 lên 25.7 giây.
 
