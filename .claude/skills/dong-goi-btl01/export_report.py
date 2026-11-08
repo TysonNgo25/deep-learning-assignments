@@ -1,4 +1,4 @@
-"""Xuất report/BTL01_Nhom05.md thành report/BTL01_Nhom05.docx và docs/BTL01_Nhom05_BaoCao.pdf.
+"""Xuất report/BTL01_Nhom05.md thành docs/BTL01_Nhom05.docx và docs/BTL01_Nhom05_BaoCao.pdf.
 
 Chạy từ thư mục "BTL01 - Function Approximation" (sau `python -m scripts.build_report`):
     python ../.claude/skills/dong-goi-btl01/export_report.py --pandoc <đường dẫn pandoc.exe>
@@ -356,7 +356,7 @@ def main():
 
     root = Path(args.root).resolve()
     md = root / "report" / "BTL01_Nhom05.md"
-    docx_out = root / "report" / "BTL01_Nhom05.docx"
+    docx_out = root / "docs" / "BTL01_Nhom05.docx"
     pdf_out = root / "docs" / "BTL01_Nhom05_BaoCao.pdf"
     pdf_out.parent.mkdir(exist_ok=True)
 

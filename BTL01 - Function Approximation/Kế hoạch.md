@@ -130,8 +130,7 @@ BTL01/
   experiments/     run_A.py, run_B.py, run_C.py
   results/A|B|C/   logs/*.csv, figures/*.png, summary.csv
   models/          best_model.pt
-  docs/            BTL01_Nhom05_BaoCao.pdf, BTL01_Nhom05_Slide.pdf
-  report/          BTL01_Nhom05.docx
+  docs/            BTL01_Nhom05.docx, BTL01_Nhom05_BaoCao.pdf, BTL01_Nhom05_Slide.pdf
   slides/          BTL01_Nhom05.pptx
   README.md, requirements.txt
 ```

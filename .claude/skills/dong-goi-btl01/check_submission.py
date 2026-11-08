@@ -36,7 +36,7 @@ REQUIRED = [
     "results/final/final_metrics.json",
 ]
 REQUIRED_GLOBS = {
-    "report/*.docx": "báo cáo Word",
+    "docs/*.docx": "báo cáo Word",
     "docs/*BaoCao*.pdf": "báo cáo PDF",
     "docs/*Slide*.pdf": "slide PDF",
     "slides/*.pptx": "slide PowerPoint",
