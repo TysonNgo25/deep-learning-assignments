@@ -1,0 +1,15 @@
+# Dữ liệu FER2013 (tải từ Kaggle, không đưa lên git)
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Checkpoint trung gian (chỉ giữ results/final/best_model.pt)
+results/**/*.pt
+!results/final/best_model.pt
+
+# Office tạm
+~$*

@@ -1,0 +1,34 @@
+# Baseline BTL02 – chốt ngày 24/11/2026. Mỗi thực nghiệm chỉ đổi MỘT tham số so với file này.
+seed: 0
+
+data:
+  csv: data/fer2013.csv
+  image_size: 48
+  num_classes: 7
+  normalize: train_mean_std      # chia 255 rồi chuẩn hóa theo mean/std tập train
+
+augmentation:
+  hflip: true
+  rotation_deg: 10
+  shift: 0.1
+  zoom: 0.0
+
+model:
+  arch: medium                   # small | medium | medium_01 | large
+  activation: relu               # relu | leaky_relu | elu | sigmoid
+  batchnorm: false
+  dropout_block: 0.2
+  dropout_fc: 0.5
+  fc_units: 1024
+
+train:
+  optimizer: adam                # adam | sgd
+  lr: 0.001
+  momentum: 0.9                  # chỉ dùng khi optimizer = sgd
+  weight_decay: 0.0
+  scheduler: none                # none | plateau
+  batch_size: 64
+  max_epochs: 40
+  early_stopping_patience: 8
+  class_weighted_loss: false
+  num_workers: 2
