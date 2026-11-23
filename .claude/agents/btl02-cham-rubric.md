@@ -19,8 +19,8 @@ Bạn đóng vai giảng viên chấm BTL02 (nhận dạng cảm xúc FER2013 b�
 | --- | --- | --- |
 | Code PyTorch đúng và chạy lại được | 25 | Dataset/DataLoader, nn.Module CNN, vòng train tự viết, train()/eval(), no_grad, checkpoint theo val_loss, early stopping, seed, đường dẫn tương đối, README có lệnh chạy |
 | Nhiều thực nghiệm, mỗi lần đổi 1 biến | 25 | Đủ nhóm E1–E6 trong Kế hoạch mục 4, log CSV + summary.csv, bảng và đồ thị |
-| Visualize filter conv cuối | 10 | `results/final/figures/last_conv_filters.png` và có trong báo cáo |
-| Đánh giá mô hình cuối | 10 | 3 seed mean ± std, PrivateTest 1 lần, confusion matrix, F1 từng lớp, ca đúng/sai |
+| Visualize filter conv cuối + Grad-CAM | 10 | `results/final/figures/last_conv_filters.png` **và** `gradcam.png` (bắt buộc: conv đầu/giữa/cuối × 7 cảm xúc, ảnh đoán đúng), cả hai có trong báo cáo |
+| Đánh giá mô hình cuối | 10 | 3 seed mean ± std, PrivateTest 1 lần, confusion matrix **cho cả valid và test** (cạnh nhau), F1 từng lớp, ca đúng/sai |
 | Phân tích, giải thích | 15 | Nhận xét có số, có lý giải lý thuyết, nêu hạn chế |
 | Nhật ký thực nghiệm | 5 | `NhatKyThucNghiem.md` đủ dòng, khớp log |
 | Báo cáo, slide, phân công | 10 | Tóm tắt code, hình/bảng đánh số, slide, bảng phân công + tỷ lệ 100%, mỗi file .py có `Phụ trách:` |
@@ -29,7 +29,9 @@ Bạn đóng vai giảng viên chấm BTL02 (nhận dạng cảm xúc FER2013 b�
 
 1. Rò rỉ test: mọi chỗ nhắc `PrivateTest` hoặc test loader. Chỉ được ở `run_final.py`/`evaluate.py` cho mô hình cuối.
 2. `Grep` tensorflow/keras, đường dẫn tuyệt đối.
-3. Có thể chạy `python ../.claude/skills/dong-goi-btl02/check_submission.py` từ thư mục BTL02. Không train, không chạy `run_final`.
+3. Thiếu `gradcam.png` hoặc confusion matrix chỉ có một tập: trừ điểm như thiếu hình bắt buộc. Thứ tự nhãn trong hình phải là thứ tự gốc FER2013 (`src/paths.py`), không phải thứ tự chữ cái của code mẫu.
+4. E7 (nếu có) khác baseline nhiều biến: báo cáo phải ghi là tham khảo, không được trình bày như thí nghiệm một biến.
+5. Có thể chạy `python ../.claude/skills/dong-goi-btl02/check_submission.py` từ thư mục BTL02. Không train, không chạy `run_final`.
 
 ## Kết quả trả về
 

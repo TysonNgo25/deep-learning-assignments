@@ -16,7 +16,7 @@ from pathlib import Path
 
 BTL = "BTL02 Emotion Recognition"
 DEADLINE = date(2026, 11, 28)
-BASELINE_LOCK = date(2026, 11, 25)  # từ ngày này baseline đã chốt
+BASELINE_LOCK = date(2026, 11, 25)  # baseline chốt hết ngày 24/11; từ 25/11 sửa thì hỏi lại
 ROOT = Path(os.environ.get("CLAUDE_PROJECT_DIR") or Path(__file__).resolve().parents[2])
 BTL_DIR = ROOT / BTL
 THU = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
@@ -116,7 +116,8 @@ def session() -> None:
         pass
     try:
         log = (BTL_DIR / "NhatKyThucNghiem.md").read_text(encoding="utf-8")
-        runs = re.findall(r"^\|\s*((?:E\d|F)-\d+|BASE)\s*\|([^|]*)\|", log, re.M)
+        # Mã run: BASE, E1-1 … E7-2, F-0/1/2, kể cả bản chạy lại có hậu tố _r2.
+        runs = re.findall(r"^\|\s*((?:(?:E\d|F)-\d+|BASE)(?:_r\d+)?)\s*\|([^|]*)\|", log, re.M)
         done = [r for r, day in runs if day.strip()]
         lines.append(f"Nhật ký thực nghiệm: {len(done)} run đã ghi ({', '.join(done) or 'chưa có'}).")
     except Exception:

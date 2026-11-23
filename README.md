@@ -1,68 +1,40 @@
-# Deep Learning Assignments
+# Deep Learning Assignments – Nhóm 5
 
-## Bài 03 — Kỹ thuật lập trình Python với Numpy
+Bài tập học phần Học sâu. Code viết bằng **PyTorch** (code mẫu của thầy là Keras/TensorFlow).
 
-Repository chứa đề bài gốc, notebook lời giải và hướng dẫn chạy trên Anaconda cho bài thực hành số 03.
+| STT | MSV | Họ và tên |
+| --- | --- | --- |
+| 19 | 3123411143 | Phạm Trần Minh Khang |
+| 29 | 3123411205 | Ngô Nguyễn Thành Nhân |
+| 43 | 3123411312 | Huỳnh Ngọc Trúc (nhóm trưởng) |
+| 44 | 3123411318 | Tạ Quang Trung |
 
-## Phân loại file
+## Các bài
 
-### Đề bài gốc
+| Thư mục | Nội dung | Trạng thái |
+| --- | --- | --- |
+| [`lab1/`](lab1/) | Bài thực hành 1 (bai1–bai3) | đã làm |
+| [`lab03_house_price/`](lab03_house_price/) | Lab 03: dự đoán giá nhà Ames (scikit-learn, MLP PyTorch) | đã làm |
+| [`BTL01 - Function Approximation/`](BTL01%20-%20Function%20Approximation/) | Xấp xỉ hàm Gauss 2 chiều bằng MLP | đã nộp 8/11/2026 |
+| [`BTL02 Emotion Recognition/`](BTL02%20Emotion%20Recognition/) | Nhận dạng 7 cảm xúc FER2013 bằng CNN, thực nghiệm E1–E7 | đang làm, hạn 28/11/2026 |
+| [`BTL03 - Chuyển code từ keras sang pytorch deep learning/`](BTL03%20-%20Chuy%E1%BB%83n%20code%20t%E1%BB%AB%20keras%20sang%20pytorch%20deep%20learning/) | Chuyển 11 notebook Keras (MLP, CNN, CNN+LSTM, SegNet, phát hiện xe) sang PyTorch và so kết quả | đang làm, hạn 28/11/2026 |
 
-- [`bai03/my_lesson3.html`](bai03/my_lesson3.html): nội dung đề bài được xuất dưới dạng HTML.
-- [`bai03/my_lesson3.ipynb`](bai03/my_lesson3.ipynb): notebook đề bài gốc với các vị trí cần điền lời giải.
-- `bai03/4a.png`, `bai03/4b.png`, `bai03/pi.png`: hình kết quả/minh họa đi kèm notebook gốc.
+Mỗi bài có `README.md` riêng hướng dẫn cài môi trường và chạy. Thư mục `Yêu cầu/` (hoặc `Đề và yêu cầu/`) trong mỗi bài là đề gốc của thầy, giữ nguyên.
 
-### Đáp án
+## Dữ liệu
 
-- [`bai03/bai03_solution.ipynb`](bai03/bai03_solution.ipynb): lời giải hoàn chỉnh theo thứ tự Bài 1 → Bài 2 → Bài 3. Notebook đã được chạy và lưu output.
-- [`bai03/outputs/`](bai03/outputs/): các biểu đồ được sinh từ notebook lời giải.
+Dữ liệu lớn không đưa lên git (FER2013, Gender `.npy`...). Cách tải và chỗ đặt ghi trong README của từng bài.
 
-### Cài đặt và hướng dẫn chạy
+## Làm việc với Claude Code
 
-- [`bai03/environment.yml`](bai03/environment.yml): cấu hình môi trường Conda.
-- [`bai03/README_DEMO.md`](bai03/README_DEMO.md): hướng dẫn tạo môi trường, chạy notebook và kiểm tra kết quả.
+Thư mục `.claude/` chứa công cụ hỗ trợ cho từng bài (quy tắc chung ở [`CLAUDE.md`](CLAUDE.md)):
 
-## Chạy nhanh
+| Loại | BTL01 | BTL02 | BTL03 |
+| --- | --- | --- | --- |
+| Lệnh (`commands/`) | – | `/btl02-bat-dau`, `/btl02-ghi-run`, `/btl02-tien-do`, `/btl02-cham-thu` | `/btl03-bat-dau`, `/btl03-ghi-ket-qua`, `/btl03-tien-do`, `/btl03-cham-thu` |
+| Skill (`skills/`) | chạy thực nghiệm, nhật ký, báo cáo, ôn vấn đáp, đóng gói | chạy thực nghiệm, nhật ký, báo cáo, ôn vấn đáp, đóng gói | chuyển đổi, chạy notebook, nhật ký, báo cáo, ôn vấn đáp, đóng gói |
+| Agent (`agents/`) | chấm rubric, đối chiếu số liệu, giám khảo vấn đáp | chấm rubric, đối chiếu số liệu, giám khảo vấn đáp | chấm rubric, đối chiếu với Keras, giám khảo vấn đáp |
+| Rule (`rules/`) | – | code, thực nghiệm, báo cáo | code, kết quả, báo cáo |
+| Hook (`hooks/`) | – | `btl02_guard.py` | `btl03_guard.py` |
 
-Mở Anaconda Prompt và thực hiện:
-
-```powershell
-cd /d "C:\Users\TGC\OneDrive\Documents\ChatGPT\python-deep-learning\bai03"
-conda env create -f environment.yml
-conda activate bai03-python
-jupyter notebook bai03_solution.ipynb
-```
-
-Trong Jupyter, chọn **Kernel → Restart Kernel and Run All Cells**. Bài chạy đúng khi cell cuối in:
-
-```text
-TẤT CẢ KIỂM TRA ĐỀU ĐẠT
-```
-
-## Nội dung chính
-
-- Phép toán vector và ma trận với Numpy.
-- Broadcasting và khoảng cách giữa hai tập giá trị.
-- Phân bố đều, phân bố chuẩn và trực quan hóa bằng Matplotlib.
-- Giải hệ phương trình tuyến tính bằng `numpy.linalg.solve`.
-- Xấp xỉ số π bằng phương pháp Monte Carlo.
-
-## Cấu trúc nộp bài
-
-```text
-python-deep-learning/
-├── README.md
-├── .gitignore
-└── bai03/
-    ├── my_lesson3.html          # Đề bài dạng HTML
-    ├── my_lesson3.ipynb         # Notebook đề bài gốc
-    ├── 4a.png                   # Hình của đề gốc
-    ├── 4b.png
-    ├── pi.png
-    ├── bai03_solution.ipynb     # Đáp án chính
-    ├── environment.yml          # Môi trường Conda
-    ├── README_DEMO.md           # Hướng dẫn demo
-    └── outputs/                 # Biểu đồ do đáp án sinh ra
-```
-
-Các tài liệu `python_advance.*`, `img1.png`, `img2.png`, `plot2d.png` và `scater2d.png` là tài liệu Python mở rộng. Chúng không phải đáp án chính nhưng vẫn được lưu trong `bai03` để repository chứa đầy đủ thư mục bài học gốc.
+Hook chặn `git push` và commit có `Co-Authored-By` (repo nhóm, có chấm điểm), chặn sửa đề gốc trong `Yêu cầu/` và chặn `tensorflow`/`keras` trong code PyTorch. Hook chạy bằng `C:/Users/hntruc/anaconda3/python.exe` (máy Trúc); máy khác cần sửa đường dẫn này trong `.claude/settings.json`.

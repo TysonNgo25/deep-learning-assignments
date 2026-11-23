@@ -1,0 +1,17 @@
+# Dữ liệu (Gender .npy, Emotion onehot CSV): nặng, không đưa lên git, chỉ giữ cấu trúc thư mục
+data/**
+!data/**/
+!data/**/.gitkeep
+
+# Checkpoint mô hình và log TensorBoard
+*.pt
+*.pth
+runs/
+logs/
+
+# Python, Jupyter
+__pycache__/
+.ipynb_checkpoints/
+
+# Office tạm
+~$*
