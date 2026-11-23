@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "C:/Users/hntruc/anaconda3/python.exe \"$CLAUDE_PROJECT_DIR/.claude/hooks/btl02_guard.py\" session", "timeout": 20 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "C:/Users/hntruc/anaconda3/python.exe \"$CLAUDE_PROJECT_DIR/.claude/hooks/btl02_guard.py\" pre", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}
