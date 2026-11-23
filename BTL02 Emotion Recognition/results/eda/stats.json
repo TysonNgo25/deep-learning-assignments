@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "train": 28709,
+    "val": 3589,
+    "test": 3589
+  },
+  "counts_match_fer2013": true,
+  "train_pixel_mean": 0.5077,
+  "train_pixel_std": 0.255,
+  "largest_class": "Happy",
+  "smallest_class": "Disgust",
+  "imbalance_ratio": 16.55,
+  "class_weights": [
+    1.0266,
+    9.4066,
+    1.001,
+    0.5684,
+    0.8491,
+    1.2934,
+    0.826
+  ]
+}

@@ -7,6 +7,7 @@ Chạy kiểm tra dữ liệu + EDA (đứng ở thư mục BTL02):
 Kết quả ghi vào results/eda/.
 """
 import argparse
+import csv
 import json
 from pathlib import Path
 
@@ -37,15 +38,20 @@ def load_fer2013(csv_path=FER_CSV, splits=("train", "val")):
         raise FileNotFoundError(
             f"Không thấy {csv_path}. Tải fer2013.csv từ Kaggle và đặt vào thư mục data/."
         )
-    df = pd.read_csv(csv_path, usecols=["emotion", "pixels", "Usage"])
-    data = {}
-    for name in splits:
-        part = df[df["Usage"] == SPLITS[name]]
-        images = np.stack([_parse_pixels(s) for s in part["pixels"]])
-        # np.array để có bản sao ghi được (to_numpy của pandas có thể trả view chỉ đọc).
-        labels = np.array(part["emotion"], dtype=np.int64)
-        data[name] = (images, labels)
-    return data
+    # Đọc từng dòng và đổi ngay sang uint8 thay vì pd.read_csv: pandas giữ cả ~300 MB chuỗi
+    # pixel trong RAM (máy Trúc báo out of memory), còn cách này chỉ tốn ~83 MB cho ảnh.
+    wanted = {SPLITS[name]: name for name in splits}
+    images = {name: [] for name in splits}
+    labels = {name: [] for name in splits}
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            name = wanted.get(row["Usage"])
+            if name is None:  # dòng của tập không cần (vd. PrivateTest khi train) thì bỏ qua
+                continue
+            images[name].append(_parse_pixels(row["pixels"]))
+            labels[name].append(int(row["emotion"]))
+    return {name: (np.stack(images[name]), np.array(labels[name], dtype=np.int64))
+            for name in splits}
 
 
 def _parse_pixels(text):

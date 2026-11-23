@@ -104,7 +104,7 @@ BTL02 Emotion Recognition/
 
 | Ngày | Việc | Kết quả để kiểm tra | Trạng thái |
 |---|---|---|---|
-| T2 23/11 tối | Tải `fer2013.csv`; dựng thư mục; `paths.py`, `data.py`; EDA (histogram lớp, ảnh mẫu) | Đếm đúng 28.709 / 3.589 / 3.589, đủ 7 lớp | - [ ] |
+| T2 23/11 tối | Tải `fer2013.csv`; dựng thư mục; `paths.py`, `data.py`; EDA (histogram lớp, ảnh mẫu) | Đếm đúng 28.709 / 3.589 / 3.589, đủ 7 lớp | - [x] |
 | T3 24/11 | `models.py` (4 kiến trúc, tùy BN/activation/dropout); `train.py` (log CSV, checkpoint, early stopping, đo thời gian); chạy thử baseline; chốt `baseline.yaml` | Baseline chạy hết, val_acc khoảng 55–62% | - [ ] |
 | T4 25/11 | Chạy E1, E2 trên GPU; ghi nhật ký; viết `evaluate.py` | `results/E1`, `results/E2` có `summary.csv` | - [ ] |
 | T5 26/11 | Chạy E3, E4, E5, E6; ghi nhật ký; viết `visualize.py` | Đủ `summary.csv` E3–E6 | - [ ] |

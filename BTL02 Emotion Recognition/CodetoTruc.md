@@ -14,9 +14,10 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7, việc tối 23/11 
 2. Viết kế hoạch đầy đủ: `docs/Kế hoạch.md` (yêu cầu, rủi ro, baseline, 19 run, lịch ngày, phân công 4 thành viên, checklist nộp).
 3. Tạo khung thư mục: `configs/`, `data/`, `src/`, `experiments/`, `results/`, `report/`, `slides/`, cùng `README.md`, `requirements.txt`, `.gitignore`, `NhatKyThucNghiem.md`, `configs/baseline.yaml`, `src/paths.py`.
 4. Thêm bộ công cụ Claude cho BTL02: skill, agent, rule, lệnh, hook; cập nhật `CLAUDE.md`.
-5. Viết `src/data.py`: đọc CSV, chia tập theo `Usage`, chuẩn hóa theo mean/std của train, Dataset/DataLoader có augmentation, trọng số lớp, EDA. Đã chạy thử bằng một CSV giả nhỏ.
-
-Chưa làm: tải `fer2013.csv`, nên chưa chạy EDA trên dữ liệu thật và chưa kiểm số 28.709 / 3.589 / 3.589. Ô trạng thái ngày 23/11 trong kế hoạch **chưa tick** (xem Còn treo).
+5. Viết `src/data.py`: đọc CSV, chia tập theo `Usage`, chuẩn hóa theo mean/std của train, Dataset/DataLoader có augmentation, trọng số lớp, EDA. Chạy thử bằng CSV giả trước, sau đó chạy trên dữ liệu thật.
+6. Tải `fer2013.csv` (Kaggle `nicolejyt/facialexpressionrecognition`, 301 MB, 3 cột `emotion,pixels,Usage`) vào `data/`.
+7. Tạo conda env `btl02` (Python 3.11, torch 2.15 CPU, torchvision 0.29.2). Máy không có GPU NVIDIA, nên thực nghiệm chạy trên Colab/Kaggle.
+8. Chạy `python -m src.data` trên dữ liệu thật: **đúng 28.709 / 3.589 / 3.589, đủ 7 lớp**. Đã tick ô 23/11 trong kế hoạch mục 7.
 
 ### Commit trong ngày
 
@@ -24,7 +25,8 @@ Chưa làm: tải `fer2013.csv`, nên chưa chạy EDA trên dữ liệu thật 
 - `396bc7a5` BTL02: thêm docs/Kế hoạch.md: bản kế hoạch đầu tiên.
 - `7fc928bb` BTL02: tạo khung thư mục, baseline.yaml, README, nhật ký thực nghiệm: dựng thư mục và các file khung.
 - `3b97b309` BTL02: kế hoạch, khung thư mục, bộ skill/agent/rule/lệnh/hook, cập nhật CLAUDE.md: cài bộ công cụ Claude vào `.claude/`, sửa `CLAUDE.md`.
-- _(commit `src/data.py` + nhật ký này: Trúc điền hash ở mục ngày sau)_
+- `ad7c5e17` BTL02: viết src/data.py (đọc FER2013, DataLoader, augmentation, EDA): bản đầu của `data.py` (còn dùng `pd.read_csv`), thêm `Phụ trách` vào `paths.py`, lệnh chạy trong README.
+- _(commit đọc CSV từng dòng + `results/eda/` + số liệu EDA: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -57,7 +59,8 @@ Phần `src/paths.py`, `baseline.yaml`, hook:
 Phần `src/data.py`:
 
 - **Hằng số `SPLITS`, `EXPECTED_COUNTS`**: ánh xạ tên trong code (`train/val/test`) sang giá trị cột `Usage` (`Training/PublicTest/PrivateTest`) và số ảnh chuẩn để tự kiểm.
-- **`load_fer2013(csv_path, splits=("train", "val"))`**: đọc 3 cột `emotion, pixels, Usage`, lọc theo `Usage`, trả `{tập: (ảnh uint8 N×48×48, nhãn int64)}`. **Mặc định không đọc PrivateTest**: muốn có tập test phải viết rõ `splits=(..., "test")`. Nhờ vậy khó lỡ tay dùng test để chọn mô hình. Nhãn được copy bằng `np.array(...)`, vì `to_numpy()` của pandas có thể trả mảng chỉ đọc (lúc chạy thử torch đã cảnh báo).
+- **`load_fer2013(csv_path, splits=("train", "val"))`**: đọc từng dòng bằng `csv.DictReader`, đổi ngay chuỗi pixel thành ảnh uint8, trả `{tập: (ảnh uint8 N×48×48, nhãn int64)}`. **Mặc định không đọc PrivateTest**: muốn có tập test phải viết rõ `splits=(..., "test")`, các dòng của tập không cần thì bỏ qua luôn. Nhờ vậy khó lỡ tay dùng test để chọn mô hình.
+  - Vì sao không dùng `pd.read_csv`: bản đầu dùng pandas và **bị out of memory trên máy Trúc**. Pandas phải giữ cả khoảng 300 MB chuỗi pixel cùng lúc. Đọc từng dòng thì chỉ giữ ảnh đã đổi sang uint8, khoảng 83 MB cho cả 35.887 ảnh.
 - **`_parse_pixels(text)`**: tách chuỗi 2304 số thành ảnh 48×48. Báo lỗi nếu số pixel sai, để phát hiện ngay file CSV hỏng.
 - **`compute_mean_std(images)`**: mean/std của pixel sau khi chia 255, **chỉ trên tập train**. Cộng dồn tổng và tổng bình phương theo từng khối 4096 ảnh, rồi dùng std = √(E[x²] − E[x]²). Lý do: đổi cả 28.709×2304 pixel sang float64 cùng lúc tốn khoảng 0,5 GB, trong khi máy Trúc đang thiếu RAM.
 - **`class_counts(labels)`**: `np.bincount` với `minlength=7`, để lớp không có ảnh vẫn hiện số 0.
@@ -74,7 +77,7 @@ Phần `src/data.py`:
 
 ### Đã kiểm tra
 
-Chưa có `fer2013.csv`, nên mình tạo một CSV giả trong thư mục tạm: 700/140/140 ảnh, tỷ lệ lớp giống FER2013 (Disgust ít nhất, Happy nhiều nhất). Môi trường chạy thử là env `ai_prj` (torch 2.14 CPU), cộng torchvision 0.29.2 cài tạm ngoài repo; env của Trúc không bị sửa.
+Trước khi có `fer2013.csv`, mình tạo một CSV giả trong thư mục tạm: 700/140/140 ảnh, tỷ lệ lớp giống FER2013 (Disgust ít nhất, Happy nhiều nhất). Môi trường chạy thử là env `ai_prj` (torch 2.14 CPU), cộng torchvision 0.29.2 cài tạm ngoài repo; env của Trúc không bị sửa.
 
 | Kiểm tra | Kết quả |
 |---|---|
@@ -89,6 +92,15 @@ Chưa có `fer2013.csv`, nên mình tạo một CSV giả trong thư mục tạm
 | `num_workers = 2` trên Windows | Chạy được khi đặt `OPENBLAS_NUM_THREADS=1`; không đặt thì worker chết vì OpenBLAS không xin được bộ nhớ (máy lúc đó chỉ còn 1,0/15,8 GB RAM trống) |
 | Không augmentation (E4-1) | `build_train_transform` trả `None` |
 | Augmentation E4-3 | Lật 0,5 + xoay ±10° + dịch 0,1 + scale (0,9; 1,1) |
+
+Chạy trên **dữ liệu thật** (env `btl02`, CPU, 28 s):
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Số ảnh | `[OK ]` train 28.709, val 3.589, test 3.589; cả 3 tập đủ 7/7 lớp; `counts_match_fer2013: true` |
+| Bản `pd.read_csv` đầu tiên | `ParserError: out of memory`. Commit memory của máy chỉ còn 0,4 GB trống (AMDChat 3,7 GB, WSL 3,0 GB, VS Code 2,9 GB). Đã đổi sang đọc từng dòng |
+| `conda create -n btl02 python=3.11` | Lần Trúc chạy báo `PackagesNotFoundError: python=3.11`, dù kênh `defaults` có Python 3.11.0–3.11.18. Khả năng cao do thiếu bộ nhớ lúc giải phụ thuộc; chạy lại khi máy trống hơn thì tạo được |
+| Hình EDA | Đã xem cả 4 hình: ảnh mẫu đúng lớp, ảnh trung bình rõ miệng há (Surprise) và miệng cười (Happy), viền augmentation màu xám trung bình |
 
 Về chuyện điền viền: lúc đầu viền trống sau xoay/dịch được điền 0 (đen). Sau chuẩn hóa, giá trị đó thành (0 − mean)/std, rất âm; với FER2013 thật vào khoảng −2. Mạng có thể học nhầm "có viền đen" như một đặc trưng. Điền bằng mean của train thì viền thành đúng 0 sau chuẩn hóa, tức là "không có thông tin". Cách này gần với `fill_mode='nearest'` mặc định của Keras trong code mẫu.
 
@@ -110,11 +122,31 @@ Kết quả đúng phải thấy:
 [OK ] test  (PrivateTest):   3589 ảnh (chuẩn 3589), 7/7 lớp, shape (48, 48)
 ```
 
-Sau đó là bảng số ảnh mỗi lớp, mean/std pixel train, dòng "Lớp nhiều nhất Happy, ít nhất Disgust", và `results/eda/` có 6 file. Theo tài liệu FER2013, số ảnh train dự kiến là: Angry 3995, Disgust 436, Fear 4097, Happy 7215, Sad 4830, Surprise 3171, Neutral 4965. Đối chiếu với bảng in ra.
+Sau đó là bảng số ảnh mỗi lớp (train: Angry 3995, Disgust 436, Fear 4097, Happy 7215, Sad 4830, Surprise 3171, Neutral 4965), dòng `Mean/std pixel tập train (sau khi chia 255): 0.5077 / 0.2550`, dòng "Lớp nhiều nhất Happy, ít nhất Disgust, chênh 16.55 lần", và `results/eda/` có 6 file.
+
+Máy báo out of memory thì tắt AMDChat, chạy `wsl --shutdown`, đóng bớt Zalo/Discord rồi chạy lại.
 
 ### Số liệu cho báo cáo
 
-Chưa có: điền sau khi chạy EDA trên dữ liệu thật (lấy từ `results/eda/stats.json` và `class_counts.csv`): số ảnh từng lớp, mean/std pixel, tỷ lệ chênh Happy/Disgust, trọng số lớp.
+Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
+
+| Lớp | Train | % train | Val (PublicTest) | Test (PrivateTest) | Trọng số lớp |
+|---|---|---|---|---|---|
+| Angry | 3995 | 13,92 | 467 | 491 | 1,0266 |
+| Disgust | 436 | 1,52 | 56 | 55 | 9,4066 |
+| Fear | 4097 | 14,27 | 496 | 528 | 1,0010 |
+| Happy | 7215 | 25,13 | 895 | 879 | 0,5684 |
+| Sad | 4830 | 16,82 | 653 | 594 | 0,8491 |
+| Surprise | 3171 | 11,05 | 415 | 416 | 1,2934 |
+| Neutral | 4965 | 17,29 | 607 | 626 | 0,8260 |
+| **Tổng** | **28709** | 100 | **3589** | **3589** | |
+
+- Mean / std pixel tập train (sau khi chia 255): **0,5077 / 0,2550**.
+- Happy nhiều gấp **16,55 lần** Disgust. Đoán toàn bộ là Happy đã được 895/3589 ≈ 24,9% trên val; đó là mức sàn để so với mô hình.
+- Nhận xét cho mục 1 báo cáo:
+  - Ảnh trung bình của Surprise và Happy khác biệt rõ ở vùng miệng (há tròn, cười rộng).
+  - Angry, Fear, Sad, Neutral có ảnh trung bình gần giống nhau, nên dự kiến hay bị nhầm lẫn nhau. Kiểm lại bằng confusion matrix ở mô hình cuối.
+  - Ảnh mẫu có cả ảnh dính watermark, tay che mặt, mặt nghiêng: dữ liệu khá nhiễu.
 
 ### Câu hỏi vấn đáp có thể gặp
 
@@ -126,13 +158,16 @@ Chưa có: điền sau khi chạy EDA trên dữ liệu thật (lấy từ `resu
 - *Viền trống sau khi xoay điền giá trị gì, vì sao?* Điền mean của train, để sau chuẩn hóa viền bằng 0, mạng không học nhầm viền đen như một đặc trưng (đã thử: điền 0 thì phân bố train lệch, mean −0,57, std 2,09).
 - *Trọng số lớp tính thế nào?* w_c = N/(K·n_c). Lớp hiếm (Disgust) có trọng số lớn, nên lỗi trên lớp đó bị phạt nặng hơn trong CrossEntropy.
 - *Tập test có được dùng trong EDA không?* Chỉ đếm số ảnh mỗi lớp để mô tả dữ liệu. Không xem ảnh test, không tính thống kê nào cho mô hình từ test.
+- *Dữ liệu lệch lớp thế nào, ảnh hưởng gì?* Happy chiếm 25,1% train, Disgust chỉ 1,5% (chênh 16,55 lần). Mô hình dễ thiên về lớp đông và gần như bỏ Disgust, nên ngoài accuracy phải báo F1 từng lớp, và thử CE có trọng số lớp (E6-3, trọng số Disgust 9,41).
+- *Vì sao đọc CSV từng dòng mà không dùng pandas?* `pd.read_csv` giữ cả khoảng 300 MB chuỗi pixel và bị out of memory trên máy nhóm. Đọc từng dòng và đổi ngay sang uint8 chỉ cần khoảng 83 MB.
 
 ### Còn treo
 
-- [ ] Tải `fer2013.csv` từ Kaggle vào `data/`
-- [ ] Chạy `python -m src.data` trên dữ liệu thật: phải ra `[OK ]` cả 3 tập; xem 4 hình trong `results/eda/`; tick ô 23/11 trong `docs/Kế hoạch.md` mục 7
-- [x] Viết `src/data.py` + EDA (code xong, đã chạy thử bằng CSV giả)
-- [ ] Tạo conda env `btl02`, kiểm tra có GPU không (`nvidia-smi`). Hiện máy chưa có env `btl02`, và `nvidia-smi` không có trong PATH
+- [x] Tải `fer2013.csv` từ Kaggle vào `data/`
+- [x] Chạy `python -m src.data` trên dữ liệu thật: `[OK ]` cả 3 tập, đã xem 4 hình, đã tick ô 23/11 trong kế hoạch
+- [x] Viết `src/data.py` + EDA
+- [x] Tạo conda env `btl02`. Máy không có GPU NVIDIA (không có `nvidia-smi`), nên E1–E7 và mô hình cuối chạy trên Colab/Kaggle
+- [ ] (tùy chọn) Đếm ảnh trùng trong FER2013 (Kaggle báo 34.034 chuỗi pixel khác nhau trên 35.887 ảnh), kiểm có ảnh nào nằm ở cả train lẫn val/test không, đưa vào mục 1 báo cáo
 - [x] Xóa file `Kế hoạch.md` cũ ở gốc thư mục BTL02 (đã không còn)
 - [ ] `train.py` (24/11): `set_seed()` phải gọi **trước** `get_dataloaders()`, nếu không augmentation không lặp lại được khi `num_workers = 0`
 - [ ] `train.py` (24/11): cho phép ghi đè `num_workers` từ dòng lệnh (`--workers 0`) khi chạy thử trên máy Trúc thiếu RAM; baseline giữ 2 cho Colab/Kaggle
