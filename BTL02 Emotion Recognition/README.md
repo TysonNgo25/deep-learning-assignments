@@ -29,7 +29,13 @@ Cột `Usage`: Training (28.709) dùng để train, PublicTest (3.589) làm vali
 
 ## Cách chạy
 
-(Bổ sung khi viết xong code.)
+Đứng ở thư mục BTL02 và chạy dạng module:
+
+| Lệnh | Làm gì | Kết quả |
+|---|---|---|
+| `python -m src.data` | Đọc `fer2013.csv`, kiểm số ảnh 28.709 / 3.589 / 3.589, vẽ EDA | `results/eda/` |
+
+(Bổ sung các lệnh train, thực nghiệm khi viết xong code.)
 
 ## Phân công
 

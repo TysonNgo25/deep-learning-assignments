@@ -1,4 +1,7 @@
-"""Đường dẫn dùng chung, tính tương đối theo thư mục BTL02 để chạy được trên mọi máy."""
+"""Đường dẫn dùng chung, tính tương đối theo thư mục BTL02 để chạy được trên mọi máy.
+
+Phụ trách: Huỳnh Ngọc Trúc
+"""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
