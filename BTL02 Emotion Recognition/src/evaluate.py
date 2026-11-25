@@ -130,7 +130,8 @@ def plot_cases(images, y_true, y_pred, probs, correct, split, path, per_class=5,
     """Mỗi hàng một lớp thật, per_class ảnh đoán đúng (chọn ngẫu nhiên theo seed)
     hoặc đoán sai (chọn những ca mô hình tự tin nhất mà vẫn sai, đáng phân tích nhất).
 
-    Ảnh lấy từ đúng tập đang đánh giá (code mẫu vẽ nhầm x_train[valid_idx]).
+    Ảnh và nhãn lấy từ cùng một tập (code mẫu có hình "Validating Images" vẽ nhầm
+    x_train[valid_idx] với nhãn y_valid).
     """
     plt = _plt()
     rng = np.random.default_rng(seed)

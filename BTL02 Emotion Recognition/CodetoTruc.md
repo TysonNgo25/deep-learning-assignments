@@ -309,6 +309,9 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 7. Viết **`src/evaluate.py`** (việc 25/11 trong kế hoạch) trong lúc GPU chạy.
 8. Viết luôn **`src/visualize.py`** (việc 26/11): filter lớp conv cuối, feature map, Grad-CAM.
 9. Viết luôn **`experiments/run_final.py`** + `configs/final.yaml` (việc 27/11), thêm phần "3. Mô hình cuối" vào notebook. Chỉ còn chờ kết quả E1–E6 để điền `final.yaml`.
+10. Viết **báo cáo mục 1** (`report/section_1_intro_data.md`) và **mục 2** (`report/section_2_code.md`), cùng `report/tai_lieu_tham_khao.md`. Để mọi số trong báo cáo truy được về `results/`:
+    - EDA thêm thống kê ảnh trùng (`duplicate_stats` trong `data.py` → `stats.json`).
+    - `python -m src.models` ghi `results/models/params.csv` (số tham số) và `init_check.csv` (khởi tạo mặc định so với He).
 
 ### Commit trong ngày
 
@@ -316,7 +319,8 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 - `597f4201` BTL02: notebook chạy E1–E6 song song trên 2 GPU Kaggle, nhật ký 25/11: ô 2 luồng thay 6 ô chạy tuần tự.
 - `fcdf6eea` BTL02: evaluate.py (metrics, confusion valid+test, ca đúng/sai, evaluate_final đánh giá test 1 lần): thêm `src/evaluate.py`.
 - `ed57e54e` BTL02: visualize.py (filter conv cuối, ảnh kích hoạt mạnh nhất, feature map, Grad-CAM): thêm `src/visualize.py`.
-- _(commit run_final.py, final.yaml, notebook phần mô hình cuối: Trúc điền hash ở mục ngày sau)_
+- `d10dd58b` BTL02: run_final.py + configs/final.yaml (3 seed, test 1 lần), notebook thêm phần mô hình cuối.
+- _(commit báo cáo mục 1, 2, thống kê ảnh trùng, results/models: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -345,6 +349,9 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
   - `--seeds 0 2 --chi-train`: chia GPU.
 - Notebook: thêm phần **"3. Mô hình cuối"** (đóng gói thành phần 4). Ô này tự dừng khi `final.yaml` chưa chốt.
 - README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`, `src.visualize`, `run_final`.
+- [src/data.py](src/data.py): thêm `duplicate_stats`; [results/eda/stats.json](results/eda/stats.json) có thêm khóa `duplicates`. Bốn hình EDA chạy lại không đổi.
+- [src/models.py](src/models.py): `main()` ghi [results/models/params.csv](results/models/params.csv) và [results/models/init_check.csv](results/models/init_check.csv); thêm hàm `init_check`.
+- [report/section_1_intro_data.md](report/section_1_intro_data.md), [report/section_2_code.md](report/section_2_code.md), [report/tai_lieu_tham_khao.md](report/tai_lieu_tham_khao.md): **mới**.
 
 ### Giải thích
 
@@ -369,7 +376,7 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 - **`plot_cases(correct=True/False)`**: mỗi hàng là một lớp thật, 5 ảnh.
   - Ca đúng: chọn ngẫu nhiên theo seed.
   - Ca sai: chọn những ảnh **mô hình tự tin nhất mà vẫn sai**, là các ca đáng phân tích nhất.
-  - Ảnh lấy từ đúng tập đang đánh giá; code mẫu vẽ nhầm `x_train[valid_idx]`.
+  - Ảnh và nhãn lấy từ cùng một tập. Lỗi `x_train[valid_idx]` của code mẫu nằm ở hình "Validating Images" phần khám phá dữ liệu (ảnh train kèm nhãn `y_valid`), không phải ở hình ca đúng/sai: ca đúng/sai của mẫu dùng đúng `x_test` (agent đối chiếu phát hiện ngày 25/11, đã sửa báo cáo mục 2).
 - **`plot_curves`**: loss/accuracy theo epoch, train nét đứt, val nét liền, mỗi seed một màu.
 - **`evaluate_checkpoint`** (chế độ dòng lệnh): **chỉ đọc validation**. Dòng lệnh không có tùy chọn nào để đọc PrivateTest.
 - **`evaluate_final(final_dir, run_ids)`**:
@@ -406,6 +413,18 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
   3. Train.
   4. Đủ 3 seed mới gọi `evaluate_final` (test một lần), rồi `visualize(best_model.pt)`.
 - **`--thu`**: train 3 seed × 1 epoch × 5 batch vào `results/_thu/final_<giờ>/`, đánh giá **validation** cho F-0 và vẽ hình với ít bước. Không bao giờ đọc PrivateTest.
+
+`data.py` (thêm) và `models.py` (thêm):
+
+- **`duplicate_stats(data)`**:
+  - Băm MD5 2304 byte của từng ảnh, so trong và giữa các tập.
+  - Đếm: ảnh lặp trong mỗi tập, số ảnh khác nhau của cả bộ, ảnh val/test trùng ảnh train, ảnh test trùng ảnh val, nhóm ảnh trùng mà khác nhãn, ảnh một màu (min = max).
+  - Dùng mã băm 16 byte thay vì giữ nguyên ảnh làm khóa, để không tốn thêm khoảng 80 MB bộ nhớ.
+  - PrivateTest chỉ được dùng để đếm (mô tả dữ liệu), không đưa gì vào mô hình.
+- **`init_check()`** trong `models.py`:
+  - Đưa 64 ảnh nhiễu N(0, 1) (giống ảnh đã chuẩn hóa) qua Medium hai lần: một lần với khởi tạo mặc định (`reset_parameters()`), một lần với He.
+  - Ghi std sau từng ReLU, std logits, và gradient trung bình ở conv1 với nhãn ngẫu nhiên.
+  - Thay cho số đo hôm 23/11 (đo bằng ảnh thật, nằm ngoài `results/`), để báo cáo có nguồn.
 
 ### Đã kiểm tra
 
@@ -445,6 +464,31 @@ Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final
 | val_acc trong log F-0 (0,2594) khác evaluate (0,2385) | Đúng như thiết kế: `--thu` chỉ chấm 5 batch val, evaluate chấm đủ 3.589 ảnh. Chạy thật thì hai số trùng nhau (đã kiểm 0,2633 = 0,2633) |
 | Notebook sau khi thêm phần mô hình cuối | Mọi ô code parse được; thứ tự BASE → E1–E6 → mô hình cuối → đóng gói |
 
+**Thống kê ảnh trùng** (`python -m src.data`, khóa `duplicates` trong `stats.json`):
+
+| Chỉ số | Giá trị |
+|---|---|
+| Ảnh khác nhau trong cả bộ | **34.034** / 35.887, khớp đúng con số Kaggle hiển thị |
+| Ảnh lặp trong train / val / test | 1.236 / 26 / 17 |
+| Ảnh val trùng một ảnh train | **280 (7,80% val)** |
+| Ảnh test trùng một ảnh train | **288 (8,02% test)** |
+| Ảnh test trùng một ảnh val | 44 |
+| Nhóm ảnh trùng pixel nhưng khác nhãn | 57 |
+| Ảnh một màu | 11 train, 1 val, 0 test |
+
+Chạy lại EDA thì 4 hình không đổi (git chỉ báo `stats.json` thay đổi): EDA tái lập đúng.
+
+**`init_check`** (`results/models/init_check.csv`, ảnh nhiễu N(0, 1), batch 64):
+
+| Khởi tạo | std sau ReLU 1 → 9 | Gradient conv1 |
+|---|---|---|
+| Mặc định PyTorch | 0,3437 → 0,0051 | 4,97×10⁻⁶ |
+| He | 0,8181 → 1,5366 | 2,76×10⁻² (lớn hơn khoảng 5.500 lần) |
+
+Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047; 6,1×10⁻⁶ so với 6,7×10⁻²).
+
+**Báo cáo mục 1, 2:** đối chiếu với code mẫu thì phát hiện mình viết sai một dòng. Code mẫu **cũng** dùng PublicTest làm validation và PrivateTest làm test (`public_files` → `x_valid`), không phải tự tách validation. Đã sửa Bảng 2.6. Đã kiểm thêm: code mẫu có `zoom_range = 0.1`, `fill_mode='nearest'`, batch 128, patience 10; báo cáo mẫu ghi "Best at Epoch 31/53/31", val_acc 0,64–0,67.
+
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Chạy 2 run cùng lúc trên 2 GPU có làm kết quả khác đi không?* Không. Mỗi run là một tiến trình riêng, có seed riêng, dùng một GPU riêng. Kết quả chỉ phụ thuộc config và seed. Thời gian mỗi epoch có thể chậm hơn một chút vì hai tiến trình dùng chung CPU để nạp dữ liệu, nên cột "Thời gian" trong nhật ký ghi rõ "T4, chạy song song".
@@ -458,6 +502,7 @@ Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final
 - *Grad-CAM là gì, khác feature map thế nào?* Feature map chỉ cho biết kênh nào bật ở đâu. Grad-CAM nhân feature map với gradient của điểm lớp đúng, nên cho biết vùng nào **làm tăng điểm của lớp đó**. Ở conv đầu, Grad-CAM ra cạnh/viền (đặc trưng cấp thấp); ở conv cuối, ra vùng lớn như miệng, mắt.
 - *Vì sao visualize chỉ dùng ảnh validation?* PrivateTest chỉ dùng một lần trong `evaluate_final`. Chọn ảnh minh họa cũng là "nhìn" dữ liệu, nên giữ test hoàn toàn chưa thấy.
 - *Mô hình cuối đổi nhiều biến so với baseline, có trái nguyên tắc "mỗi lần đổi một biến" không?* Không. Nguyên tắc một biến là cho E1–E6, để biết từng thay đổi tác động thế nào. Mô hình cuối là bước **gộp** các thay đổi đã được chứng minh tốt, ghi rõ trong `configs/final.yaml` kèm run làm căn cứ. Chạy 3 seed để biết kết quả không phải may mắn của một seed.
+- *FER2013 có ảnh trùng không, ảnh hưởng gì?* Có: 34.034 ảnh khác nhau trên 35.887. 280 ảnh val (7,80%) và 288 ảnh test (8,02%) trùng y hệt một ảnh train, nên accuracy đo trên FER2013 hơi cao hơn so với ảnh hoàn toàn mới. Nhóm không xóa ảnh trùng, để so được với báo cáo mẫu và các công bố dùng cùng cách chia, nhưng nêu trong phần hạn chế. 57 nhóm ảnh trùng mà khác nhãn cho thấy nhãn có nhiễu.
 - *Vì sao chạy 3 seed mà chỉ test một mô hình?* 3 seed cho biết độ dao động của val_acc (trung bình ± độ lệch chuẩn). Chọn seed theo val_loss rồi đánh giá test một lần, nên số test không bị "chọn lọc" theo chính test.
 
 ### Còn treo
@@ -468,7 +513,10 @@ Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final
 - [ ] Tải `results_*.zip` của Version #1, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
 - [x] Viết `src/evaluate.py` (accuracy, macro F1, confusion matrix valid + test, classification report, ca đúng/sai, đường học)
 - [x] `src/visualize.py`: filter conv cuối (3 cách), feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
-- [ ] Đưa 2 loại ảnh rác (biển cảnh báo, biểu tượng máy ảnh) vào phân tích dữ liệu/lỗi trong báo cáo; có thể đếm thêm bằng mục "ảnh trùng" còn treo ở 23/11
+- [x] Đưa 2 loại ảnh rác (biển cảnh báo, biểu tượng máy ảnh) và thống kê ảnh trùng vào báo cáo mục 1.5
+- [x] Báo cáo mục 1 và mục 2
+- [ ] Báo cáo mục 3 (khi có E1–E6), mục 4 và 5 (khi có mô hình cuối), phụ lục (bảng phân công, ghép `tai_lieu_tham_khao.md`)
+- [ ] Phần hạn chế ở mục 5: khoảng 8% ảnh val/test trùng ảnh train, 57 nhóm nhãn mâu thuẫn (số ở `stats.json`)
 - [x] `experiments/run_final.py` + `configs/final.yaml` + phần mô hình cuối trong notebook
 - [ ] Có kết quả E1–E6: điền `configs/final.yaml` (mỗi khóa kèm run căn cứ), đổi `chot: true`
 - [ ] Commit + push `results/BASE`, `results/E1` … `E6` và `final.yaml`; Import lại notebook; Save & Run All để chạy mô hình cuối

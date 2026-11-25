@@ -26,7 +26,7 @@ Quy ước số liệu, đánh số hình/bảng, văn phong: xem `.claude/rules
 | Filter lớp conv cuối | `results/final/figures/last_conv_filters.png` | Đề bắt buộc |
 | Grad-CAM | `results/final/figures/gradcam.png` | **Bắt buộc**: 3 hàng (conv đầu, giữa, cuối) × 7 cột (mỗi cảm xúc 1 ảnh **đoán đúng**) |
 | Confusion matrix | `results/final/figures/confusion_matrix.png` | **Valid và test đặt cạnh nhau**; nhãn theo thứ tự gốc FER2013 0–6, không theo thứ tự chữ cái như code mẫu |
-| Ca đúng / ca sai | `true_cases.png`, `wrong_cases.png` | Ảnh lấy từ đúng tập đang nói (không lặp lỗi `x_train[valid_idx]` của code mẫu) |
+| Ca đúng / ca sai | `true_cases.png`, `wrong_cases.png` | Ảnh và nhãn lấy từ cùng một tập (code mẫu có hình "Validating Images" vẽ nhầm `x_train[valid_idx]` với nhãn `y_valid`; ca đúng/sai của mẫu thì đúng) |
 
 E7 (VGG16 128×128×3), nếu chạy, đặt ở mục 3.7 với ghi chú "khác baseline nhiều biến, chỉ để tham khảo"; so E7-1 với E7-2 để nói về tác dụng của pretrained.
 

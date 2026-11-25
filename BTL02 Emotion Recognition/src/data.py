@@ -213,8 +213,8 @@ def check_counts(data):
 def run_eda(csv_path=FER_CSV, out_dir=RESULTS_DIR / "eda", seed=0):
     """Kiểm số ảnh và vẽ hình EDA cho mục 1 của báo cáo.
 
-    PrivateTest chỉ dùng để đếm số ảnh mỗi lớp (mô tả dữ liệu), không xem ảnh,
-    không tính thống kê nào đưa vào mô hình.
+    PrivateTest chỉ dùng để mô tả dữ liệu (đếm ảnh mỗi lớp, đếm ảnh trùng với train),
+    không vẽ ảnh test, không tính thống kê nào đưa vào mô hình.
     """
     import matplotlib
     matplotlib.use("Agg")  # không cần màn hình, chạy được trên Colab/Kaggle
@@ -245,12 +245,14 @@ def run_eda(csv_path=FER_CSV, out_dir=RESULTS_DIR / "eda", seed=0):
         "smallest_class": train_counts.idxmin(),
         "imbalance_ratio": round(float(train_counts.max() / max(train_counts.min(), 1)), 2),
         "class_weights": [round(w, 4) for w in class_weights(y_train).tolist()],
+        "duplicates": duplicate_stats(data),
     }
     (out_dir / "stats.json").write_text(json.dumps(stats, indent=2, ensure_ascii=False),
                                         encoding="utf-8")
     print(f"\nMean/std pixel tập train (sau khi chia 255): {mean:.4f} / {std:.4f}")
     print(f"Lớp nhiều nhất {stats['largest_class']}, ít nhất {stats['smallest_class']}, "
           f"chênh {stats['imbalance_ratio']} lần")
+    print("Ảnh trùng: " + json.dumps(stats["duplicates"], ensure_ascii=False))
 
     _plot_class_distribution(plt, counts, out_dir / "class_distribution.png")
     rng = np.random.default_rng(seed)
@@ -261,6 +263,40 @@ def run_eda(csv_path=FER_CSV, out_dir=RESULTS_DIR / "eda", seed=0):
                        out_dir / "augmentation_examples.png")
     print(f"\nĐã ghi hình và bảng vào {out_dir}")
     return counts_ok
+
+
+def duplicate_stats(data):
+    """Đếm ảnh trùng pixel trong và giữa các tập (so bằng mã băm MD5 của 2304 byte ảnh).
+
+    Ảnh của tập val/test trùng y hệt một ảnh train nghĩa là mô hình đã "thấy" ảnh đó lúc train,
+    nên accuracy trên các ảnh này cao hơn thực tế. Ảnh trùng mà khác nhãn cho thấy nhãn nhiễu.
+    Ảnh một màu (min = max) không chứa khuôn mặt.
+    """
+    import hashlib
+
+    keys = {name: [hashlib.md5(img.tobytes()).hexdigest() for img in images]
+            for name, (images, _) in data.items()}
+    out = {}
+    for name, ks in keys.items():
+        out[f"{name}_unique"] = len(set(ks))
+        out[f"{name}_duplicate_images"] = len(ks) - len(set(ks))
+    all_keys = [k for ks in keys.values() for k in ks]
+    out["all_unique"] = len(set(all_keys))
+    train_set = set(keys.get("train", []))
+    for name in ("val", "test"):
+        if name in keys:
+            out[f"{name}_images_also_in_train"] = sum(k in train_set for k in keys[name])
+    if "val" in keys and "test" in keys:
+        val_set = set(keys["val"])
+        out["test_images_also_in_val"] = sum(k in val_set for k in keys["test"])
+    labels_of = {}
+    for name, (_, labels) in data.items():
+        for k, y in zip(keys[name], labels):
+            labels_of.setdefault(k, set()).add(int(y))
+    out["pixel_groups_with_conflicting_labels"] = sum(len(v) > 1 for v in labels_of.values())
+    out["constant_images"] = {name: int(sum(img.min() == img.max() for img in images))
+                              for name, (images, _) in data.items()}
+    return out
 
 
 def _plot_class_distribution(plt, counts, path):

@@ -18,5 +18,23 @@
     0.8491,
     1.2934,
     0.826
-  ]
+  ],
+  "duplicates": {
+    "train_unique": 27473,
+    "train_duplicate_images": 1236,
+    "val_unique": 3563,
+    "val_duplicate_images": 26,
+    "test_unique": 3572,
+    "test_duplicate_images": 17,
+    "all_unique": 34034,
+    "val_images_also_in_train": 280,
+    "test_images_also_in_train": 288,
+    "test_images_also_in_val": 44,
+    "pixel_groups_with_conflicting_labels": 57,
+    "constant_images": {
+      "train": 11,
+      "val": 1,
+      "test": 0
+    }
+  }
 }
