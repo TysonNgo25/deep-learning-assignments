@@ -34,7 +34,9 @@ $py = "C:\Users\hntruc\anaconda3\envs\btl02\python.exe"
 
 ## 2. Chạy trên GPU Colab/Kaggle
 
-Notebook `experiments/chay_colab_kaggle.ipynb` làm hết: `git clone` repo công khai `TysonNgo25/deep-learning-assignments`, lấy dữ liệu, chạy BASE và E1–E6, nén `results_*.zip` (không kèm `checkpoints/`, `_thu/`).
+Notebook `experiments/chay_colab_kaggle.ipynb` làm hết: `git clone` repo công khai `TysonNgo25/deep-learning-assignments`, lấy dữ liệu, chạy BASE, E1–E6 (2 luồng song song trên T4 x2), mô hình cuối (tự dừng nếu `configs/final.yaml` chưa chốt), nén `results_*.zip` (không kèm `checkpoints/`, `_thu/`; có `results/final/best_model.pt`).
+
+Chạy mô hình cuối: commit + push `results/BASE`, `results/E1` … `results/E6` và `configs/final.yaml` (`chot: true`) trước, rồi Import lại notebook và Save & Run All. Các ô BASE/E tự bỏ qua run đã có log, chỉ ô mô hình cuối chạy.
 
 1. Trúc **commit + push** code mới nhất trước (notebook clone từ GitHub).
 2. Kaggle (khuyên dùng): Add Input dataset `nicolejyt/facialexpressionrecognition`, Accelerator GPU, bật Internet, **Save Version → Save & Run All** để chạy nền ≤ 12 giờ; zip nằm ở tab Output.
@@ -55,7 +57,8 @@ Notebook `experiments/chay_colab_kaggle.ipynb` làm hết: `git clone` repo côn
 | `-m experiments.run_E1 [--runs E1-1 E1-3] [--thu] [--workers 0]` | Nhóm E1; tương tự `run_E3` … `run_E6` | `results/E1/` … `summary.csv`, `figures/curves.png` |
 | `-m experiments.run_E2 [--arch medium_01]` | E2-1: kiến trúc tốt nhất E1 (tự đọc `results/E1/summary.csv`) + BN | `results/E2/` |
 | `-m src.evaluate --ckpt <file .pt> [--out …]` | Đánh giá checkpoint **chỉ trên validation** (dòng lệnh không đọc được PrivateTest): `metrics.json`, `classification_report.csv`, `predictions_val.csv`, confusion matrix, ca đúng/sai | `results/<nhóm>/eval/<mã>/` |
-| `-m experiments.run_final` | (chưa viết) Train F-0/1/2 rồi gọi `src.evaluate.evaluate_final`: chọn seed theo val_loss, đánh giá PrivateTest **một lần**, ghi `final_metrics.json` trước khi vẽ hình; gọi lần hai báo lỗi | `results/final/` |
+| `-m experiments.run_final --thu [--workers 0]` | Chạy thử toàn bộ (3 seed × 1 epoch × 5 batch → đánh giá **validation** → 5 hình), **không đọc PrivateTest**, chạy được cả khi chưa chốt | `results/_thu/final_<giờ>/` |
+| `-m experiments.run_final [--seeds 0 2 --chi-train]` | Cấu hình từ `configs/final.yaml` (**phải `chot: true`**, chưa chốt thì tự dừng). Train F-0/1/2 (seed có log thì bỏ qua) → `evaluate_final`: chọn seed theo val_loss, đánh giá PrivateTest **một lần**, ghi `final_metrics.json` trước khi vẽ hình → `visualize`. `final_metrics.json` đã có thì dừng ngay (hook cũng chặn) | `results/final/` |
 | `-m src.visualize [--ckpt <file .pt>] [--out …] [--steps 150]` | Chỉ dùng validation. Mặc định `results/final/best_model.pt`. Ghi `last_conv_filters.png` (activation maximization), `last_conv_top_images.png`, `last_conv_weights.png`, `feature_maps.png`, `gradcam.png` (conv đầu/giữa/cuối × 7 cảm xúc). CPU ~3–4 phút, GPU < 1 phút | `results/final/figures/` (hoặc `<nhóm>/figures/`) |
 
 Mỗi run ghi: `logs/<run>.csv` (theo epoch), `checkpoints/<run>.pt` (val_loss nhỏ nhất, git bỏ qua), `configs/<run>.json` (config đầy đủ, máy, mean/std train), thêm 1 dòng `summary.csv`.

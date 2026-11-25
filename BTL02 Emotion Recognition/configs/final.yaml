@@ -1,0 +1,11 @@
+# Mô hình cuối = baseline.yaml + các thay đổi tốt nhất từ E1–E6.
+# Chọn theo val_acc tại epoch có val_loss nhỏ nhất (results/E*/summary.csv), chỉ dựa trên validation.
+# Mỗi khóa ghi kèm run làm căn cứ. Khóa phải có trong baseline.yaml (sai tên thì run_final báo lỗi).
+#
+# Điền xong và kiểm lại thì đổi chot: true. Khi chot: false, run_final chỉ cho chạy thử (--thu),
+# để chạy lại notebook không vô tình đánh giá PrivateTest bằng cấu hình chưa chốt.
+chot: false
+override: {}
+#  model.arch: medium_01          # vd. E1-3 tốt nhất E1
+#  model.batchnorm: true          # vd. E2-1 tốt hơn E1-3
+#  train.scheduler: plateau       # vd. E3-3 tốt nhất E3

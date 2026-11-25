@@ -308,13 +308,15 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 6. Bấm Save & Run All: Version #1 (GPU T4 x2) chạy nền BASE + E1–E6.
 7. Viết **`src/evaluate.py`** (việc 25/11 trong kế hoạch) trong lúc GPU chạy.
 8. Viết luôn **`src/visualize.py`** (việc 26/11): filter lớp conv cuối, feature map, Grad-CAM.
+9. Viết luôn **`experiments/run_final.py`** + `configs/final.yaml` (việc 27/11), thêm phần "3. Mô hình cuối" vào notebook. Chỉ còn chờ kết quả E1–E6 để điền `final.yaml`.
 
 ### Commit trong ngày
 
 - `e5b06e03` BTL02: models.py (4 kiến trúc, He init), train.py, run_E1–E6, notebook Colab/Kaggle; baseline lr 1e-4, 60 epoch, patience 10: toàn bộ code train và chạy thực nghiệm viết ngày 23/11 (giải thích ở mục 23/11).
 - `597f4201` BTL02: notebook chạy E1–E6 song song trên 2 GPU Kaggle, nhật ký 25/11: ô 2 luồng thay 6 ô chạy tuần tự.
 - `fcdf6eea` BTL02: evaluate.py (metrics, confusion valid+test, ca đúng/sai, evaluate_final đánh giá test 1 lần): thêm `src/evaluate.py`.
-- _(commit visualize.py: Trúc điền hash ở mục ngày sau)_
+- `ed57e54e` BTL02: visualize.py (filter conv cuối, ảnh kích hoạt mạnh nhất, feature map, Grad-CAM): thêm `src/visualize.py`.
+- _(commit run_final.py, final.yaml, notebook phần mô hình cuối: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -336,7 +338,13 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
   | `feature_maps.png` | Một ảnh Happy qua 3 khối (48×48 → 24×24 → 12×12), 8 kênh mạnh nhất mỗi khối | 4.1 (Khang) |
   | `gradcam.png` | Grad-CAM tại conv đầu / giữa / cuối × 7 cảm xúc, ảnh đoán đúng tự tin nhất mỗi lớp | 4 (Nhân) |
 
-- README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`, `src.visualize`.
+- [configs/final.yaml](configs/final.yaml): **mới**, cấu hình mô hình cuối = `override` so với baseline + cờ `chot`. Hiện `chot: false`, `override: {}`; điền sau khi có E1–E6.
+- [experiments/run_final.py](experiments/run_final.py): **mới**.
+  - `python -m experiments.run_final --thu`: chạy thử, không đọc test.
+  - `python -m experiments.run_final`: chạy thật.
+  - `--seeds 0 2 --chi-train`: chia GPU.
+- Notebook: thêm phần **"3. Mô hình cuối"** (đóng gói thành phần 4). Ô này tự dừng khi `final.yaml` chưa chốt.
+- README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`, `src.visualize`, `run_final`.
 
 ### Giải thích
 
@@ -386,6 +394,19 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 - **`grad_cam(model, x1, target, module)`**: A = feature map tại lớp đó; α_k = trung bình không gian của ∂y_target/∂A_k; bản đồ = ReLU(Σ α_k·A_k), phóng về 48×48, chuẩn hóa [0, 1].
 - **`plot_gradcam`**: hàng đầu là ảnh gốc, 3 hàng sau là Grad-CAM. Mỗi cột một cảm xúc, chọn ảnh validation **đoán đúng** có xác suất cao nhất. Lớp không có ca đúng thì để trống và ghi chú, không lỗi.
 
+`experiments/run_final.py` (đứng tên Trúc) và `configs/final.yaml`:
+
+- **Vì sao tách `final.yaml`**: mô hình cuối gộp nhiều thay đổi tốt nhất, ví dụ kiến trúc của E1, BN của E2, scheduler của E3. Đây là chỗ duy nhất được đổi nhiều biến cùng lúc so với baseline, nên phải ghi riêng, mỗi khóa kèm run làm căn cứ, không sửa `baseline.yaml` đã chốt.
+- **Cờ `chot`**: `false` thì chạy thật bị từ chối (`sys.exit`), chỉ cho `--thu`. Notebook có ô mô hình cuối nên Save & Run All lúc chưa chốt vẫn an toàn, không vô tình đánh giá PrivateTest bằng cấu hình dở dang.
+- **`load_final()`**: đọc `final.yaml` và gọi thử `load_config(override)` ngay, để khóa sai tên báo lỗi **trước** khi tốn giờ train.
+- **`train_seeds(override, seeds, out_dir)`**: train `F-<seed>` với `override + {"seed": seed}`, seed đã có log thì bỏ qua. Nhờ vậy chia được 2 GPU: hai tiến trình `--chi-train` train seed {0, 2} và {1} song song, sau đó lệnh không có `--chi-train` chỉ còn bước đánh giá.
+- **`main()`**: thứ tự kiểm tra là
+  1. `final_metrics.json` đã có thì dừng (test đã dùng).
+  2. Chưa chốt thì dừng.
+  3. Train.
+  4. Đủ 3 seed mới gọi `evaluate_final` (test một lần), rồi `visualize(best_model.pt)`.
+- **`--thu`**: train 3 seed × 1 epoch × 5 batch vào `results/_thu/final_<giờ>/`, đánh giá **validation** cho F-0 và vẽ hình với ít bước. Không bao giờ đọc PrivateTest.
+
 ### Đã kiểm tra
 
 | Kiểm tra | Kết quả |
@@ -414,6 +435,16 @@ PrivateTest của dữ liệu thật **chưa bị đọc lần nào**: phần te
 
 Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final/best_model.pt`) ngày 27/11.
 
+**Kiểm tra `run_final.py`** (không lần nào đọc PrivateTest thật):
+
+| Kiểm tra | Kết quả |
+|---|---|
+| `python -m experiments.run_final` khi `chot: false` | `configs/final.yaml chưa chốt (chot: false)…`, thoát mã 1, **không tạo `results/final/`** |
+| `train_seeds` trên CSV giả, chạy 2 lần | Lần 1 train F-0, F-1; lần 2 in `[F-0] đã có log, bỏ qua.`, `summary.csv` không bị ghi trùng |
+| `--thu --workers 0` trên dữ liệu thật, CPU 3 phút 17 giây | Train F-0/1/2 → evaluate validation (accuracy 0,2385) → 5 hình. F-0 (seed 0, cấu hình baseline) val_loss **2,2088, trùng E1-2 và E3-3** chạy thử hôm 23/11: tái lập đúng |
+| val_acc trong log F-0 (0,2594) khác evaluate (0,2385) | Đúng như thiết kế: `--thu` chỉ chấm 5 batch val, evaluate chấm đủ 3.589 ảnh. Chạy thật thì hai số trùng nhau (đã kiểm 0,2633 = 0,2633) |
+| Notebook sau khi thêm phần mô hình cuối | Mọi ô code parse được; thứ tự BASE → E1–E6 → mô hình cuối → đóng gói |
+
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Chạy 2 run cùng lúc trên 2 GPU có làm kết quả khác đi không?* Không. Mỗi run là một tiến trình riêng, có seed riêng, dùng một GPU riêng. Kết quả chỉ phụ thuộc config và seed. Thời gian mỗi epoch có thể chậm hơn một chút vì hai tiến trình dùng chung CPU để nạp dữ liệu, nên cột "Thời gian" trong nhật ký ghi rõ "T4, chạy song song".
@@ -426,6 +457,8 @@ Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final
 - *Vì sao phải làm mờ ảnh khi tối ưu?* Không làm mờ thì gradient đẩy ảnh thành nhiễu tần số cao (đã thử: ra nhiễu hạt). Làm mờ, dịch ngẫu nhiên và phạt L2 là ép ảnh thành mẫu hình trơn, giống ảnh tự nhiên hơn.
 - *Grad-CAM là gì, khác feature map thế nào?* Feature map chỉ cho biết kênh nào bật ở đâu. Grad-CAM nhân feature map với gradient của điểm lớp đúng, nên cho biết vùng nào **làm tăng điểm của lớp đó**. Ở conv đầu, Grad-CAM ra cạnh/viền (đặc trưng cấp thấp); ở conv cuối, ra vùng lớn như miệng, mắt.
 - *Vì sao visualize chỉ dùng ảnh validation?* PrivateTest chỉ dùng một lần trong `evaluate_final`. Chọn ảnh minh họa cũng là "nhìn" dữ liệu, nên giữ test hoàn toàn chưa thấy.
+- *Mô hình cuối đổi nhiều biến so với baseline, có trái nguyên tắc "mỗi lần đổi một biến" không?* Không. Nguyên tắc một biến là cho E1–E6, để biết từng thay đổi tác động thế nào. Mô hình cuối là bước **gộp** các thay đổi đã được chứng minh tốt, ghi rõ trong `configs/final.yaml` kèm run làm căn cứ. Chạy 3 seed để biết kết quả không phải may mắn của một seed.
+- *Vì sao chạy 3 seed mà chỉ test một mô hình?* 3 seed cho biết độ dao động của val_acc (trung bình ± độ lệch chuẩn). Chọn seed theo val_loss rồi đánh giá test một lần, nên số test không bị "chọn lọc" theo chính test.
 
 ### Còn treo
 
@@ -436,4 +469,6 @@ Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final
 - [x] Viết `src/evaluate.py` (accuracy, macro F1, confusion matrix valid + test, classification report, ca đúng/sai, đường học)
 - [x] `src/visualize.py`: filter conv cuối (3 cách), feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
 - [ ] Đưa 2 loại ảnh rác (biển cảnh báo, biểu tượng máy ảnh) vào phân tích dữ liệu/lỗi trong báo cáo; có thể đếm thêm bằng mục "ảnh trùng" còn treo ở 23/11
-- [ ] `experiments/run_final.py` (27/11): train F-0/1/2 với cấu hình tốt nhất rồi gọi `evaluate_final`
+- [x] `experiments/run_final.py` + `configs/final.yaml` + phần mô hình cuối trong notebook
+- [ ] Có kết quả E1–E6: điền `configs/final.yaml` (mỗi khóa kèm run căn cứ), đổi `chot: true`
+- [ ] Commit + push `results/BASE`, `results/E1` … `E6` và `final.yaml`; Import lại notebook; Save & Run All để chạy mô hình cuối
