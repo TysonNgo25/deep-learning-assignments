@@ -39,6 +39,7 @@ Cột `Usage`: Training (28.709) dùng để train, PublicTest (3.589) làm vali
 | `python -m src.train --run BASE` | Train baseline (`configs/baseline.yaml`) | `results/BASE/` |
 | `python -m src.train --run <mã> --set train.lr=0.001 --change "..."` | Một run = baseline + ghi đè khóa config | `results/<nhóm>/` |
 | `python -m experiments.run_E1` … `run_E6` | Chạy cả nhóm thực nghiệm, bảng tóm tắt, đồ thị | `results/E1/` … `results/E6/` |
+| `python -m src.evaluate --ckpt results/BASE/checkpoints/BASE.pt` | Đánh giá một checkpoint **trên validation**: accuracy, P/R/F1 từng lớp, confusion matrix, ca đúng/sai | `results/<nhóm>/eval/<mã>/` |
 
 Máy không có GPU thì thêm `--workers 0` khi chạy thử; thực nghiệm đầy đủ chạy trên GPU bằng `experiments/chay_colab_kaggle.ipynb` (Colab hoặc Kaggle).
 

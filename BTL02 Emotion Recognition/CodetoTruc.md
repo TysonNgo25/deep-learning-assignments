@@ -304,15 +304,27 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
    - Bật GPU **T4 x2** + Internet.
 3. Chạy các ô trên Kaggle: clone đúng `e5b06e03`, `fer2013.csv` 287 MB, `--thu` trên T4 chạy 40 batch trong khoảng 1,1 s (CPU máy Trúc khoảng 19 s).
 4. Sửa notebook: gộp 6 ô `run_E1` … `run_E6` thành **một ô chạy 2 luồng song song**, mỗi luồng một GPU (xem "Giải thích").
+5. BASE trên Kaggle (phiên nháp, xem 7 epoch rồi dừng): val_acc 0,301 → 0,381 → 0,421 → 0,470 → 0,500 → 0,510 → **0,535**, val_loss giảm đều, khoảng 19 s/epoch trên T4. **Hết kẹt ở 0,2494**: khởi tạo He có tác dụng.
+6. Bấm Save & Run All: Version #1 (GPU T4 x2) chạy nền BASE + E1–E6.
+7. Viết **`src/evaluate.py`** (việc 25/11 trong kế hoạch) trong lúc GPU chạy.
 
 ### Commit trong ngày
 
 - `e5b06e03` BTL02: models.py (4 kiến trúc, He init), train.py, run_E1–E6, notebook Colab/Kaggle; baseline lr 1e-4, 60 epoch, patience 10: toàn bộ code train và chạy thực nghiệm viết ngày 23/11 (giải thích ở mục 23/11).
-- _(commit notebook 2 GPU + nhật ký này: Trúc điền hash ở mục ngày sau)_
+- `597f4201` BTL02: notebook chạy E1–E6 song song trên 2 GPU Kaggle, nhật ký 25/11: ô 2 luồng thay 6 ô chạy tuần tự.
+- _(commit evaluate.py: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
 - [experiments/chay_colab_kaggle.ipynb](experiments/chay_colab_kaggle.ipynb): ô chạy E1–E6 mới; log từng luồng ở `/kaggle/working/log_gpu0.txt`, `log_gpu1.txt`.
+- [src/evaluate.py](src/evaluate.py): **mới**. Hai chế độ:
+
+  | Cách gọi | Đọc tập | Ghi vào |
+  |---|---|---|
+  | `python -m src.evaluate --ckpt <file .pt>` | chỉ validation | `results/<nhóm>/eval/<mã run>/`: `metrics.json`, `classification_report.csv`, `predictions_val.csv`, `figures/confusion_matrix.png`, `true_cases.png`, `wrong_cases.png` |
+  | `evaluate_final(results/final, ["F-0","F-1","F-2"])` (gọi từ `run_final.py`, 27/11) | validation + **PrivateTest, một lần** | `results/final/`: `best_model.pt`, `final_metrics.json`, `classification_report.csv`, `predictions_val.csv`, `predictions_test.csv`, `figures/confusion_matrix.png` (valid + test cạnh nhau), `true_cases.png`, `wrong_cases.png` (ảnh test), `curves.png` (3 seed) |
+
+- README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`.
 
 ### Giải thích
 
@@ -324,6 +336,28 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 - Vòng `while` in dòng cuối của mỗi log 2 phút một lần để theo dõi; hết thì in 4.000 ký tự cuối mỗi log kèm mã thoát.
 - Chỉ có 1 GPU (Colab) thì gộp 6 nhóm thành một luồng, chạy tuần tự.
 
+`src/evaluate.py` (đứng tên Trúc; phần confusion matrix và ca đúng/ca sai là của Trung theo kế hoạch mục 8):
+
+- **`load_checkpoint(path)`**: dựng lại mô hình từ config lưu trong checkpoint, nạp trọng số, `model.eval()`. Lấy luôn `train_mean`/`train_std` trong checkpoint để chuẩn hóa ảnh đúng như lúc train.
+- **`predict(...)`**: chạy mô hình trên cả tập, không augmentation, trong `torch.no_grad()`. Trả nhãn đoán (`argmax`) và xác suất softmax.
+- **`split_metrics(y_true, y_pred)`**: accuracy, macro F1, weighted F1, precision/recall/F1/support từng lớp (sklearn `classification_report`). **Macro F1** lấy trung bình đều 7 lớp, nên Disgust nặng ngang Happy; accuracy thì gần như bỏ qua lớp nhỏ. Báo cả hai để thấy mô hình có bỏ lớp hiếm không.
+- **`write_report_csv`**, **`write_predictions`**: báo cáo từng lớp, và dự đoán từng ảnh (kèm 7 xác suất) để phân tích lỗi và để agent đối chiếu số liệu kiểm lại.
+- **`plot_confusion`**:
+  - Valid và test đặt cạnh nhau, như `valid_vgg16.html` của thầy.
+  - Màu theo **tỷ lệ trên mỗi hàng** (tức recall của lớp thật), nên Disgust (56 ảnh) vẫn đọc được; mỗi ô ghi cả số ảnh lẫn %.
+  - Nhãn theo thứ tự gốc FER2013 0–6, không theo chữ cái như code mẫu.
+- **`plot_cases(correct=True/False)`**: mỗi hàng là một lớp thật, 5 ảnh.
+  - Ca đúng: chọn ngẫu nhiên theo seed.
+  - Ca sai: chọn những ảnh **mô hình tự tin nhất mà vẫn sai**, là các ca đáng phân tích nhất.
+  - Ảnh lấy từ đúng tập đang đánh giá; code mẫu vẽ nhầm `x_train[valid_idx]`.
+- **`plot_curves`**: loss/accuracy theo epoch, train nét đứt, val nét liền, mỗi seed một màu.
+- **`evaluate_checkpoint`** (chế độ dòng lệnh): **chỉ đọc validation**. Dòng lệnh không có tùy chọn nào để đọc PrivateTest.
+- **`evaluate_final(final_dir, run_ids)`**:
+  1. `final_metrics.json` đã có thì báo lỗi, vì đó sẽ là đánh giá test lần hai.
+  2. Đọc `summary.csv` của F-0/1/2, tính val_acc trung bình ± **độ lệch chuẩn mẫu** (chia n−1).
+  3. Chọn seed có `best_val_loss` nhỏ nhất, **chỉ dựa trên validation**, rồi chép checkpoint thành `best_model.pt`.
+  4. Đánh giá mô hình đó trên validation và PrivateTest. Ghi `final_metrics.json` **ngay khi có số test**, để dù vẽ hình có lỗi thì test vẫn được đánh dấu là đã dùng. Sau đó mới vẽ hình.
+
 ### Đã kiểm tra
 
 | Kiểm tra | Kết quả |
@@ -332,15 +366,29 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 | Giả lập ô 2 luồng bằng `echo`/`sleep` (Git Bash trên máy) | Luồng 0 chạy E1 → E2 → E3 với `GPU=0`, luồng 1 chạy E4 → E5 → E6 với `GPU=1`, song song, mã thoát 0; dòng tiến độ in đúng |
 | `nvidia-smi` trên Kaggle | 2 × Tesla T4, 15.360 MiB mỗi card |
 | `--run BASE --thu` trên T4 | `[BASE] baseline \| Tesla T4 \| 11,327,303 tham số`; epoch 2 chạy 40 batch trong 1,1 s |
+| BASE đầy đủ, 7 epoch đầu (phiên nháp) | val_acc 0,301 / 0,381 / 0,421 / 0,470 / 0,500 / 0,510 / 0,535; val_loss 1,765 → 1,219; ~19 s/epoch; GPU 0 99%, GPU 1 0% (nên mới sửa notebook chạy song song) |
+| `evaluate --ckpt` trên checkpoint chạy thử (He, 3 epoch × 60 batch), dữ liệu thật, chỉ val | accuracy **0,2633 = đúng val_acc epoch 3 trong log train**: `evaluate.py` và `train.py` tính cùng một số. Macro F1 0,1649, Disgust F1 0 |
+| `evaluate_final` trên **CSV giả** (F-0/1/2 train 2 epoch × 4 batch) | Chọn F-0 (val_loss 1,9989 nhỏ nhất); val_acc 0,1928 ± 0,0515, khớp tính tay (std mẫu); val_acc do evaluate tính = log train; ghi đủ file, confusion valid + test cạnh nhau |
+| Gọi `evaluate_final` lần hai | `RuntimeError: … final_metrics.json đã có: PrivateTest đã được đánh giá. Không đánh giá lần hai.` |
+| Xem hình | Confusion matrix nhãn đúng thứ tự 0–6. `wrong_cases.png` (val thật, hàng Surprise) có **một ảnh biển cảnh báo, không phải mặt người**: FER2013 có lẫn ảnh rác, đưa vào phân tích lỗi |
+
+PrivateTest của dữ liệu thật **chưa bị đọc lần nào**: phần test của `evaluate_final` chỉ thử trên CSV giả.
 
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Chạy 2 run cùng lúc trên 2 GPU có làm kết quả khác đi không?* Không. Mỗi run là một tiến trình riêng, có seed riêng, dùng một GPU riêng. Kết quả chỉ phụ thuộc config và seed. Thời gian mỗi epoch có thể chậm hơn một chút vì hai tiến trình dùng chung CPU để nạp dữ liệu, nên cột "Thời gian" trong nhật ký ghi rõ "T4, chạy song song".
 - *Vì sao không dùng `DataParallel` để một run chạy trên cả 2 GPU?* Mạng nhỏ (11 triệu tham số), ảnh 48×48: chia batch 64 ra 2 card tốn chi phí đồng bộ gần bằng phần tiết kiệm. Chạy 2 run độc lập trên 2 card đơn giản hơn và nhanh gần gấp đôi.
+- *Mô hình cuối chọn thế nào, có dùng test để chọn không?* Không. Chọn seed có val_loss nhỏ nhất trong 3 seed, chỉ dựa trên PublicTest, rồi mới đánh giá PrivateTest một lần. `final_metrics.json` ghi ngay sau khi có số test, và code từ chối đánh giá lần hai.
+- *Vì sao báo cả accuracy và macro F1?* Accuracy tính trên mọi ảnh nên bị Happy (25%) chi phối; Disgust chỉ 1,5% nên đoán sai hết Disgust cũng chỉ mất khoảng 1,5 điểm accuracy. Macro F1 lấy trung bình đều 7 lớp, nên Disgust F1 = 0 kéo macro F1 xuống rõ rệt.
+- *Confusion matrix tô màu theo gì?* Theo tỷ lệ trên mỗi hàng (recall của lớp thật), không theo số ảnh. Nếu tô theo số ảnh thì hàng Happy luôn đậm nhất, còn hàng Disgust gần như trắng dù sai hết.
+- *Độ lệch chuẩn 3 seed tính thế nào?* Độ lệch chuẩn mẫu, chia n−1 = 2, vì 3 seed là mẫu nhỏ từ mọi seed có thể.
 
 ### Còn treo
 
-- [ ] Xem 5 epoch đầu của BASE trên Kaggle: val_acc phải vượt rõ 0,2494
-- [ ] Commit + push notebook mới, Import lại vào Kaggle, **Save & Run All**
-- [ ] Tải `results_*.zip`, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
-- [ ] Viết `src/evaluate.py` (accuracy, confusion matrix valid + test, classification report, ca đúng/sai) trong lúc GPU chạy
+- [x] Xem 5 epoch đầu của BASE trên Kaggle: val_acc 0,535 ở epoch 7, đã vượt xa 0,2494
+- [x] Commit + push notebook mới (`597f4201`), Import lại vào Kaggle, **Save & Run All** (Version #1)
+- [ ] Kiểm tra trên Kaggle: notebook trong Version #1 là bản 1 ô chạy 2 GPU hay bản 6 ô cũ (bản cũ chỉ chậm hơn, kết quả như nhau)
+- [ ] Tải `results_*.zip` của Version #1, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
+- [x] Viết `src/evaluate.py` (accuracy, macro F1, confusion matrix valid + test, classification report, ca đúng/sai, đường học)
+- [ ] `src/visualize.py` (26/11): filter conv cuối, feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
+- [ ] `experiments/run_final.py` (27/11): train F-0/1/2 với cấu hình tốt nhất rồi gọi `evaluate_final`

@@ -54,7 +54,8 @@ Notebook `experiments/chay_colab_kaggle.ipynb` làm hết: `git clone` repo côn
 | `-m src.train --run <mã> --set nhóm.khóa=giá_trị --change "<mô tả>"` | Một run bất kỳ = baseline + override (`--set` lặp được, khóa sai báo lỗi) | `results/<nhóm>/` |
 | `-m experiments.run_E1 [--runs E1-1 E1-3] [--thu] [--workers 0]` | Nhóm E1; tương tự `run_E3` … `run_E6` | `results/E1/` … `summary.csv`, `figures/curves.png` |
 | `-m experiments.run_E2 [--arch medium_01]` | E2-1: kiến trúc tốt nhất E1 (tự đọc `results/E1/summary.csv`) + BN | `results/E2/` |
-| `-m experiments.run_final` | (chưa viết) Mô hình cuối 3 seed + đánh giá PrivateTest **một lần** | `results/final/` |
+| `-m src.evaluate --ckpt <file .pt> [--out …]` | Đánh giá checkpoint **chỉ trên validation** (dòng lệnh không đọc được PrivateTest): `metrics.json`, `classification_report.csv`, `predictions_val.csv`, confusion matrix, ca đúng/sai | `results/<nhóm>/eval/<mã>/` |
+| `-m experiments.run_final` | (chưa viết) Train F-0/1/2 rồi gọi `src.evaluate.evaluate_final`: chọn seed theo val_loss, đánh giá PrivateTest **một lần**, ghi `final_metrics.json` trước khi vẽ hình; gọi lần hai báo lỗi | `results/final/` |
 | `-m src.visualize` | (chưa viết) Filter conv cuối, feature map, Grad-CAM | `results/final/figures/` |
 
 Mỗi run ghi: `logs/<run>.csv` (theo epoch), `checkpoints/<run>.pt` (val_loss nhỏ nhất, git bỏ qua), `configs/<run>.json` (config đầy đủ, máy, mean/std train), thêm 1 dòng `summary.csv`.
