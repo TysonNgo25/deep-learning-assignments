@@ -1,4 +1,6 @@
 # Baseline BTL02 – chốt ngày 24/11/2026. Mỗi thực nghiệm chỉ đổi MỘT tham số so với file này.
+# 23/11: lr 1e-3 -> 1e-4, max_epochs 40 -> 60, patience 8 -> 10 theo code mẫu (demo_code.html:
+# Adam 1e-4, patience 10, val_loss tốt nhất ở epoch 31-32) và lần chạy thử lr 1e-3 bị kẹt val_acc 0.235.
 seed: 0
 
 data:
@@ -19,16 +21,16 @@ model:
   batchnorm: false
   dropout_block: 0.2
   dropout_fc: 0.5
-  fc_units: 1024
+  fc_units: null                 # null = theo kiến trúc (small/medium/medium_01: 1024, large: 2048)
 
 train:
   optimizer: adam                # adam | sgd
-  lr: 0.001
+  lr: 0.0001
   momentum: 0.9                  # chỉ dùng khi optimizer = sgd
   weight_decay: 0.0
   scheduler: none                # none | plateau
   batch_size: 64
-  max_epochs: 40
-  early_stopping_patience: 8
+  max_epochs: 60
+  early_stopping_patience: 10
   class_weighted_loss: false
   num_workers: 2

@@ -34,8 +34,15 @@ Cột `Usage`: Training (28.709) dùng để train, PublicTest (3.589) làm vali
 | Lệnh | Làm gì | Kết quả |
 |---|---|---|
 | `python -m src.data` | Đọc `fer2013.csv`, kiểm số ảnh 28.709 / 3.589 / 3.589, vẽ EDA | `results/eda/` |
+| `python -m src.models` | In số tham số của 4 kiến trúc (có/không BatchNorm) | màn hình |
+| `python -m src.train --run BASE --thu` | Chạy thử pipeline 2 epoch × 20 batch | `results/_thu/` |
+| `python -m src.train --run BASE` | Train baseline (`configs/baseline.yaml`) | `results/BASE/` |
+| `python -m src.train --run <mã> --set train.lr=0.001 --change "..."` | Một run = baseline + ghi đè khóa config | `results/<nhóm>/` |
+| `python -m experiments.run_E1` … `run_E6` | Chạy cả nhóm thực nghiệm, bảng tóm tắt, đồ thị | `results/E1/` … `results/E6/` |
 
-(Bổ sung các lệnh train, thực nghiệm khi viết xong code.)
+Máy không có GPU thì thêm `--workers 0` khi chạy thử; thực nghiệm đầy đủ chạy trên GPU bằng `experiments/chay_colab_kaggle.ipynb` (Colab hoặc Kaggle).
+
+Mỗi run ghi `logs/<mã>.csv` (theo epoch: `epoch, train_loss, train_acc, val_loss, val_acc, lr, epoch_time_s`), `checkpoints/<mã>.pt` (mô hình có val_loss nhỏ nhất), `configs/<mã>.json` (config đầy đủ và máy chạy) và một dòng trong `summary.csv`. Validation là PublicTest; PrivateTest chỉ dùng một lần cho mô hình cuối.
 
 ## Phân công
 

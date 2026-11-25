@@ -4,7 +4,7 @@ Nhật ký cá nhân của Trúc, không nộp. Quy tắc ở `CLAUDE.md` mục 
 
 ---
 
-## T2 23/11/2026 – Lập kế hoạch, khung thư mục, công cụ Claude; viết src/data.py + EDA
+## T2 23/11/2026 – Lập kế hoạch, khung thư mục; data.py + EDA; models.py, train.py, script thực nghiệm
 
 ### Việc theo kế hoạch
 
@@ -19,6 +19,16 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7, việc tối 23/11 
 7. Tạo conda env `btl02` (Python 3.11, torch 2.15 CPU, torchvision 0.29.2). Máy không có GPU NVIDIA, nên thực nghiệm chạy trên Colab/Kaggle.
 8. Chạy `python -m src.data` trên dữ liệu thật: **đúng 28.709 / 3.589 / 3.589, đủ 7 lớp**. Đã tick ô 23/11 trong kế hoạch mục 7.
 
+Làm sớm việc của ngày T3 24/11 (kế hoạch mục 7):
+
+9. `src/models.py`: 4 kiến trúc Small / Medium / Medium_01 / Large theo đúng code mẫu, tùy chọn BN / activation / dropout, khởi tạo He.
+10. `src/train.py`: seed, vòng train/eval tự viết, checkpoint và early stopping theo val_loss, log CSV, `summary.csv`, ghi đè config bằng `--set`, chạy thử `--thu`, `--workers`, chặn ghi đè log.
+11. `experiments/common.py`, `run_E1.py` … `run_E6.py` và notebook `experiments/chay_colab_kaggle.ipynb` để chạy trên GPU.
+12. **Đổi baseline** (bàn giao bản 2, sau khi đọc hết code mẫu): Adam lr 1e-3 → **1e-4**, tối đa 40 → **60** epoch, patience 8 → **10**, `fc_units: null` (theo kiến trúc, để Large có FC 2048). Kế hoạch mục 3 và 4 (giá trị E3) đổi theo.
+13. Cập nhật `.claude/`: rule thực nghiệm (E7-1, E7-2, baseline mới), skill chạy thực nghiệm (lệnh thật, máy không GPU, notebook), skill báo cáo + agent chấm (Grad-CAM bắt buộc, confusion matrix valid + test), hook (đếm cả run `_r2`).
+
+Chưa xong của 24/11: **chạy BASE đầy đủ trên GPU** và chốt baseline (xem Còn treo).
+
 ### Commit trong ngày
 
 - `b885df2f` Up bài tập BTL03 (giải nén car_data, depth_hand): commit này cũng đưa thư mục `Yêu cầu/` của BTL02 (đề, báo cáo mẫu, code mẫu) lên repo.
@@ -26,12 +36,16 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7, việc tối 23/11 
 - `7fc928bb` BTL02: tạo khung thư mục, baseline.yaml, README, nhật ký thực nghiệm: dựng thư mục và các file khung.
 - `3b97b309` BTL02: kế hoạch, khung thư mục, bộ skill/agent/rule/lệnh/hook, cập nhật CLAUDE.md: cài bộ công cụ Claude vào `.claude/`, sửa `CLAUDE.md`.
 - `ad7c5e17` BTL02: viết src/data.py (đọc FER2013, DataLoader, augmentation, EDA): bản đầu của `data.py` (còn dùng `pd.read_csv`), thêm `Phụ trách` vào `paths.py`, lệnh chạy trong README.
-- _(commit đọc CSV từng dòng + `results/eda/` + số liệu EDA: Trúc điền hash ở mục ngày sau)_
+- `b9164c36` BTL02: đọc CSV từng dòng (tránh hết RAM), chạy EDA trên FER2013 thật: `load_fer2013` đọc bằng module `csv`, thêm `results/eda/`, số liệu EDA vào nhật ký.
+- _(commit models.py, train.py, experiments, đổi baseline: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
 - [docs/Kế hoạch.md](docs/Kế%20hoạch.md): kế hoạch và phân công.
-- [configs/baseline.yaml](configs/baseline.yaml): baseline Medium CNN, ReLU, Adam 1e-3, batch 64, tối đa 40 epoch, patience 8.
+- [configs/baseline.yaml](configs/baseline.yaml): baseline Medium CNN, ReLU, không BN, **Adam lr 1e-4**, batch 64, **tối đa 60 epoch, patience 10**, `fc_units: null`. (Bản đầu ngày: Adam 1e-3, 40 epoch, patience 8; đổi theo code mẫu, xem "Đã kiểm tra".)
+- [src/models.py](src/models.py), [src/train.py](src/train.py): **mới**.
+- [experiments/common.py](experiments/common.py), `run_E1.py` … `run_E6.py`, [experiments/chay_colab_kaggle.ipynb](experiments/chay_colab_kaggle.ipynb): **mới**.
+- [.gitignore](.gitignore): thêm `results/_thu/` (kết quả chạy thử).
 - [src/paths.py](src/paths.py): hằng số đường dẫn và danh sách 7 cảm xúc. Hôm nay thêm dòng `Phụ trách: Huỳnh Ngọc Trúc`.
 - [src/data.py](src/data.py): **mới**, đọc dữ liệu + DataLoader + EDA.
 - [README.md](README.md): thêm lệnh `python -m src.data` vào mục "Cách chạy".
@@ -75,6 +89,54 @@ Phần `src/data.py`:
 - **`run_eda(...)`**: kiểm số ảnh, ghi `class_counts.csv` và `stats.json`, vẽ 4 hình. PrivateTest chỉ dùng để **đếm** số ảnh mỗi lớp (mô tả dữ liệu), không vẽ ảnh, không tính thống kê nào đưa vào mô hình. Dùng backend `Agg` để chạy được cả khi không có màn hình (Colab/Kaggle).
 - **`main()`**: tham số `--csv` và `--out` (mặc định `data/fer2013.csv`, `results/eda`). Số ảnh không khớp chuẩn thì in cảnh báo và thoát với mã 1.
 
+Phần `src/models.py` (đứng tên Khang):
+
+- **`ARCHS`**: mỗi kiến trúc là danh sách khối (số filter của từng conv) cộng số nơ-ron FC, chép đúng cấu trúc `SMALL_CNN` … `LARGE_CNN` trong `demo_code.html`:
+
+  | Kiến trúc | Khối conv | FC | Tham số |
+  |---|---|---|---|
+  | small | [64,64] [128,128,256,256] | 1024 | 38.901.191 |
+  | medium (baseline) | [64×2] [128×3] [256×3] | 1024 | 11.327.303 |
+  | medium_01 | [64×3] [128×4] [256×4] | 1024 | 12.101.895 |
+  | large | [64×4] [128×4] [256×4] [512×4] | 2048 | 20.406.599 |
+
+- **`EmotionCNN`**: mỗi khối là [Conv 3×3 padding 1 (+BN) + activation] × k → MaxPool 2×2 → Dropout; sau cùng Flatten → FC → activation → Dropout → FC 7.
+  - padding 1 tương đương `padding='same'` của Keras: chỉ MaxPool làm ảnh nhỏ đi (48 → 24 → 12 → 6 → 3).
+  - Có BN thì conv bỏ bias, vì tham số β của BN đã làm việc dịch.
+  - Lớp cuối trả **logits**, không softmax, vì `nn.CrossEntropyLoss` đã gồm log-softmax. Keras dùng softmax + `categorical_crossentropy`, hai cách tương đương về toán.
+- **`_init_weights`**: khởi tạo He (Kaiming normal) cho mọi Conv/Linear, bias 0. Lý do đo được ở "Đã kiểm tra". Dùng chung cho mọi run, nên không phải biến thực nghiệm.
+- **`build_model(cfg["model"])`**, **`count_params`**, **`conv_layers`**, **`last_conv`**: `last_conv` trả lớp Conv cuối (Medium: weight 256×256×3×3) để Khang vẽ filter conv cuối (đề bắt buộc).
+- `python -m src.models` in bảng tham số 4 kiến trúc × có/không BN.
+
+Phần `src/train.py` (đứng tên Trúc):
+
+- **`load_config(override)`**: đọc `baseline.yaml` rồi ghi đè khóa dạng `"train.lr"`. Khóa không có trong baseline thì báo `KeyError`. Lý do: gõ sai tên khóa mà không báo lỗi thì run đó âm thầm thành bản sao của baseline.
+- **`set_seed(seed)`**: đặt seed cho `random`, `numpy`, `torch`, `torch.cuda`, và tắt `cudnn.benchmark`. Phải gọi **trước** `get_dataloaders` và `build_model`, để khởi tạo trọng số, thứ tự xáo và augmentation đều lặp lại được.
+- **`group_of(run_id)`**: `E1-2` → `E1`, `E3-2_r2` → `E3`, `F-0` → `final`, `BASE` → `BASE`; quyết định thư mục `results/<nhóm>/`.
+- **`build_optimizer`** (adam | sgd), **`build_scheduler`** (none | plateau): ReduceLROnPlateau dùng `factor=0.1, patience=2` giống code mẫu.
+- **`run_epoch(model, loader, criterion, device, optimizer=None)`**: có optimizer thì `model.train()` + backward; không có thì `model.eval()` + `torch.no_grad()`. Loss trung bình theo ảnh (nhân `loss.item()` với số ảnh trong batch, vì batch cuối nhỏ hơn). `train_acc` tính lúc đang train (còn dropout + augmentation), giống `acc` của Keras.
+- **`train(run_id, cfg, ...)`**: vòng epoch.
+  - Mỗi epoch ghi một dòng log và `flush` ngay, để Colab có ngắt thì log vẫn còn.
+  - val_loss giảm (so sánh `<`) thì lưu checkpoint; không giảm thì tăng bộ đếm, đủ `patience` thì dừng (early stopping).
+  - Scheduler `step(val_loss)` sau mỗi epoch.
+  - Hết run thì thêm 1 dòng `summary.csv`, số lấy ở epoch có val_loss nhỏ nhất.
+  - Log đã có thì báo `FileExistsError`: không ghi đè run đã chạy.
+  - `configs/<run>.json` lưu config đầy đủ, tên GPU, mean/std train, để biết chính xác run chạy với gì.
+- **`run(run_id, override, change, workers)`**: điểm vào cho `run_E*.py`. `workers` không phải biến thực nghiệm, chỉ để máy yếu chạy được.
+- **CLI**: `--run`, `--set khóa=giá_trị` (giá trị đọc bằng `yaml.safe_load`: `0.001` thành số, `true` thành bool), `--change`, `--workers`, `--thu` (2 epoch × 20 batch, ghi vào `results/_thu/<run>_<giờ>/`).
+
+Phần `experiments/` (đứng tên theo kế hoạch mục 8: E1–E2 Khang, E3–E4 Trung, E5–E6 Nhân, `common.py` Trúc):
+
+- Mỗi `run_E*.py` chỉ khai báo `RUNS = {mã: (override, mô tả)}`.
+- `common.run_group` **bỏ qua run đã có log**, nên chạy lại lệnh sau khi bị ngắt là tiếp tục từ run còn thiếu.
+- `print_summary` in bảng nhóm; `plot_group` vẽ `results/<nhóm>/figures/curves.png` (val_loss, val_acc theo epoch, kèm đường BASE nét đứt để so).
+- `run_E2` tự chọn kiến trúc tốt nhất từ `results/E1/summary.csv` (val_acc tại epoch val_loss nhỏ nhất), hoặc nhận `--arch`.
+- Run đổi nhiều khóa nhưng một ý: E3-1 (SGD đi cùng lr 1e-3), E4-1 (tắt cả lật/xoay/dịch), E4-2 (chỉ giữ lật), E6-1 (bỏ cả 2 dropout).
+- `chay_colab_kaggle.ipynb`:
+  - `git clone` repo công khai, lấy `fer2013.csv` từ Kaggle Input hoặc `MyDrive`.
+  - Colab: nối `results/` vào Drive để không mất log khi ngắt.
+  - Chạy BASE → E1 … E6, rồi nén `results_*.zip` (không kèm checkpoint).
+
 ### Đã kiểm tra
 
 Trước khi có `fer2013.csv`, mình tạo một CSV giả trong thư mục tạm: 700/140/140 ảnh, tỷ lệ lớp giống FER2013 (Disgust ít nhất, Happy nhiều nhất). Môi trường chạy thử là env `ai_prj` (torch 2.14 CPU), cộng torchvision 0.29.2 cài tạm ngoài repo; env của Trúc không bị sửa.
@@ -104,6 +166,32 @@ Chạy trên **dữ liệu thật** (env `btl02`, CPU, 28 s):
 
 Về chuyện điền viền: lúc đầu viền trống sau xoay/dịch được điền 0 (đen). Sau chuẩn hóa, giá trị đó thành (0 − mean)/std, rất âm; với FER2013 thật vào khoảng −2. Mạng có thể học nhầm "có viền đen" như một đặc trưng. Điền bằng mean của train thì viền thành đúng 0 sau chuẩn hóa, tức là "không có thông tin". Cách này gần với `fill_mode='nearest'` mặc định của Keras trong code mẫu.
 
+**Kiểm tra `models.py`, `train.py`** (env `btl02`, CPU):
+
+| Kiểm tra | Kết quả |
+|---|---|
+| `python -m src.models` | Cả 4 kiến trúc, có/không BN, output `(2, 7)`. Số tham số như bảng ở trên; Small nhiều nhất vì chỉ pool 2 lần, flatten 12×12×256 = 36.864 chiều |
+| 13 kiểu override của E1–E6, mỗi run 1 epoch × 2 batch | Đều chạy, ghi đủ log / checkpoint / config / summary |
+| Khóa sai `model.activaton` | `KeyError: Không có khóa 'model.activaton' trong baseline.yaml` |
+| Chạy lại run đã có log | `FileExistsError … chạy lại thì đặt mã E1-1_r2` |
+| Tái lập: 2 lần cùng seed | Log giống hệt (`train_loss 3.3448, val_loss 1.89543`) |
+| Tốc độ CPU | ~0,6 s/batch train, một epoch đầy đủ ~5 phút: run thật phải chạy GPU |
+
+**Chuyện baseline "kẹt" ở val_acc 0,235** (đáng ghi nhớ cho vấn đáp và phần phân tích):
+
+1. Chạy thử `--thu` (2 epoch × 20 batch) với lr 1e-3 rồi 1e-4 đều ra val_acc 0,2352. Nhưng `--thu` chỉ cho mạng thấy 2.560 ảnh, và đánh giá trên 1.280 ảnh val đầu tiên; 0,2352 là tỷ lệ Happy trong 1.280 ảnh đó. Tức là mạng đang đoán toàn Happy, chuyện rất bình thường lúc mới bắt đầu. **Phép thử này không nói được lr nào tốt hơn**; ghi chú trong `baseline.yaml` coi đó là lý do đổi lr là chưa chính xác. Lý do đúng để dùng 1e-4 là code mẫu dùng 1e-4.
+2. Thử dài hơn (3 epoch × 60 batch, val đầy đủ): lr 1e-4 ra val_acc 0,2494 → 0,2494 → 0,2327; lr 1e-3 ra 0,2527 → 0,2494 → 0,2494. 0,2494 = 895/3589 = tỷ lệ Happy trong val. Cả hai vẫn đoán toàn Happy.
+3. Đo độ lớn tín hiệu qua Medium trên 1 batch thật:
+
+   | Khởi tạo | std sau ReLU (lớp 1 → 9) | Gradient trung bình ở conv1 |
+   |---|---|---|
+   | PyTorch mặc định | 0,37 → 0,0047 | 6×10⁻⁶ |
+   | Glorot (Keras) | 0,089 → 0,009 | 2×10⁻³ |
+   | He / Kaiming | ~0,8–1,0 mọi lớp | 6,7×10⁻² |
+
+   Mặc định của PyTorch đặt Var(w) = 1/(3·fan_in). Qua mỗi lớp ReLU, phương sai nhân thêm khoảng fan_in·Var(w)/2 = 1/6; qua 9 lớp thì tín hiệu gần như mất, gradient ở lớp đầu nhỏ hơn He khoảng 10.000 lần. He đặt Var(w) = 2/fan_in nên phương sai giữ nguyên qua ReLU.
+4. Thêm khởi tạo He, chạy lại 3 epoch × 60 batch với lr 1e-4: val_acc **0,2622 → 0,2739 → 0,2633**, đã vượt mức đoán toàn Happy. Mới chỉ ~11.500 ảnh, nên chưa nói được độ chính xác cuối; BASE đầy đủ trên GPU mới là bằng chứng.
+
 ### Cách tự kiểm tra lại
 
 Trong Anaconda Prompt (sau khi tạo env `btl02` và tải `fer2013.csv`):
@@ -125,6 +213,20 @@ Kết quả đúng phải thấy:
 Sau đó là bảng số ảnh mỗi lớp (train: Angry 3995, Disgust 436, Fear 4097, Happy 7215, Sad 4830, Surprise 3171, Neutral 4965), dòng `Mean/std pixel tập train (sau khi chia 255): 0.5077 / 0.2550`, dòng "Lớp nhiều nhất Happy, ít nhất Disgust, chênh 16.55 lần", và `results/eda/` có 6 file.
 
 Máy báo out of memory thì tắt AMDChat, chạy `wsl --shutdown`, đóng bớt Zalo/Discord rồi chạy lại.
+
+Mô hình và vòng train (trên máy, chỉ chạy thử):
+
+```bat
+python -m src.models
+python -m src.train --run BASE --thu --workers 0
+python -m experiments.run_E3 --thu --workers 0
+```
+
+- `src.models`: phải thấy bảng 8 dòng, medium 11,327,303 tham số.
+- `src.train --thu`: phải thấy 2 dòng `epoch` và dòng `[BASE] tốt nhất epoch …`, cùng thư mục mới trong `results/_thu/` có `logs/BASE.csv`, `checkpoints/BASE.pt`, `configs/BASE.json`, `summary.csv`.
+- `run_E3 --thu`: phải chạy đủ E3-1, E3-2, E3-3, mỗi run 1 epoch.
+
+Chạy thật trên GPU: mở `experiments/chay_colab_kaggle.ipynb` trên Kaggle hoặc Colab (hướng dẫn ở ô đầu notebook). Với BASE, sau khoảng 5 epoch đầy đủ val_acc phải rõ ràng trên 0,25. Nếu đứng yên ở 0,2494 (đoán toàn Happy) thì dừng lại và báo.
 
 ### Số liệu cho báo cáo
 
@@ -161,6 +263,13 @@ Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
 - *Dữ liệu lệch lớp thế nào, ảnh hưởng gì?* Happy chiếm 25,1% train, Disgust chỉ 1,5% (chênh 16,55 lần). Mô hình dễ thiên về lớp đông và gần như bỏ Disgust, nên ngoài accuracy phải báo F1 từng lớp, và thử CE có trọng số lớp (E6-3, trọng số Disgust 9,41).
 - *Vì sao đọc CSV từng dòng mà không dùng pandas?* `pd.read_csv` giữ cả khoảng 300 MB chuỗi pixel và bị out of memory trên máy nhóm. Đọc từng dòng và đổi ngay sang uint8 chỉ cần khoảng 83 MB.
 
+- *Vì sao Small ít lớp hơn mà nhiều tham số nhất?* Small chỉ MaxPool 2 lần, nên ảnh vào FC còn 12×12×256 = 36.864 chiều, nhân FC 1024 ra 37,7 triệu tham số chỉ riêng lớp đó. Medium pool 3 lần, flatten còn 6×6×256 = 9.216 chiều. Số tham số chủ yếu nằm ở lớp FC đầu tiên, không phải ở conv.
+- *Vì sao mô hình không có softmax ở cuối?* `nn.CrossEntropyLoss` nhận logits và tự làm log-softmax, ổn định số học hơn tự softmax rồi lấy log. Lúc dự đoán chỉ cần `argmax` của logits (softmax không đổi thứ tự).
+- *Vì sao dùng khởi tạo He?* Đã đo: khởi tạo mặc định làm std tín hiệu teo 0,37 → 0,005 qua 9 lớp ReLU, gradient conv1 chỉ 6×10⁻⁶, mạng kẹt ở mức đoán toàn Happy (val_acc 0,2494). He giữ phương sai qua ReLU (Var = 2/fan_in), gradient conv1 6,7×10⁻². Khởi tạo dùng chung cho mọi run nên không phá nguyên tắc đổi một biến.
+- *Checkpoint và early stopping theo gì?* Theo val_loss nhỏ nhất (giống `ModelCheckpoint(monitor='val_loss')` và `EarlyStopping` của code mẫu); patience 10. Báo cáo val_acc tại đúng epoch đó, không lấy val_acc lớn nhất (lấy max là chọn epoch theo chính số đang báo cáo).
+- *`train_acc` thấp hơn val_acc có lạ không?* Không: train_acc tính lúc còn dropout và augmentation; val không có hai thứ đó.
+- *Vì sao E3-1 đổi cả optimizer lẫn lr?* SGD với lr 1e-4 gần như không học trong 60 epoch, so như vậy không công bằng với SGD. "Biến" ở E3-1 là cặp (optimizer, lr thường dùng với nó).
+
 ### Còn treo
 
 - [x] Tải `fer2013.csv` từ Kaggle vào `data/`
@@ -169,5 +278,8 @@ Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
 - [x] Tạo conda env `btl02`. Máy không có GPU NVIDIA (không có `nvidia-smi`), nên E1–E7 và mô hình cuối chạy trên Colab/Kaggle
 - [ ] (tùy chọn) Đếm ảnh trùng trong FER2013 (Kaggle báo 34.034 chuỗi pixel khác nhau trên 35.887 ảnh), kiểm có ảnh nào nằm ở cả train lẫn val/test không, đưa vào mục 1 báo cáo
 - [x] Xóa file `Kế hoạch.md` cũ ở gốc thư mục BTL02 (đã không còn)
-- [ ] `train.py` (24/11): `set_seed()` phải gọi **trước** `get_dataloaders()`, nếu không augmentation không lặp lại được khi `num_workers = 0`
-- [ ] `train.py` (24/11): cho phép ghi đè `num_workers` từ dòng lệnh (`--workers 0`) khi chạy thử trên máy Trúc thiếu RAM; baseline giữ 2 cho Colab/Kaggle
+- [x] `train.py`: `set_seed()` gọi **trước** `get_dataloaders()` (trong `train()`); đã kiểm tái lập, 2 lần cùng seed ra log giống hệt
+- [x] `train.py`: `--workers 0` ghi đè `num_workers` khi chạy thử trên máy thiếu RAM; baseline giữ 2 cho Colab/Kaggle
+- [ ] **Chạy BASE đầy đủ trên GPU** (Kaggle/Colab, notebook `experiments/chay_colab_kaggle.ipynb`), ghi `NhatKyThucNghiem.md`, chốt baseline trước hết 24/11 (từ 25/11 hook hỏi lại khi sửa `baseline.yaml`). Nếu BASE vẫn kẹt ~0,25 sau 5 epoch thì xem lại lr/khởi tạo **trước** khi chạy E1–E6
+- [ ] Sửa ghi chú đầu `configs/baseline.yaml`: lý do đổi lr là "theo code mẫu", không phải "lr 1e-3 bị kẹt" (phép thử `--thu` không phân biệt được hai lr)
+- [ ] Trúc commit + push trước khi chạy notebook (notebook `git clone` từ GitHub)

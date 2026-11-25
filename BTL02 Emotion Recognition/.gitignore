@@ -7,6 +7,9 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
+# Kết quả chạy thử (python -m src.train --thu)
+results/_thu/
+
 # Checkpoint trung gian (chỉ giữ results/final/best_model.pt)
 results/**/*.pt
 !results/final/best_model.pt
