@@ -282,4 +282,65 @@ Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
 - [x] `train.py`: `--workers 0` ghi đè `num_workers` khi chạy thử trên máy thiếu RAM; baseline giữ 2 cho Colab/Kaggle
 - [ ] **Chạy BASE đầy đủ trên GPU** (Kaggle/Colab, notebook `experiments/chay_colab_kaggle.ipynb`), ghi `NhatKyThucNghiem.md`, chốt baseline trước hết 24/11 (từ 25/11 hook hỏi lại khi sửa `baseline.yaml`). Nếu BASE vẫn kẹt ~0,25 sau 5 epoch thì xem lại lr/khởi tạo **trước** khi chạy E1–E6
 - [ ] Sửa ghi chú đầu `configs/baseline.yaml`: lý do đổi lr là "theo code mẫu", không phải "lr 1e-3 bị kẹt" (phép thử `--thu` không phân biệt được hai lr)
-- [ ] Trúc commit + push trước khi chạy notebook (notebook `git clone` từ GitHub)
+- [x] Trúc commit + push trước khi chạy notebook (commit `e5b06e03`, 25/11)
+
+---
+
+## T4 25/11/2026 – Đưa lên Kaggle (2 × T4), chạy BASE, chạy E1–E6 song song trên 2 GPU
+
+### Việc theo kế hoạch
+
+Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
+- Việc 24/11 còn lại: chạy BASE đầy đủ trên GPU, chốt baseline.
+- Việc 25/11: chạy E1, E2 trên GPU, ghi nhật ký, viết `evaluate.py`.
+
+Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
+
+1. Commit + push `models.py`, `train.py`, `experiments/`, notebook (`e5b06e03`).
+2. Dựng phiên Kaggle:
+   - Import `experiments/chay_colab_kaggle.ipynb`.
+   - Add Input dataset FER2013 (`nicolejyt/facialexpressionrecognition`). Tìm theo tên không ra, phải dán link dataset vào ô tìm kiếm.
+   - **Xác minh số điện thoại tài khoản Kaggle.** Chưa xác minh thì Session options không có Accelerator và công tắc Internet bị khóa.
+   - Bật GPU **T4 x2** + Internet.
+3. Chạy các ô trên Kaggle: clone đúng `e5b06e03`, `fer2013.csv` 287 MB, `--thu` trên T4 chạy 40 batch trong khoảng 1,1 s (CPU máy Trúc khoảng 19 s).
+4. Sửa notebook: gộp 6 ô `run_E1` … `run_E6` thành **một ô chạy 2 luồng song song**, mỗi luồng một GPU (xem "Giải thích").
+
+### Commit trong ngày
+
+- `e5b06e03` BTL02: models.py (4 kiến trúc, He init), train.py, run_E1–E6, notebook Colab/Kaggle; baseline lr 1e-4, 60 epoch, patience 10: toàn bộ code train và chạy thực nghiệm viết ngày 23/11 (giải thích ở mục 23/11).
+- _(commit notebook 2 GPU + nhật ký này: Trúc điền hash ở mục ngày sau)_
+
+### Kết quả
+
+- [experiments/chay_colab_kaggle.ipynb](experiments/chay_colab_kaggle.ipynb): ô chạy E1–E6 mới; log từng luồng ở `/kaggle/working/log_gpu0.txt`, `log_gpu1.txt`.
+
+### Giải thích
+
+Ô chạy E1–E6 trong notebook:
+
+- `streams = [["E1", "E2", "E3"], ["E4", "E5", "E6"]]`: luồng 0 chạy trên GPU 0, luồng 1 trên GPU 1, cùng lúc. E2 lấy kiến trúc tốt nhất từ `results/E1/summary.csv`, nên phải nằm sau E1 trong cùng luồng. Chia như vậy mỗi luồng có 8–9 run.
+- Mỗi luồng là một tiến trình `bash -c "python -m experiments.run_E1; python -m experiments.run_E2; …"`, đặt `CUDA_VISIBLE_DEVICES=<i>`. Trong tiến trình đó chỉ thấy một GPU, nên `train.py` (vốn dùng `cuda`) không phải sửa gì. Các lệnh nối bằng `;` chứ không phải `&&`, để một nhóm lỗi không chặn các nhóm sau.
+- Hai luồng ghi vào hai thư mục `results/<nhóm>/` khác nhau, mỗi nhóm có `summary.csv` riêng, nên không tranh nhau ghi file.
+- Vòng `while` in dòng cuối của mỗi log 2 phút một lần để theo dõi; hết thì in 4.000 ký tự cuối mỗi log kèm mã thoát.
+- Chỉ có 1 GPU (Colab) thì gộp 6 nhóm thành một luồng, chạy tuần tự.
+
+### Đã kiểm tra
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Mọi ô code của notebook parse được (`ast.parse`, bỏ dòng `!`) | OK |
+| Giả lập ô 2 luồng bằng `echo`/`sleep` (Git Bash trên máy) | Luồng 0 chạy E1 → E2 → E3 với `GPU=0`, luồng 1 chạy E4 → E5 → E6 với `GPU=1`, song song, mã thoát 0; dòng tiến độ in đúng |
+| `nvidia-smi` trên Kaggle | 2 × Tesla T4, 15.360 MiB mỗi card |
+| `--run BASE --thu` trên T4 | `[BASE] baseline \| Tesla T4 \| 11,327,303 tham số`; epoch 2 chạy 40 batch trong 1,1 s |
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Chạy 2 run cùng lúc trên 2 GPU có làm kết quả khác đi không?* Không. Mỗi run là một tiến trình riêng, có seed riêng, dùng một GPU riêng. Kết quả chỉ phụ thuộc config và seed. Thời gian mỗi epoch có thể chậm hơn một chút vì hai tiến trình dùng chung CPU để nạp dữ liệu, nên cột "Thời gian" trong nhật ký ghi rõ "T4, chạy song song".
+- *Vì sao không dùng `DataParallel` để một run chạy trên cả 2 GPU?* Mạng nhỏ (11 triệu tham số), ảnh 48×48: chia batch 64 ra 2 card tốn chi phí đồng bộ gần bằng phần tiết kiệm. Chạy 2 run độc lập trên 2 card đơn giản hơn và nhanh gần gấp đôi.
+
+### Còn treo
+
+- [ ] Xem 5 epoch đầu của BASE trên Kaggle: val_acc phải vượt rõ 0,2494
+- [ ] Commit + push notebook mới, Import lại vào Kaggle, **Save & Run All**
+- [ ] Tải `results_*.zip`, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
+- [ ] Viết `src/evaluate.py` (accuracy, confusion matrix valid + test, classification report, ca đúng/sai) trong lúc GPU chạy
