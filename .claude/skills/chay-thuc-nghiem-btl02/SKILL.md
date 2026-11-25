@@ -56,7 +56,7 @@ Notebook `experiments/chay_colab_kaggle.ipynb` làm hết: `git clone` repo côn
 | `-m experiments.run_E2 [--arch medium_01]` | E2-1: kiến trúc tốt nhất E1 (tự đọc `results/E1/summary.csv`) + BN | `results/E2/` |
 | `-m src.evaluate --ckpt <file .pt> [--out …]` | Đánh giá checkpoint **chỉ trên validation** (dòng lệnh không đọc được PrivateTest): `metrics.json`, `classification_report.csv`, `predictions_val.csv`, confusion matrix, ca đúng/sai | `results/<nhóm>/eval/<mã>/` |
 | `-m experiments.run_final` | (chưa viết) Train F-0/1/2 rồi gọi `src.evaluate.evaluate_final`: chọn seed theo val_loss, đánh giá PrivateTest **một lần**, ghi `final_metrics.json` trước khi vẽ hình; gọi lần hai báo lỗi | `results/final/` |
-| `-m src.visualize` | (chưa viết) Filter conv cuối, feature map, Grad-CAM | `results/final/figures/` |
+| `-m src.visualize [--ckpt <file .pt>] [--out …] [--steps 150]` | Chỉ dùng validation. Mặc định `results/final/best_model.pt`. Ghi `last_conv_filters.png` (activation maximization), `last_conv_top_images.png`, `last_conv_weights.png`, `feature_maps.png`, `gradcam.png` (conv đầu/giữa/cuối × 7 cảm xúc). CPU ~3–4 phút, GPU < 1 phút | `results/final/figures/` (hoặc `<nhóm>/figures/`) |
 
 Mỗi run ghi: `logs/<run>.csv` (theo epoch), `checkpoints/<run>.pt` (val_loss nhỏ nhất, git bỏ qua), `configs/<run>.json` (config đầy đủ, máy, mean/std train), thêm 1 dòng `summary.csv`.
 

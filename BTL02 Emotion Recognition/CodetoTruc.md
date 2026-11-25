@@ -307,12 +307,14 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 5. BASE trên Kaggle (phiên nháp, xem 7 epoch rồi dừng): val_acc 0,301 → 0,381 → 0,421 → 0,470 → 0,500 → 0,510 → **0,535**, val_loss giảm đều, khoảng 19 s/epoch trên T4. **Hết kẹt ở 0,2494**: khởi tạo He có tác dụng.
 6. Bấm Save & Run All: Version #1 (GPU T4 x2) chạy nền BASE + E1–E6.
 7. Viết **`src/evaluate.py`** (việc 25/11 trong kế hoạch) trong lúc GPU chạy.
+8. Viết luôn **`src/visualize.py`** (việc 26/11): filter lớp conv cuối, feature map, Grad-CAM.
 
 ### Commit trong ngày
 
 - `e5b06e03` BTL02: models.py (4 kiến trúc, He init), train.py, run_E1–E6, notebook Colab/Kaggle; baseline lr 1e-4, 60 epoch, patience 10: toàn bộ code train và chạy thực nghiệm viết ngày 23/11 (giải thích ở mục 23/11).
 - `597f4201` BTL02: notebook chạy E1–E6 song song trên 2 GPU Kaggle, nhật ký 25/11: ô 2 luồng thay 6 ô chạy tuần tự.
-- _(commit evaluate.py: Trúc điền hash ở mục ngày sau)_
+- `fcdf6eea` BTL02: evaluate.py (metrics, confusion valid+test, ca đúng/sai, evaluate_final đánh giá test 1 lần): thêm `src/evaluate.py`.
+- _(commit visualize.py: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -324,7 +326,17 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
   | `python -m src.evaluate --ckpt <file .pt>` | chỉ validation | `results/<nhóm>/eval/<mã run>/`: `metrics.json`, `classification_report.csv`, `predictions_val.csv`, `figures/confusion_matrix.png`, `true_cases.png`, `wrong_cases.png` |
   | `evaluate_final(results/final, ["F-0","F-1","F-2"])` (gọi từ `run_final.py`, 27/11) | validation + **PrivateTest, một lần** | `results/final/`: `best_model.pt`, `final_metrics.json`, `classification_report.csv`, `predictions_val.csv`, `predictions_test.csv`, `figures/confusion_matrix.png` (valid + test cạnh nhau), `true_cases.png`, `wrong_cases.png` (ảnh test), `curves.png` (3 seed) |
 
-- README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`.
+- [src/visualize.py](src/visualize.py): **mới**. `python -m src.visualize [--ckpt …]`, mặc định mô hình cuối `results/final/best_model.pt`, chỉ dùng validation. Ghi 5 hình vào `results/final/figures/` (hoặc `<nhóm>/figures/`):
+
+  | Hình | Nội dung | Mục báo cáo |
+  |---|---|---|
+  | `last_conv_filters.png` | **Filter lớp conv cuối** (đề bắt buộc): ảnh tổng hợp làm 64 filter hoạt động mạnh nhất kích hoạt cực đại | 4.1 (Khang) |
+  | `last_conv_top_images.png` | 10 filter × 6 ảnh validation thật kích hoạt mạnh nhất | 4.1 (Khang) |
+  | `last_conv_weights.png` | Trọng số 3×3 của 64 filter (trung bình theo 256 kênh vào) | 4.1 (Khang) |
+  | `feature_maps.png` | Một ảnh Happy qua 3 khối (48×48 → 24×24 → 12×12), 8 kênh mạnh nhất mỗi khối | 4.1 (Khang) |
+  | `gradcam.png` | Grad-CAM tại conv đầu / giữa / cuối × 7 cảm xúc, ảnh đoán đúng tự tin nhất mỗi lớp | 4 (Nhân) |
+
+- README và skill `chay-thuc-nghiem-btl02`: thêm lệnh `src.evaluate`, `src.visualize`.
 
 ### Giải thích
 
@@ -358,6 +370,22 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
   3. Chọn seed có `best_val_loss` nhỏ nhất, **chỉ dựa trên validation**, rồi chép checkpoint thành `best_model.pt`.
   4. Đánh giá mô hình đó trên validation và PrivateTest. Ghi `final_metrics.json` **ngay khi có số test**, để dù vẽ hình có lỗi thì test vẫn được đánh dấu là đã dùng. Sau đó mới vẽ hình.
 
+`src/visualize.py` (đứng tên Khang cho filter + feature map, Nhân cho Grad-CAM):
+
+- **`capture(model, module, x)`**: gắn forward hook tạm thời để lấy đầu ra của một lớp bất kỳ trong lúc chạy mô hình, rồi gỡ hook ngay (`try/finally`), không sửa code mô hình.
+- **`activation_after(model, conv)`**: lớp kích hoạt ngay sau một Conv (bỏ qua BN nếu có). Feature map và Grad-CAM lấy ở đây, vì đó là thứ lớp sau thực sự nhận được.
+- **`mean_activations`**: mức kích hoạt trung bình của từng kênh trên mỗi ảnh validation (N×256). Dùng để chọn 64 filter **hoạt động mạnh nhất** (filter "chết", luôn bằng 0, không có gì để xem) và để tìm ảnh kích hoạt mạnh nhất. Script in số filter chết.
+- **`filter_patterns`** (activation maximization):
+  - Bắt đầu từ nhiễu nhỏ, cập nhật **ảnh đầu vào** (không đổi trọng số) bằng Adam để tăng trung bình đầu ra của filter.
+  - Lấy đầu ra conv **trước** ReLU: sau ReLU, filter đang bằng 0 thì gradient cũng bằng 0, ảnh không đổi.
+  - Ba cách chống nhiễu: dịch ngẫu nhiên ±2 pixel mỗi bước, phạt L2, và cứ 4 bước làm mờ Gaussian 3×3.
+  - Tối ưu 64 ảnh cùng lúc trong một batch, chỉ lấy gradient theo ảnh (`torch.autograd.grad`).
+- **`plot_filter_weights`**: vẽ thẳng trọng số. Lớp cuối có 256 kênh vào nên phải lấy trung bình mới vẽ được 3×3; khó đọc bằng mắt. Có hình này để giải thích vì sao phải dùng hai cách kia.
+- **`plot_top_images`**: cách dễ giải thích nhất khi vấn đáp, ví dụ "filter X bắt ảnh tối / miệng mở".
+- **`plot_feature_maps`**: lấy đầu ra conv cuối mỗi khối (conv đứng ngay trước MaxPool) cho ảnh Happy đoán đúng tự tin nhất.
+- **`grad_cam(model, x1, target, module)`**: A = feature map tại lớp đó; α_k = trung bình không gian của ∂y_target/∂A_k; bản đồ = ReLU(Σ α_k·A_k), phóng về 48×48, chuẩn hóa [0, 1].
+- **`plot_gradcam`**: hàng đầu là ảnh gốc, 3 hàng sau là Grad-CAM. Mỗi cột một cảm xúc, chọn ảnh validation **đoán đúng** có xác suất cao nhất. Lớp không có ca đúng thì để trống và ghi chú, không lỗi.
+
 ### Đã kiểm tra
 
 | Kiểm tra | Kết quả |
@@ -374,6 +402,18 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 
 PrivateTest của dữ liệu thật **chưa bị đọc lần nào**: phần test của `evaluate_final` chỉ thử trên CSV giả.
 
+**Kiểm tra `visualize.py`** trên checkpoint chạy thử (val_acc 0,2633), dữ liệu thật, chỉ validation, `--steps 60`, CPU 2 phút 32 giây:
+
+| Hình | Thấy gì |
+|---|---|
+| `gradcam.png` | Đủ 4 hàng × 7 cột. Cột Disgust ghi "(không có ca đúng)" vì mô hình yếu chưa đoán đúng ảnh Disgust nào. Ở conv cuối, vùng đỏ đã rơi vào miệng (Angry) và mặt (Happy); ở conv đầu là cạnh/viền |
+| `last_conv_top_images.png` | Filter lớp cuối của mô hình yếu này phản ứng chủ yếu theo **độ sáng** (ảnh rất tối / rất sáng). Lộ ra thêm ảnh rác trong FER2013: **biển cảnh báo** và **biểu tượng máy ảnh** |
+| `feature_maps.png` | Khối 1 (48×48) còn rõ hình mặt, viền, kính; khối 3 (12×12) chỉ còn các vùng sáng rời rạc |
+| `last_conv_filters.png` | Bản đầu (chỉ dịch + L2) ra nhiễu hạt. **Thêm làm mờ Gaussian** thì ra mẫu hình rõ: sọc chéo (filter 88, 34), lưới chấm đều (21, 250, 17) |
+| Số filter chết ở lớp cuối | 0/256 |
+
+Hình thật cho báo cáo sẽ vẽ lại từ mô hình cuối (`results/final/best_model.pt`) ngày 27/11.
+
 ### Câu hỏi vấn đáp có thể gặp
 
 - *Chạy 2 run cùng lúc trên 2 GPU có làm kết quả khác đi không?* Không. Mỗi run là một tiến trình riêng, có seed riêng, dùng một GPU riêng. Kết quả chỉ phụ thuộc config và seed. Thời gian mỗi epoch có thể chậm hơn một chút vì hai tiến trình dùng chung CPU để nạp dữ liệu, nên cột "Thời gian" trong nhật ký ghi rõ "T4, chạy song song".
@@ -382,6 +422,10 @@ PrivateTest của dữ liệu thật **chưa bị đọc lần nào**: phần te
 - *Vì sao báo cả accuracy và macro F1?* Accuracy tính trên mọi ảnh nên bị Happy (25%) chi phối; Disgust chỉ 1,5% nên đoán sai hết Disgust cũng chỉ mất khoảng 1,5 điểm accuracy. Macro F1 lấy trung bình đều 7 lớp, nên Disgust F1 = 0 kéo macro F1 xuống rõ rệt.
 - *Confusion matrix tô màu theo gì?* Theo tỷ lệ trên mỗi hàng (recall của lớp thật), không theo số ảnh. Nếu tô theo số ảnh thì hàng Happy luôn đậm nhất, còn hàng Disgust gần như trắng dù sai hết.
 - *Độ lệch chuẩn 3 seed tính thế nào?* Độ lệch chuẩn mẫu, chia n−1 = 2, vì 3 seed là mẫu nhỏ từ mọi seed có thể.
+- *"Visualize filter lớp conv cuối" làm thế nào?* Trọng số lớp cuối là 256 filter × 256 kênh vào × 3×3, không vẽ thẳng thành ảnh nhìn được. Nhóm dùng activation maximization: giữ nguyên trọng số, tối ưu **ảnh đầu vào** bằng gradient để filter kích hoạt mạnh nhất; ảnh thu được là "mẫu hình filter đó tìm". Thêm hình ảnh validation thật kích hoạt mạnh nhất để đối chiếu.
+- *Vì sao phải làm mờ ảnh khi tối ưu?* Không làm mờ thì gradient đẩy ảnh thành nhiễu tần số cao (đã thử: ra nhiễu hạt). Làm mờ, dịch ngẫu nhiên và phạt L2 là ép ảnh thành mẫu hình trơn, giống ảnh tự nhiên hơn.
+- *Grad-CAM là gì, khác feature map thế nào?* Feature map chỉ cho biết kênh nào bật ở đâu. Grad-CAM nhân feature map với gradient của điểm lớp đúng, nên cho biết vùng nào **làm tăng điểm của lớp đó**. Ở conv đầu, Grad-CAM ra cạnh/viền (đặc trưng cấp thấp); ở conv cuối, ra vùng lớn như miệng, mắt.
+- *Vì sao visualize chỉ dùng ảnh validation?* PrivateTest chỉ dùng một lần trong `evaluate_final`. Chọn ảnh minh họa cũng là "nhìn" dữ liệu, nên giữ test hoàn toàn chưa thấy.
 
 ### Còn treo
 
@@ -390,5 +434,6 @@ PrivateTest của dữ liệu thật **chưa bị đọc lần nào**: phần te
 - [ ] Kiểm tra trên Kaggle: notebook trong Version #1 là bản 1 ô chạy 2 GPU hay bản 6 ô cũ (bản cũ chỉ chậm hơn, kết quả như nhau)
 - [ ] Tải `results_*.zip` của Version #1, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
 - [x] Viết `src/evaluate.py` (accuracy, macro F1, confusion matrix valid + test, classification report, ca đúng/sai, đường học)
-- [ ] `src/visualize.py` (26/11): filter conv cuối, feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
+- [x] `src/visualize.py`: filter conv cuối (3 cách), feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
+- [ ] Đưa 2 loại ảnh rác (biển cảnh báo, biểu tượng máy ảnh) vào phân tích dữ liệu/lỗi trong báo cáo; có thể đếm thêm bằng mục "ảnh trùng" còn treo ở 23/11
 - [ ] `experiments/run_final.py` (27/11): train F-0/1/2 với cấu hình tốt nhất rồi gọi `evaluate_final`
