@@ -17,3 +17,5 @@
 [7] J. Yosinski, J. Clune, A. Nguyen, T. Fuchs, H. Lipson. "Understanding Neural Networks Through Deep Visualization." Deep Learning Workshop, ICML 2015.
 
 [8] R. R. Selvaraju, M. Cogswell, A. Das, R. Vedantam, D. Parikh, D. Batra. "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization." ICCV 2017.
+
+[9] X. Li, S. Chen, X. Hu, J. Yang. "Understanding the Disharmony between Dropout and Batch Normalization by Variance Shift." CVPR 2019.

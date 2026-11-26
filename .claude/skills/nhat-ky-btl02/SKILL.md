@@ -25,6 +25,7 @@ Quy tắc gốc ở `CLAUDE.md` mục 1, bố cục theo [template.md](../nhat-k
 ## B. Dòng run trong NhatKyThucNghiem.md
 
 1. Đọc `results/<nhóm>/logs/<mã run>.csv`, lấy dòng có `val_loss` nhỏ nhất: `epoch`, `val_loss`, `val_acc`. Thời gian = tổng `epoch_time_s`.
+   - **Làm tròn accuracy từ số ảnh đúng, không từ giá trị trong log.** Log lưu 5 chữ số (0.66425), nên ca "đúng nửa" bị in sai (BASE thật là 2384/3589 = 66.43%, in thẳng ra 66.42%). Lấy `round(val_acc × 3589) / 3589` và `round(train_acc × 28709) / 28709`, hoặc đọc sẵn từ `results/tong_hop.csv` (chạy `python -m experiments.tong_hop`). Hiệu số (so với BASE, train − val) cũng tính từ giá trị chính xác này.
 2. "Đổi gì so với baseline" lấy từ `docs/Kế hoạch.md` mục 4 (đúng một thay đổi). "Người phụ trách" lấy cột tương ứng.
 3. Nhận xét 1 câu có số: so với baseline (`+1.8 điểm val_acc`), dấu hiệu quá khớp (khoảng cách train_acc − val_acc), số epoch đến early stopping.
 4. Thêm dòng theo thứ tự mã run, không sửa dòng cũ. Chạy lại thì thêm dòng `<run>_r2`.

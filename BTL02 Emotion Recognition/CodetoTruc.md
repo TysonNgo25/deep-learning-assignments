@@ -280,7 +280,7 @@ Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
 - [x] Xóa file `Kế hoạch.md` cũ ở gốc thư mục BTL02 (đã không còn)
 - [x] `train.py`: `set_seed()` gọi **trước** `get_dataloaders()` (trong `train()`); đã kiểm tái lập, 2 lần cùng seed ra log giống hệt
 - [x] `train.py`: `--workers 0` ghi đè `num_workers` khi chạy thử trên máy thiếu RAM; baseline giữ 2 cho Colab/Kaggle
-- [x] **Chạy BASE đầy đủ trên GPU** (xong 25/11 trên Kaggle T4: val_acc 66.42% ở epoch 47/57, đã ghi `NhatKyThucNghiem.md`)
+- [x] **Chạy BASE đầy đủ trên GPU** (xong 25/11 trên Kaggle T4: val_acc 66.43% ở epoch 47/57, đã ghi `NhatKyThucNghiem.md`)
 - [ ] Sửa ghi chú đầu `configs/baseline.yaml`: lý do đổi lr là "theo code mẫu", không phải "lr 1e-3 bị kẹt" (phép thử `--thu` không phân biệt được hai lr)
 - [x] Trúc commit + push trước khi chạy notebook (commit `e5b06e03`, 25/11)
 
@@ -523,12 +523,12 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 
 ---
 
-## T5 26/11/2026 – Nhận kết quả BASE + E1–E6 từ Kaggle, ghi nhật ký thực nghiệm, chốt cấu hình mô hình cuối
+## T5 26/11/2026 – Nhận kết quả BASE + E1–E6, ghi nhật ký thực nghiệm, chốt mô hình cuối, viết báo cáo mục 3
 
 ### Việc theo kế hoạch
 
 Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
-- T3 24/11: baseline chạy hết, val_acc trong khoảng 60–66%. Kết quả 66,42%, đạt.
+- T3 24/11: baseline chạy hết, val_acc trong khoảng 60–66%. Kết quả 66,43%, đạt.
 - T4 25/11: có `summary.csv` của E1, E2, có `evaluate.py`. Đạt.
 - T5 26/11: có `summary.csv` E3–E6, có `visualize.py` (viết từ 25/11). Đạt.
 
@@ -537,10 +537,12 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
 1. Tải `results_20261125-1359.zip` (Version #1 trên Kaggle), giải nén vào thư mục tạm, chỉ chép `results/BASE` và `results/E1` … `E6` vào repo. **Không lấy `results/eda/` trong zip**, vì đó là bản cũ Kaggle clone từ commit `e5b06e03`, chưa có thống kê ảnh trùng; giải nén đè sẽ mất `stats.json` mới mà báo cáo mục 1 đang dùng.
 2. Ghi 18 dòng (BASE, E1-1 … E6-3) vào [NhatKyThucNghiem.md](NhatKyThucNghiem.md); mọi số đọc từ `results/<nhóm>/logs/<run>.csv`.
 3. Trúc chọn cấu hình mô hình cuối: **Small (E1-1)**. Đã điền [configs/final.yaml](configs/final.yaml): `model.arch: small`, `chot: true`.
+4. Viết `experiments/tong_hop.py` (bảng tổng hợp + 2 hình) và **báo cáo mục 3** (`report/section_3_experiments.md`): 3.0 thiết lập chung, 3.1–3.6 từng nhóm (bảng, hình, nhận xét có số), 3.7 tổng kết.
 
 ### Commit trong ngày
 
-_(Trúc điền ở mục ngày sau)_
+- `ad79a0af` BTL02: kết quả BASE + E1–E6, nhật ký thực nghiệm 18 run, chốt mô hình cuối (Small): thêm `results/BASE`, `results/E1` … `E6`, 18 dòng nhật ký thực nghiệm, `final.yaml` chốt.
+- _(commit báo cáo mục 3, `tong_hop.py`, sửa lỗi làm tròn 66.42 → 66.43: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -548,12 +550,14 @@ _(Trúc điền ở mục ngày sau)_
 - [NhatKyThucNghiem.md](NhatKyThucNghiem.md): 18 dòng.
 - [configs/final.yaml](configs/final.yaml): chốt Small.
 - [docs/Kế hoạch.md](docs/Kế%20hoạch.md): tick ô 24/11, 25/11, 26/11.
+- [experiments/tong_hop.py](experiments/tong_hop.py): **mới**. `python -m experiments.tong_hop` ghi `results/tong_hop.csv` (mỗi run một dòng, có cột so với BASE, train − val, chạm trần), `results/figures/tong_hop_val_acc.png`, `results/BASE/figures/curves.png`.
+- [report/section_3_experiments.md](report/section_3_experiments.md): **mới**, 8 bảng, 8 hình. [report/tai_lieu_tham_khao.md](report/tai_lieu_tham_khao.md): thêm [9] (Li và cộng sự 2019, dropout và BatchNorm).
 
 ### Run trong ngày
 
 Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem.md). Tất cả chạy trên Tesla T4, seed 0, ngày 25/11.
 
-| Nhóm | Run tốt nhất trong nhóm (val_acc tại epoch val_loss nhỏ nhất) | So với BASE 66,42% |
+| Nhóm | Run tốt nhất trong nhóm (val_acc tại epoch val_loss nhỏ nhất) | So với BASE 66,43% |
 |---|---|---|
 | E1 kiến trúc | E1-1 Small 67,01% | +0,59 |
 | E2 BatchNorm | E2-1 62,36% (so với E1-1: −4,65) | −4,07 |
@@ -575,10 +579,23 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 | E6-1 val_loss sau epoch 17 | 1,0102 → 1,0218 → … → 1,0722 ở epoch 27: tăng dần, quá khớp |
 | Run chạm trần 60 epoch | E2-1, E3-1, E5-3, E6-2: epoch tốt nhất = 60 = epoch cuối, val_loss vẫn đang giảm |
 | `final.yaml` | `load_final()` đọc được `chot: True`, `override {'model.arch': 'small'}`; `load_config` ra `arch small`, lr 1e-4 như baseline |
+| Agent đối chiếu số liệu mục 3 (khoảng 230 số) | 4 chỗ đã sửa: mốc train/val cắt nhau của BASE ghi rõ "lần đầu epoch 21, liên tục từ 23" và "lần đầu 26, liên tục từ 30"; câu "E1-1 thì ngược lại" đổi thành "E1-1 có train_acc vượt val_acc liên tục từ epoch 22" (đã kiểm: epoch 1–19 và 21 thì không); E2-1, E6-2 không "giảm đều" mà dao động rồi thấp nhất ở epoch 60 (sửa cả báo cáo lẫn nhật ký thực nghiệm); thêm nguồn 0.64–0.67, 24.94%; mỗi mục 3.1–3.6 có dòng Nguồn |
+| **Lỗi làm tròn accuracy** (phát hiện khi viết mục 3) | Log lưu val_acc 5 chữ số: BASE ghi 0.66425, nhưng thật là 2384/3589 = 0.664252, tức **66.43%**. In thẳng `0.66425 × 100` ra 66.42 (số thực máy tính ra 66.42499…). Sửa: dựng lại số ảnh đúng `round(acc × 3589)` (train: × 28709) rồi chia. Hậu quả đã sửa: BASE và E1-2 thành 66.43% (trước ghi 66.42%), E6-3 so với BASE thành −4.24 (trước −4.23). Đã sửa `NhatKyThucNghiem.md`, `final.yaml`, mục nhật ký này; `experiments/tong_hop.py` tính theo cách mới |
+
+### Giải thích `experiments/tong_hop.py`
+
+- **`exact(acc, n)`**: dựng lại số ảnh đoán đúng `round(acc × n)` rồi chia cho n (n = 3589 với val, 28709 với train), để tránh lỗi làm tròn của log (xem bảng Đã kiểm tra).
+- **`collect()`**: đọc `summary.csv` của BASE, E1–E6, thêm các cột:
+  - `train_minus_val`;
+  - `delta_val_acc_vs_base`;
+  - `hit_max_epochs` (epoch tốt nhất = epoch cuối = 60, tức chưa hội tụ);
+  - `train_time_s` cộng thẳng từ log, giữ 2 chữ số. `summary.csv` đã làm tròn 1 chữ số, làm tròn tiếp sẽ lệch: E5-2 thật 827.49 s, qua 827.5 thành 828.
+- **`plot_val_acc`**: cột val_acc từng run, tô màu theo nhóm, gạch chéo nếu chạm trần, đường nét đứt là BASE. Bỏ E1-2 vì trùng BASE.
+- Đường học BASE vẽ bằng `plot_curves` có sẵn trong `evaluate.py`.
 
 ### Số liệu cho báo cáo (mục 3)
 
-- BASE 66,42% (val_loss 0,9429), ngang báo cáo mẫu 0,64–0,67.
+- BASE 66,43% (val_loss 0,9429), ngang báo cáo mẫu 0,64–0,67.
 - Chỉ E1-1 (Small) vượt BASE theo val_acc (+0,59 điểm), nhưng val_loss của nó cao hơn (0,9552). Không run nào có val_loss thấp hơn BASE.
 - Augmentation quan trọng nhất trong các yếu tố đã thử:
   - Bỏ augmentation (E4-1): −6,55 điểm, khoảng cách train − val 8,62 điểm, dừng ở epoch 21.
@@ -589,17 +606,23 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 
 ### Câu hỏi vấn đáp có thể gặp
 
-- *Vì sao chọn Small dù val_loss cao hơn baseline?* Nhóm đã định trước quy tắc chọn: so val_acc tại epoch có val_loss nhỏ nhất. Theo quy tắc đó Small cao nhất (67,01% so với 66,42%). Chênh lệch nhỏ, mỗi run chỉ một seed, nên mô hình cuối chạy 3 seed để biết độ dao động.
+- *Vì sao chọn Small dù val_loss cao hơn baseline?* Nhóm đã định trước quy tắc chọn: so val_acc tại epoch có val_loss nhỏ nhất. Theo quy tắc đó Small cao nhất (67,01% so với 66,43%). Chênh lệch nhỏ, mỗi run chỉ một seed, nên mô hình cuối chạy 3 seed để biết độ dao động.
 - *Vì sao không gộp thêm LeakyReLU, zoom… vào mô hình cuối?* Các run đó đều có val_acc thấp hơn BASE (−0,14, −0,17 điểm), không có bằng chứng là chúng giúp ích. Gộp thay đổi không có bằng chứng thì không giải thích được kết quả.
 - *Vì sao thêm BatchNorm (E2-1) lại kém hơn?* Run chạm trần 60 epoch, train_acc (56,12%) còn thấp hơn val_acc (62,36%), tức mạng chưa học xong. Nhóm không kết luận BN làm hại; với lr 1e-4 và 60 epoch thì cấu hình này chưa kịp hội tụ.
 - *Vì sao sigmoid kém nhất?* Đạo hàm sigmoid tối đa 0,25 và gần 0 khi bão hòa. Qua 9 lớp, gradient tới các lớp đầu rất nhỏ, mạng học chậm: sau 60 epoch val_acc mới 56,59%, val_loss vẫn đang giảm.
 - *Vì sao ReduceLROnPlateau (E3-3) không giúp?* Với patience 2, lr giảm 10 lần ngay ở epoch 26, rồi giảm tiếp xuống 1e-7 ở epoch 37; lr quá nhỏ nên mạng gần như ngừng học khi val_acc mới 65,20%.
 - *E1-2 trùng khít BASE chứng minh gì?* Cùng cấu hình, cùng seed thì cho đúng cùng log ở mọi epoch: kết quả tái lập được, nên chênh lệch giữa các run là do biến thực nghiệm, không do ngẫu nhiên giữa các lần chạy.
+- *Yếu tố nào ảnh hưởng nhiều nhất?* Trong các yếu tố đã thử: hàm kích hoạt (sigmoid kém ReLU 9,84 điểm), rồi augmentation (bỏ augmentation mất 6,55 điểm). Kiến trúc ít ảnh hưởng nhất: bốn mạng chỉ chênh 1,98 điểm (Bảng 3.8).
+- *Bằng chứng augmentation chống quá khớp?* Khoảng cách train − val giảm đúng theo mức augmentation tăng: không có 8,62 → lật 7,14 → lật + xoay + dịch 4,11 → thêm zoom 1,42 điểm. Không augmentation thì val_loss nhỏ nhất ở epoch 11 rồi tăng lên 1,4957 ở epoch 21.
+- *Vì sao train_acc của E2-1 (BatchNorm) thấp hơn val_acc?* Lúc train, BatchNorm chuẩn hóa bằng thống kê của từng batch 64 ảnh và dropout đang bật; lúc đánh giá, BatchNorm dùng thống kê trung bình tích lũy và dropout tắt. Hai chế độ khác nhau, cộng với run chưa hội tụ (chạm trần 60 epoch).
+- *Sigmoid đứng yên mấy epoch đầu là sao?* 7 epoch đầu val_acc đúng bằng 24,94% = tỷ lệ Happy, tức mạng đoán mọi ảnh là Happy. Gradient qua 9 lớp sigmoid quá nhỏ (đạo hàm tối đa 0,25), phải sau vài epoch tín hiệu mới đủ để các lớp đầu thay đổi.
 
 ### Còn treo
 
-- [ ] Commit + push `results/BASE`, `results/E1` … `E6`, `NhatKyThucNghiem.md`, `configs/final.yaml`; Import lại notebook vào Kaggle; Save & Run All (lượt này các ô BASE và E1–E6 tự bỏ qua, chỉ ô mô hình cuối chạy)
+- [x] Commit + push `results/BASE`, `results/E1` … `E6`, `NhatKyThucNghiem.md`, `configs/final.yaml` (`ad79a0af`)
+- [ ] Import lại notebook vào Kaggle; Save & Run All (lượt này các ô BASE và E1–E6 tự bỏ qua, chỉ ô mô hình cuối chạy)
 - [ ] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
-- [ ] Báo cáo mục 3 (viết được ngay từ `results/E*/`), sau đó mục 4, 5 và phụ lục
+- [x] Báo cáo mục 3
+- [ ] Báo cáo mục 4, 5 (khi có mô hình cuối) và phụ lục (bảng phân công, ghép `tai_lieu_tham_khao.md`)
 - [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
 - [ ] Ghi chú đầu `configs/baseline.yaml` vẫn nêu lý do đổi lr chưa chính xác (treo từ 23/11); baseline đã chốt nên chỉ ghi rõ trong báo cáo mục 2.4 là lr lấy theo code mẫu (đã ghi)

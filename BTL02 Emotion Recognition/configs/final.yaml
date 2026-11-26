@@ -3,7 +3,7 @@
 # Mỗi khóa ghi kèm run làm căn cứ. Khóa phải có trong baseline.yaml (sai tên thì run_final báo lỗi).
 #
 # Chốt 26/11/2026:
-# - E1-1 (Small) là run duy nhất có val_acc cao hơn BASE: 67.01% so với 66.42% (+0.59 điểm).
+# - E1-1 (Small) là run duy nhất có val_acc cao hơn BASE: 67.01% so với 66.43% (+0.59 điểm).
 # - Các run E2–E6 đều có val_acc thấp hơn BASE nên không gộp thêm thay đổi nào.
 #   E2-1 (Small + BatchNorm) thấp hơn E1-1 4.65 điểm.
 # - Lưu ý: E1-1 có val_loss 0.9552, cao hơn BASE (0.9429), và mỗi run E chỉ có 1 seed.
