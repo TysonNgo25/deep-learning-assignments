@@ -41,6 +41,10 @@ E7 (VGG16 128×128×3), nếu chạy, đặt ở mục 3.7 với ghi chú "khác
 
 Đề → dữ liệu → pipeline code → baseline → E1…E6 (mỗi nhóm 1 trang) → mô hình cuối → filter/Grad-CAM → confusion matrix → kết luận → phân công. Trang nào cũng ghi người trình bày theo bảng phân công.
 
+## Tạo slide
+
+`node slides/lam_slide.js` (cần `npm install pptxgenjs`; trên máy Trúc cài vào thư mục tạm rồi chạy với `NODE_PATH=<thư mục tạm>/node_modules`). Một bản mô tả `SLIDES` sinh ra cả `BTL02_Nhom05.pptx` (pptxgenjs, biểu đồ native, ghi chú lời nói từng slide) và `BTL02_Nhom05.pdf` (HTML cùng tọa độ in bằng Edge). Máy không có PowerPoint/LibreOffice nên kiểm bố cục trên PDF (đổi trang ra ảnh), kiểm .pptx bằng `validate.py` và `slide_text.py` của skill pptx. Số liệu trong slide phải khớp báo cáo.
+
 ## Ghép thành Word và PDF
 
 `python report/ghep_bao_cao.py` (đứng ở thư mục BTL02). Máy Trúc không có Word, LibreOffice, pandoc: cài `pip install --target <thư mục tạm> pypandoc_binary` rồi chạy với `PYTHONPATH=<thư mục tạm>`. PDF in bằng Edge chạy ẩn từ HTML (mục lục có liên kết, đánh số trang); Word dùng file mẫu Times New Roman 13 pt, A4, lề 3/2/2/2 cm, bảng kẻ viền, mục lục tĩnh. Chỉ sửa nội dung trong `.md` rồi chạy lại, không sửa tay `.docx`/`.pdf`. Kiểm PDF bằng cách đổi trang ra ảnh (PyMuPDF) và xem.

@@ -151,13 +151,13 @@ Mỗi lần chạy ghi 1 dòng ngay sau khi chạy xong:
 
 ## 11. Checklist nộp bài
 
-- [ ] Report `.docx` + `.pdf`
-- [ ] Slide `.pptx` + `.pdf`
-- [ ] `NhatKyThucNghiem.md`
+- [x] Report `.docx` + `.pdf`
+- [x] Slide `.pptx` + `.pdf`
+- [x] `NhatKyThucNghiem.md`
 - [ ] Code `src/`, `experiments/`, `configs/`, `README.md`, `requirements.txt` (không kèm `fer2013.csv`)
 - [ ] `results/` gồm log CSV, `summary.csv`, hình
 - [ ] Trọng số mô hình cuối `best_model.pt`
-- [ ] Bảng phân công + tỷ lệ đóng góp cộng đủ 100%
+- [x] Bảng phân công + tỷ lệ đóng góp cộng đủ 100%
 - [ ] Zip `BTLON02_Emotion_HuynhNgocTruc_3123411312.zip`
 
 ## 12. Ghi chú từ code mẫu (đọc hết `Yêu cầu/` ngày 23/11)
