@@ -123,12 +123,12 @@ Dự phòng khi trễ: bỏ E7 trước → rút E5 còn ReLU vs Sigmoid → rú
 
 | Thành viên | STT | MSV | Code / thực nghiệm | Phần báo cáo | Slide / vấn đáp | Tỷ lệ |
 |---|---|---|---|---|---|---|
-| Huỳnh Ngọc Trúc (nhóm trưởng) | 43 | 3123411312 | `paths.py`, `data.py`, `train.py`, `evaluate.py`, mô hình cuối (F), đóng gói | 1. Giới thiệu & dữ liệu · 2. Tóm tắt code · 5. Mô hình cuối & kết luận | Mở đầu, pipeline, demo code | ...% |
-| Phạm Trần Minh Khang | 19 | 3123411143 | `models.py`, E1, E2, hình filter conv cuối + feature map | 3.1 Kiến trúc · 3.2 BatchNorm · 4.1 Visualize filter | E1–E2, filter | ...% |
-| Tạ Quang Trung | 44 | 3123411318 | E3, E4, confusion matrix, phân tích ca sai | 3.3 Optimizer · 3.4 Augmentation · 4.2 Phân tích lỗi | E3–E4, confusion matrix | ...% |
-| Ngô Nguyễn Thành Nhân | 29 | 3123411205 | E5, E6, E7 (VGG16 128×128), Grad-CAM | 3.5 Kích hoạt · 3.6 Regularization | E5–E6, khung slide | ...% |
+| Huỳnh Ngọc Trúc (nhóm trưởng) | 43 | 3123411312 | `paths.py`, `data.py`, `train.py`, `evaluate.py`, mô hình cuối (F), đóng gói | 1. Giới thiệu & dữ liệu · 2. Tóm tắt code · 3.0, 3.7 Thiết lập chung, tổng kết thực nghiệm · 5. Mô hình cuối & kết luận | Mở đầu, pipeline, demo code | 25% |
+| Phạm Trần Minh Khang | 19 | 3123411143 | `models.py`, E1, E2, hình filter conv cuối + feature map | 3.1 Kiến trúc · 3.2 BatchNorm · 4.1 Visualize filter | E1–E2, filter | 25% |
+| Tạ Quang Trung | 44 | 3123411318 | E3, E4, confusion matrix, phân tích ca sai | 3.3 Optimizer · 3.4 Augmentation · 4.2 Phân tích lỗi | E3–E4, confusion matrix | 25% |
+| Ngô Nguyễn Thành Nhân | 29 | 3123411205 | E5, E6, Grad-CAM (E7 không làm, bỏ theo dự phòng) | 3.5 Kích hoạt · 3.6 Regularization · 4.3 Grad-CAM | E5–E6, Grad-CAM, khung slide | 25% |
 
-Tỷ lệ đóng góp điền ở bước đóng gói, cộng đủ 100%. Trước T6 27/11 gửi mỗi bạn code và mục báo cáo ghi tên mình để đọc, tập trả lời vấn đáp.
+Tỷ lệ đóng góp chốt ngày 26/11: mỗi thành viên 25%, cộng đủ 100%. Trước T6 27/11 gửi mỗi bạn code và mục báo cáo ghi tên mình để đọc, tập trả lời vấn đáp.
 
 ## 9. Bố cục báo cáo
 

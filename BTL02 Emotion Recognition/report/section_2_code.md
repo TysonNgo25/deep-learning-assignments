@@ -21,6 +21,7 @@ Bảng 2.1. Các file mã nguồn.
 | `configs/baseline.yaml` | Cấu hình baseline, mọi thực nghiệm đổi so với file này | Trúc |
 | `experiments/run_E1.py` … `run_E6.py` | Khai báo các run của từng nhóm thực nghiệm | Khang (E1, E2), Trung (E3, E4), Nhân (E5, E6) |
 | `experiments/common.py` | Chạy một nhóm run, bỏ qua run đã có, bảng tóm tắt, đồ thị nhóm | Trúc |
+| `experiments/tong_hop.py` | Bảng tổng hợp mọi run và hình cho mục 3 | Trúc |
 | `configs/final.yaml`, `experiments/run_final.py` | Cấu hình và quy trình mô hình cuối (3 seed, test một lần) | Trúc |
 | `experiments/chay_colab_kaggle.ipynb` | Chạy toàn bộ trên GPU Kaggle/Colab | Trúc |
 

@@ -540,6 +540,8 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
 4. Viết `experiments/tong_hop.py` (bảng tổng hợp + 2 hình) và **báo cáo mục 3** (`report/section_3_experiments.md`): 3.0 thiết lập chung, 3.1–3.6 từng nhóm (bảng, hình, nhận xét có số), 3.7 tổng kết.
 5. Chạy mô hình cuối trên Kaggle (notebook `notebook0e986dcbeb`, Save & Run All): F-0, F-1, F-2 (Small, seed 0/1/2), chọn F-1, đánh giá PrivateTest **một lần** lúc 03:48:49 UTC 26/11. Chép `results/final/` vào repo, ghi F-0/1/2 vào nhật ký thực nghiệm. Đã tick ô T6 27/11 sáng trong kế hoạch (làm sớm).
 6. Viết **báo cáo mục 4** (`report/section_4_visualize.md`: filter conv cuối, feature map, confusion matrix, ca đúng/sai, Grad-CAM) và **mục 5** (`report/section_5_final.md`: 3 seed, test, so với mức tham chiếu, ảnh trùng, hạn chế, kết luận). Thêm 2 phân tích: `duplicate_effect` (evaluate.py) và số filter chết lớp conv cuối (`last_conv_stats.json`).
+7. Chốt tỷ lệ đóng góp (Trúc 25%, Khang 25%, Trung 25%, Nhân 25%), viết **phụ lục** (`report/appendix.md`: bảng phân công, danh sách file nộp, bảng lệnh tái lập, tài liệu tham khảo [1]–[9]). Cập nhật kế hoạch mục 8 theo việc đã làm thật: E7 không làm, Trúc viết thêm 3.0 và 3.7, Nhân viết 4.3. Bảng 2.1 báo cáo thêm `tong_hop.py`. Đã kiểm dòng `Phụ trách:` của 15 file `.py` và notebook khớp Bảng A.1.
+8. **Ghép báo cáo** thành `report/BaoCao_BTL02_Nhom05.docx` (3,2 MB) và `.pdf` (4,6 MB, 52 trang) bằng script mới `report/ghep_bao_cao.py`. Máy không có Word/LibreOffice/pandoc: dùng pandoc 3.9 trong gói `pypandoc_binary` (cài tạm ngoài repo), PDF in bằng Edge chạy ẩn từ HTML.
 
 ### Commit trong ngày
 
@@ -585,6 +587,7 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 | `final.yaml` | `load_final()` đọc được `chot: True`, `override {'model.arch': 'small'}`; `load_config` ra `arch small`, lr 1e-4 như baseline |
 | Agent đối chiếu số liệu mục 3 (khoảng 230 số) | 4 chỗ đã sửa: mốc train/val cắt nhau của BASE ghi rõ "lần đầu epoch 21, liên tục từ 23" và "lần đầu 26, liên tục từ 30"; câu "E1-1 thì ngược lại" đổi thành "E1-1 có train_acc vượt val_acc liên tục từ epoch 22" (đã kiểm: epoch 1–19 và 21 thì không); E2-1, E6-2 không "giảm đều" mà dao động rồi thấp nhất ở epoch 60 (sửa cả báo cáo lẫn nhật ký thực nghiệm); thêm nguồn 0.64–0.67, 24.94%; mỗi mục 3.1–3.6 có dòng Nguồn |
 | Agent đối chiếu số liệu mục 4, 5 (khoảng 140 giá trị) | Đã sửa: 3 ô Bảng 4.1 lệch chữ số cuối vì làm tròn hai lần (Recall test Fear 0,4223, Recall val Happy 0,8547, F1 test Angry 0,5946; tính lại cả 42 ô từ `predictions_*.csv`), recall Fear 42,23% (2 chỗ), chênh macro F1 0,0104; ghi rõ 40 filter "< 1% ảnh" đã gồm 17 filter chết và thêm code sinh `last_conv_stats.json` (`python -m src.visualize --thong-ke`, chạy lại ra đúng 17/40); bỏ chữ "UTC" (JSON không ghi múi giờ); mô tả Grad-CAM conv cuối Fear (mắt + miệng/tay), Disgust (quanh mắt), conv giữa Happy (trán + khóe miệng); bỏ câu "không dựa vào nền hay tóc" (conv đầu vẫn sáng ở tóc/nền); bỏ câu dùng test để kết luận về việc chọn cấu hình |
+| Báo cáo Word/PDF | PDF 52 trang: đổi từng trang ra ảnh (PyMuPDF) xem: bìa, mục lục 2 trang, mỗi mục lớn sang trang mới, Bảng 3.1 sang trang vẫn lặp dòng tiêu đề, Bảng A.1 đủ 100%, hình lớn không bị cắt. Word: 21 hình, 25 bảng, 6 Heading 1, 36 Heading 2, A4 + lề đúng, Times New Roman 13 pt, bảng có viền, bìa đủ 4 người, 21 chú thích hình; **chưa xem được bố cục Word bằng mắt** (máy không có trình hiển thị docx) |
 | **Lỗi làm tròn accuracy** (phát hiện khi viết mục 3) | Log lưu val_acc 5 chữ số: BASE ghi 0.66425, nhưng thật là 2384/3589 = 0.664252, tức **66.43%**. In thẳng `0.66425 × 100` ra 66.42 (số thực máy tính ra 66.42499…). Sửa: dựng lại số ảnh đúng `round(acc × 3589)` (train: × 28709) rồi chia. Hậu quả đã sửa: BASE và E1-2 thành 66.43% (trước ghi 66.42%), E6-3 so với BASE thành −4.24 (trước −4.23). Đã sửa `NhatKyThucNghiem.md`, `final.yaml`, mục nhật ký này; `experiments/tong_hop.py` tính theo cách mới |
 
 ### Mô hình cuối
@@ -605,6 +608,16 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - F-0 trùng khít E1-1 ở mọi epoch: tái lập lần thứ hai.
 - **`best_model.pt` nặng 155,6 MB**, vượt giới hạn 100 MB/file của GitHub. Đã đổi `.gitignore` (bỏ dòng `!results/final/best_model.pt`) để git bỏ qua; file giữ trong máy, đưa vào zip nộp.
 - Hình đã xem: Grad-CAM conv cuối tập trung vào miệng (Angry, Happy, Fear) và mắt (Disgust, Surprise, Neutral); filter conv cuối ra mẫu hình sọc, lưới, tổ ong rõ ràng.
+
+### Ghép báo cáo: `report/ghep_bao_cao.py`
+
+- **Word** (`build_docx`): ghép 6 file `.md` theo thứ tự, mỗi phần cách nhau một ngắt trang (khối OpenXML thô `<w:br w:type="page"/>`); thêm bìa (metadata pandoc giống BTL01: tên đề tài, "Bài tập lớn 02, học phần Học sâu · Nhóm 05", 4 thành viên + MSV, tháng năm) và **mục lục tĩnh** sinh từ các dòng `#`, `##`. Không dùng trường TOC của Word vì máy không có Word để cập nhật trường, trình xem khác có thể hiện mục lục rỗng.
+- `-f markdown-implicit_figures`: tắt việc pandoc tự lấy alt của ảnh làm chú thích, vì báo cáo đã có dòng "Hình x.y. …" riêng (nếu không sẽ bị lặp chú thích).
+- **File mẫu kiểu chữ** (`reference_docx`): lấy `reference.docx` mặc định của pandoc rồi sửa XML:
+  - mọi `rFonts` thành Times New Roman; cỡ chữ mặc định 13 pt (`sz=26`, đơn vị nửa point); màu tiêu đề đen;
+  - bảng mặc định thêm `tblBorders` (kẻ viền);
+  - `sectPr`: A4 (11906 × 16838 twip), lề trên/dưới/phải 2 cm (1134), trái 3 cm (1701). `sectPr` mẫu không có `pgSz`/`pgMar` nên phải **chèn** (sau `footnotePr`, đúng thứ tự schema), thay thế thì không có gì để thay (lần đầu chạy bị như vậy, đã sửa).
+- **PDF** (`build_pdf`): pandoc ra HTML độc lập (ảnh nhúng base64, `--toc` có liên kết), CSS: A4, lề 2/2/2/3 cm, số trang ở chân trang (`@page @bottom-center`), mỗi `h1` sang trang mới, không cắt ngang dòng bảng và ảnh, bảng kẻ viền; rồi Edge `--headless --print-to-pdf --no-pdf-header-footer`.
 
 ### Phân tích thêm cho mục 4, 5
 
@@ -668,6 +681,10 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - [ ] Đóng gói: nhớ chép `results/final/best_model.pt` (155,6 MB, không có trên git) vào zip nộp
 - [x] Báo cáo mục 3
 - [x] Báo cáo mục 4, 5
-- [ ] Phụ lục (bảng phân công + tỷ lệ đóng góp Trúc điền, ghép `tai_lieu_tham_khao.md`), ghép báo cáo thành `.docx` + `.pdf`, slide
+- [x] Phụ lục (bảng phân công, tỷ lệ 25% × 4, tài liệu tham khảo)
+- [x] Ghép báo cáo thành `.docx` + `.pdf` (bìa, mục lục, 5 mục, phụ lục)
+- [ ] Trúc mở `BaoCao_BTL02_Nhom05.docx` (Word trên máy khác, Google Docs hoặc WPS) xem bố cục; Word chưa có số trang ở chân trang (PDF có)
+- [ ] Slide 12–15 trang
+- [ ] Gửi mỗi bạn phần đứng tên để đọc trước vấn đáp
 - [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
 - [ ] Ghi chú đầu `configs/baseline.yaml` vẫn nêu lý do đổi lr chưa chính xác (treo từ 23/11); baseline đã chốt nên chỉ ghi rõ trong báo cáo mục 2.4 là lr lấy theo code mẫu (đã ghi)

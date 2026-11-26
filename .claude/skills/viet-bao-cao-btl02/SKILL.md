@@ -41,6 +41,10 @@ E7 (VGG16 128×128×3), nếu chạy, đặt ở mục 3.7 với ghi chú "khác
 
 Đề → dữ liệu → pipeline code → baseline → E1…E6 (mỗi nhóm 1 trang) → mô hình cuối → filter/Grad-CAM → confusion matrix → kết luận → phân công. Trang nào cũng ghi người trình bày theo bảng phân công.
 
+## Ghép thành Word và PDF
+
+`python report/ghep_bao_cao.py` (đứng ở thư mục BTL02). Máy Trúc không có Word, LibreOffice, pandoc: cài `pip install --target <thư mục tạm> pypandoc_binary` rồi chạy với `PYTHONPATH=<thư mục tạm>`. PDF in bằng Edge chạy ẩn từ HTML (mục lục có liên kết, đánh số trang); Word dùng file mẫu Times New Roman 13 pt, A4, lề 3/2/2/2 cm, bảng kẻ viền, mục lục tĩnh. Chỉ sửa nội dung trong `.md` rồi chạy lại, không sửa tay `.docx`/`.pdf`. Kiểm PDF bằng cách đổi trang ra ảnh (PyMuPDF) và xem.
+
 ## Sau khi viết
 
 Gọi agent `btl02-doi-chieu-so-lieu` để đối chiếu số với log, sửa chỗ "Lệch"/"Không truy được" trước khi báo xong.
