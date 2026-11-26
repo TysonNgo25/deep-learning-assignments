@@ -1,0 +1,5 @@
+notebook,thu_muc,chi_so,keras,pytorch,chenh_lech,keras_params,pytorch_params,epochs_keras,epochs_pytorch,optimizer,lr,batch,device,train_time_s,seed,ghi_chu
+Func_apxm_MLP_A,1. MLP,test_mse,,0.0086,,65,65,100,100,SGD,0.01,128,cpu,6.8,0,"Quét A=100..1000 (B=16, C=100); giá trị tại A=1000; gốc chỉ có hình (TensorFlow 2.14), đọc từ hình test ≈ 0.0067"
+Func_apxm_MLP_B,1. MLP,test_mse,,0.0013,,2049,2049,100,100,SGD,0.01,128,cpu,5.4,0,"Quét B=8..512 (A=800, C=100); giá trị tại B=512; gốc chỉ có hình (Keras cũ), đọc từ hình test ≈ 0.0014"
+Func_apxm_MLP_C,1. MLP,test_mse,,0.0015,,513,513,190,190,SGD,0.01,128,cpu,13.8,0,"Quét C=10..190 (A=800, B=128); giá trị tại C=190; gốc chỉ có hình (Keras cũ), đọc từ hình test ≈ 0.0016"
+MNIST_MLP,1. MLP,test_acc,0.9648,0.9658,0.0010,669706,669706,30,30,SGD,0.01,128,cpu,84.0,0,"Keras gốc chạy trên TensorFlow 2.14, Colab T4; PyTorch khởi tạo glorot như Keras"

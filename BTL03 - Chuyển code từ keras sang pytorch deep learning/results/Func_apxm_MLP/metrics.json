@@ -1,0 +1,9 @@
+{
+  "quet_A_test_mse_A1000": 0.00860497634857893,
+  "quet_B_test_mse_B512": 0.0013463033828884363,
+  "quet_C_test_mse_C190": 0.0015278123319149017,
+  "train_time_s": 26.042845726013184,
+  "device": "cpu",
+  "seed": 0,
+  "torch_version": "2.15.0+cpu"
+}

@@ -22,8 +22,10 @@ Chạy notebook không cần mở trình duyệt (lưu output vào chính file):
 ```powershell
 $py = "C:\Users\hntruc\anaconda3\envs\btl02\python.exe"
 Set-Location "D:\Data\GitHub\deep-learning-assignments\BTL03 - Chuyển code từ keras sang pytorch deep learning\pytorch\1. MLP"
-& $py -m jupyter nbconvert --to notebook --execute --inplace "MNIST_MLP_pytorch.ipynb" --ExecutePreprocessor.timeout=3600
+& $py -X utf8 -m nbconvert --to notebook --execute --inplace "MNIST_MLP_pytorch.ipynb" --ExecutePreprocessor.timeout=3600
 ```
+
+Dùng `-m nbconvert`, **không** dùng `-m jupyter nbconvert`: lệnh `jupyter` gọi subcommand theo PATH và trên máy có Python 3.12 cài ngoài conda (`AppData\Local\Programs\Python\Python312`) nên chạy nhầm bản đó, báo `NoSuchKernel: python3` (gặp 26/11). Env `btl02` đã cài đủ `torchinfo tensorboard scikit-image nbconvert ipykernel notebook seaborn` (26/11).
 
 Báo `MemoryError`/out of memory hoặc shell Cowork không khởi động: nhờ Trúc tắt bớt ứng dụng (AMDChat, VS Code thừa), `wsl --shutdown`, rồi chạy lại. `DataLoader(num_workers=0)` trên Windows.
 
