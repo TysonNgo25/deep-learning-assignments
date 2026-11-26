@@ -244,8 +244,31 @@ def plot_gradcam(model, x, images, labels, y_pred, probs, path):
     plt.close(fig)
 
 
+def last_conv_stats(model, acts, ckpt, path):
+    """Thống kê filter lớp conv cuối trên validation, ghi JSON để báo cáo dẫn nguồn.
+
+    acts: N×C, trung bình theo không gian của đầu ra (sau kích hoạt) từng filter trên từng ảnh.
+    "Kích hoạt ở một ảnh" = trung bình đó > 0. dead = không kích hoạt ở ảnh nào;
+    rare = kích hoạt ở dưới 1% số ảnh (đã gồm cả dead).
+    """
+    import json
+
+    convs = conv_layers(model)
+    frac = (acts > 0).mean(axis=0)
+    stats = {
+        "epoch": ckpt["epoch"], "n_conv": len(convs), "conv_names": [n for n, _ in convs],
+        "last_conv_filters": int(convs[-1][1].out_channels), "n_val_images": int(acts.shape[0]),
+        "dead_filters_on_val": int((acts.max(axis=0) == 0).sum()),
+        "filters_active_on_lt_1pct_images": int((frac < 0.01).sum()),
+        "definition": "kích hoạt ở một ảnh = trung bình đầu ra sau kích hoạt > 0; "
+                      "lt_1pct đã gồm cả filter dead",
+    }
+    path.write_text(json.dumps(stats, indent=2, ensure_ascii=False), encoding="utf-8")
+    return stats
+
+
 # ---------------------------------------------------------------- chạy tất cả
-def visualize(ckpt_path, out_dir=None, csv_path=None, n_filters=64, steps=150):
+def visualize(ckpt_path, out_dir=None, csv_path=None, n_filters=64, steps=150, only_stats=False):
     ckpt_path = Path(ckpt_path)
     # results/final/best_model.pt -> results/final/figures; results/E1/checkpoints/E1-3.pt -> results/E1/figures
     base = ckpt_path.parent.parent if ckpt_path.parent.name == "checkpoints" else ckpt_path.parent
@@ -265,8 +288,11 @@ def visualize(ckpt_path, out_dir=None, csv_path=None, n_filters=64, steps=150):
     last = conv_layers(model)[-1][1]
     acts = mean_activations(model, activation_after(model, last), x.to(device))
     filters = np.argsort(-acts.mean(axis=0))[:n_filters].tolist()
-    n_dead = int((acts.max(axis=0) == 0).sum())
-    print(f"Lớp conv cuối: {last.out_channels} filter, {n_dead} filter không kích hoạt trên ảnh val nào")
+    stats = last_conv_stats(model, acts, ckpt, out_dir.parent / "last_conv_stats.json")
+    print(f"Lớp conv cuối: {last.out_channels} filter, {stats['dead_filters_on_val']} filter không kích hoạt "
+          f"trên ảnh val nào, {stats['filters_active_on_lt_1pct_images']} filter kích hoạt ở < 1% ảnh")
+    if only_stats:
+        return
 
     patterns = filter_patterns(model, last, filters, device, steps=steps)
     plot_filter_patterns(patterns, filters, out_dir / "last_conv_filters.png",
@@ -294,8 +320,10 @@ def main():
     parser.add_argument("--csv", type=Path)
     parser.add_argument("--n-filters", type=int, default=64)
     parser.add_argument("--steps", type=int, default=150, help="số bước tối ưu ảnh cho mỗi filter")
+    parser.add_argument("--thong-ke", action="store_true",
+                        help="chỉ ghi last_conv_stats.json (số filter không kích hoạt), không vẽ lại hình")
     args = parser.parse_args()
-    visualize(args.ckpt, args.out, args.csv, args.n_filters, args.steps)
+    visualize(args.ckpt, args.out, args.csv, args.n_filters, args.steps, only_stats=args.thong_ke)
 
 
 if __name__ == "__main__":

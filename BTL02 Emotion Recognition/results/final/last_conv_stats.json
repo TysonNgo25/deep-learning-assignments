@@ -1,0 +1,17 @@
+{
+  "epoch": 32,
+  "n_conv": 6,
+  "conv_names": [
+    "features.0",
+    "features.2",
+    "features.6",
+    "features.8",
+    "features.10",
+    "features.12"
+  ],
+  "last_conv_filters": 256,
+  "n_val_images": 3589,
+  "dead_filters_on_val": 17,
+  "filters_active_on_lt_1pct_images": 40,
+  "definition": "kích hoạt ở một ảnh = trung bình đầu ra sau kích hoạt > 0; lt_1pct đã gồm cả filter dead"
+}

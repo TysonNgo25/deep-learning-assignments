@@ -287,6 +287,38 @@ def evaluate_final(final_dir, run_ids, csv_path=None):
     return summary
 
 
+def duplicate_effect(final_dir, csv_path=None):
+    """Accuracy của mô hình cuối trên ảnh val/test trùng pixel với một ảnh train, so với phần còn lại.
+
+    Chỉ đọc lại dự đoán ĐÃ LƯU (predictions_<tập>.csv) do evaluate_final ghi; không chạy lại mô hình,
+    nên không phải là đánh giá test lần hai. Ảnh test chỉ dùng để biết ảnh nào trùng train (băm MD5).
+    """
+    import hashlib
+
+    final_dir = Path(final_dir)
+    csv_path = Path(csv_path) if csv_path else ROOT / "data" / "fer2013.csv"
+    data = load_fer2013(csv_path, splits=("train", "val", "test"))
+    md5 = lambda img: hashlib.md5(img.tobytes()).hexdigest()
+    train_keys = {md5(img) for img in data["train"][0]}
+    out = {}
+    for split in ("val", "test"):
+        rows = list(csv.DictReader(open(final_dir / f"predictions_{split}.csv", encoding="utf-8")))
+        images, labels = data[split]
+        assert len(rows) == len(labels) and all(int(r["true"]) == y for r, y in zip(rows, labels))
+        dup = np.array([md5(img) in train_keys for img in images])
+        correct = np.array([r["true"] == r["pred"] for r in rows])
+        out[split] = {
+            "n_dup": int(dup.sum()), "acc_dup": round(float(correct[dup].mean()), 5),
+            "n_rest": int((~dup).sum()), "acc_rest": round(float(correct[~dup].mean()), 5),
+            "acc_all": round(float(correct.mean()), 5),
+        }
+    (final_dir / "duplicate_effect.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
+    for split, m in out.items():
+        print(f"{SPLIT_NAMES[split]}: trùng train {m['n_dup']} ảnh acc {m['acc_dup']:.4f} | "
+              f"còn lại {m['n_rest']} ảnh acc {m['acc_rest']:.4f} | tất cả {m['acc_all']:.4f}")
+    return out
+
+
 def _print_metrics(metrics):
     for split, m in metrics.items():
         print(f"{SPLIT_NAMES.get(split, split)}: accuracy {m['accuracy']:.4f}, macro F1 {m['macro_f1']:.4f}")
@@ -295,11 +327,18 @@ def _print_metrics(metrics):
 
 def main():
     parser = argparse.ArgumentParser(description="Đánh giá một checkpoint trên validation (PublicTest)")
-    parser.add_argument("--ckpt", type=Path, required=True, help="vd. results/BASE/checkpoints/BASE.pt")
+    parser.add_argument("--ckpt", type=Path, help="vd. results/BASE/checkpoints/BASE.pt")
     parser.add_argument("--out", type=Path, help="mặc định results/<nhóm>/eval/<mã run>/")
     parser.add_argument("--csv", type=Path, help="mặc định đường dẫn trong config của checkpoint")
+    parser.add_argument("--trung-lap", type=Path, metavar="THƯ_MỤC_FINAL",
+                        help="phân tích ảnh trùng train từ dự đoán đã lưu của mô hình cuối (vd. results/final)")
     args = parser.parse_args()
-    evaluate_checkpoint(args.ckpt, args.out, args.csv)
+    if args.trung_lap:
+        duplicate_effect(args.trung_lap, args.csv)
+    elif args.ckpt:
+        evaluate_checkpoint(args.ckpt, args.out, args.csv)
+    else:
+        parser.error("cần --ckpt hoặc --trung-lap")
 
 
 if __name__ == "__main__":

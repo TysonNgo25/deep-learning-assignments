@@ -523,7 +523,7 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 
 ---
 
-## T5 26/11/2026 – Kết quả BASE + E1–E6, báo cáo mục 3, chạy mô hình cuối và đánh giá PrivateTest
+## T5 26/11/2026 – Kết quả BASE + E1–E6, mô hình cuối và PrivateTest, báo cáo mục 3, 4, 5
 
 ### Việc theo kế hoạch
 
@@ -539,12 +539,14 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
 3. Trúc chọn cấu hình mô hình cuối: **Small (E1-1)**. Đã điền [configs/final.yaml](configs/final.yaml): `model.arch: small`, `chot: true`.
 4. Viết `experiments/tong_hop.py` (bảng tổng hợp + 2 hình) và **báo cáo mục 3** (`report/section_3_experiments.md`): 3.0 thiết lập chung, 3.1–3.6 từng nhóm (bảng, hình, nhận xét có số), 3.7 tổng kết.
 5. Chạy mô hình cuối trên Kaggle (notebook `notebook0e986dcbeb`, Save & Run All): F-0, F-1, F-2 (Small, seed 0/1/2), chọn F-1, đánh giá PrivateTest **một lần** lúc 03:48:49 UTC 26/11. Chép `results/final/` vào repo, ghi F-0/1/2 vào nhật ký thực nghiệm. Đã tick ô T6 27/11 sáng trong kế hoạch (làm sớm).
+6. Viết **báo cáo mục 4** (`report/section_4_visualize.md`: filter conv cuối, feature map, confusion matrix, ca đúng/sai, Grad-CAM) và **mục 5** (`report/section_5_final.md`: 3 seed, test, so với mức tham chiếu, ảnh trùng, hạn chế, kết luận). Thêm 2 phân tích: `duplicate_effect` (evaluate.py) và số filter chết lớp conv cuối (`last_conv_stats.json`).
 
 ### Commit trong ngày
 
 - `ad79a0af` BTL02: kết quả BASE + E1–E6, nhật ký thực nghiệm 18 run, chốt mô hình cuối (Small): thêm `results/BASE`, `results/E1` … `E6`, 18 dòng nhật ký thực nghiệm, `final.yaml` chốt.
 - `88c6f596` BTL02: báo cáo mục 3, tong_hop.py; sửa làm tròn accuracy (BASE 66.43%): mục 3 báo cáo, `tong_hop.py`, sửa 66.42 → 66.43 ở các file.
-- _(commit `results/final/`, F-0/1/2 trong nhật ký thực nghiệm, `.gitignore` bỏ `best_model.pt`: Trúc điền hash ở mục ngày sau)_
+- `f271546a` BTL02: kết quả mô hình cuối (3 seed, PrivateTest 1 lần), F-0/1/2 vào nhật ký; bỏ best_model.pt khỏi git (155.6 MB): thêm `results/final/` (trừ `best_model.pt`), 3 dòng F trong nhật ký thực nghiệm, `.gitignore` bỏ `best_model.pt`.
+- _(commit báo cáo mục 4, 5, `duplicate_effect`, `last_conv_stats`: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -582,6 +584,7 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 | Run chạm trần 60 epoch | E2-1, E3-1, E5-3, E6-2: epoch tốt nhất = 60 = epoch cuối, val_loss vẫn đang giảm |
 | `final.yaml` | `load_final()` đọc được `chot: True`, `override {'model.arch': 'small'}`; `load_config` ra `arch small`, lr 1e-4 như baseline |
 | Agent đối chiếu số liệu mục 3 (khoảng 230 số) | 4 chỗ đã sửa: mốc train/val cắt nhau của BASE ghi rõ "lần đầu epoch 21, liên tục từ 23" và "lần đầu 26, liên tục từ 30"; câu "E1-1 thì ngược lại" đổi thành "E1-1 có train_acc vượt val_acc liên tục từ epoch 22" (đã kiểm: epoch 1–19 và 21 thì không); E2-1, E6-2 không "giảm đều" mà dao động rồi thấp nhất ở epoch 60 (sửa cả báo cáo lẫn nhật ký thực nghiệm); thêm nguồn 0.64–0.67, 24.94%; mỗi mục 3.1–3.6 có dòng Nguồn |
+| Agent đối chiếu số liệu mục 4, 5 (khoảng 140 giá trị) | Đã sửa: 3 ô Bảng 4.1 lệch chữ số cuối vì làm tròn hai lần (Recall test Fear 0,4223, Recall val Happy 0,8547, F1 test Angry 0,5946; tính lại cả 42 ô từ `predictions_*.csv`), recall Fear 42,23% (2 chỗ), chênh macro F1 0,0104; ghi rõ 40 filter "< 1% ảnh" đã gồm 17 filter chết và thêm code sinh `last_conv_stats.json` (`python -m src.visualize --thong-ke`, chạy lại ra đúng 17/40); bỏ chữ "UTC" (JSON không ghi múi giờ); mô tả Grad-CAM conv cuối Fear (mắt + miệng/tay), Disgust (quanh mắt), conv giữa Happy (trán + khóe miệng); bỏ câu "không dựa vào nền hay tóc" (conv đầu vẫn sáng ở tóc/nền); bỏ câu dùng test để kết luận về việc chọn cấu hình |
 | **Lỗi làm tròn accuracy** (phát hiện khi viết mục 3) | Log lưu val_acc 5 chữ số: BASE ghi 0.66425, nhưng thật là 2384/3589 = 0.664252, tức **66.43%**. In thẳng `0.66425 × 100` ra 66.42 (số thực máy tính ra 66.42499…). Sửa: dựng lại số ảnh đúng `round(acc × 3589)` (train: × 28709) rồi chia. Hậu quả đã sửa: BASE và E1-2 thành 66.43% (trước ghi 66.42%), E6-3 so với BASE thành −4.24 (trước −4.23). Đã sửa `NhatKyThucNghiem.md`, `final.yaml`, mục nhật ký này; `experiments/tong_hop.py` tính theo cách mới |
 
 ### Mô hình cuối
@@ -602,6 +605,25 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - F-0 trùng khít E1-1 ở mọi epoch: tái lập lần thứ hai.
 - **`best_model.pt` nặng 155,6 MB**, vượt giới hạn 100 MB/file của GitHub. Đã đổi `.gitignore` (bỏ dòng `!results/final/best_model.pt`) để git bỏ qua; file giữ trong máy, đưa vào zip nộp.
 - Hình đã xem: Grad-CAM conv cuối tập trung vào miệng (Angry, Happy, Fear) và mắt (Disgust, Surprise, Neutral); filter conv cuối ra mẫu hình sọc, lưới, tổ ong rõ ràng.
+
+### Phân tích thêm cho mục 4, 5
+
+- **`duplicate_effect(final_dir)`** (trong `evaluate.py`, gọi bằng `python -m src.evaluate --trung-lap results/final`):
+  - Đọc lại `predictions_val.csv`, `predictions_test.csv` do `evaluate_final` đã ghi.
+  - Băm MD5 ảnh để biết ảnh nào trùng train, rồi tính accuracy riêng cho phần trùng và phần còn lại.
+  - **Không chạy lại mô hình trên test**, nên không phải đánh giá test lần hai.
+  - Kiểm `assert` nhãn trong file dự đoán khớp nhãn trong CSV, để chắc thứ tự ảnh không lệch.
+  - Đặt trong `evaluate.py` vì đây là file duy nhất được đọc PrivateTest cho mô hình cuối.
+- **Kết quả** (`results/final/duplicate_effect.json`):
+
+  | Tập | Ảnh trùng train | acc trùng | Ảnh còn lại | acc còn lại |
+  |---|---|---|---|---|
+  | Validation | 280 | 86,07% | 3309 | 64,16% |
+  | Test | 288 | 83,33% | 3301 | **64,59%** |
+
+  Trên ảnh test mô hình chưa từng thấy, accuracy là 64,59%, thấp hơn con số báo cáo (66,09%) 1,50 điểm.
+- **Filter chết** (`results/final/last_conv_stats.json`): tính trên máy (CPU, chỉ validation). Lớp conv cuối `features.12` có 256 filter: 17 filter không kích hoạt ở ảnh val nào, 40 filter kích hoạt ở dưới 1% số ảnh. Small có 6 conv: `features.0, 2, 6, 8, 10, 12`.
+- **Receptive field** của lớp conv cuối Small: 2 conv 3×3 ra 5×5, MaxPool 2×2 ra 6×6 (bước nhảy 2), 4 conv 3×3 cộng thêm 4 × 4 = 16, ra **22×22 pixel**. Giải thích vì sao ảnh activation maximization là mẫu hình lặp đều: mỗi vị trí chỉ thấy 22×22, mục tiêu là trung bình mọi vị trí.
 
 ### Giải thích `experiments/tong_hop.py`
 
@@ -645,6 +667,7 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - [x] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
 - [ ] Đóng gói: nhớ chép `results/final/best_model.pt` (155,6 MB, không có trên git) vào zip nộp
 - [x] Báo cáo mục 3
-- [ ] Báo cáo mục 4, 5 (khi có mô hình cuối) và phụ lục (bảng phân công, ghép `tai_lieu_tham_khao.md`)
+- [x] Báo cáo mục 4, 5
+- [ ] Phụ lục (bảng phân công + tỷ lệ đóng góp Trúc điền, ghép `tai_lieu_tham_khao.md`), ghép báo cáo thành `.docx` + `.pdf`, slide
 - [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
 - [ ] Ghi chú đầu `configs/baseline.yaml` vẫn nêu lý do đổi lr chưa chính xác (treo từ 23/11); baseline đã chốt nên chỉ ghi rõ trong báo cáo mục 2.4 là lr lấy theo code mẫu (đã ghi)
