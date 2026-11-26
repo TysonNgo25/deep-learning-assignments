@@ -241,7 +241,7 @@ Bảng 3.8. Mức ảnh hưởng của từng nhóm thực nghiệm.
 
 **Hạn chế của các thực nghiệm.**
 
-- Mỗi run chỉ một seed. Chênh lệch dưới khoảng 1 điểm (E1-1, E4-3, E5-1) chưa đủ để kết luận một cấu hình tốt hơn hay kém hơn baseline.
+- Mỗi run chỉ một seed. Ba seed của mô hình cuối dao động với độ lệch chuẩn 0.57 điểm (mục 5.2), nên chênh lệch dưới khoảng 1 điểm (E1-1, E4-3, E5-1) chưa đủ để kết luận một cấu hình tốt hơn hay kém hơn baseline.
 - Bốn run chạm trần 60 epoch (E2-1, E3-1, E5-3, E6-2) chưa hội tụ; kết quả của chúng là cận dưới.
 - F1 từng lớp chỉ có cho mô hình cuối, nên E6-3 chưa được đánh giá đúng mục tiêu của nó.
 - E7 (VGG16 ảnh 128×128, có và không có trọng số pretrained) chưa chạy; theo kế hoạch dự phòng, đây là phần bỏ trước tiên khi thiếu thời gian.

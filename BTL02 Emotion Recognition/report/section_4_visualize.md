@@ -106,7 +106,7 @@ Hình 4.8. Grad-CAM của mô hình cuối tại conv đầu, giữa và cuối 
 
 **Nhận xét.**
 
-- **Conv đầu** chưa mang thông tin về lớp: vùng sáng rải theo cạnh và đường viền (mép mắt, răng, viền tóc), ở ảnh Neutral thì phủ gần hết khuôn mặt. Lớp này chỉ phát hiện cạnh và độ tương phản, giống nhau cho mọi cảm xúc.
+- **Conv đầu** chưa mang thông tin về lớp: vùng sáng rải theo cạnh và đường viền (mép mắt, răng, viền tóc), ở ảnh Neutral thì phủ gần hết khuôn mặt, còn ở ảnh Sad gần như không có vùng sáng. Lớp này chỉ phát hiện cạnh và độ tương phản, giống nhau cho mọi cảm xúc; gradient của điểm lớp phải đi ngược qua cả 5 lớp conv phía sau mới tới đây nên bản đồ nhiễu. Grad-CAM vì vậy thường được đọc ở lớp conv cuối, nơi đặc trưng đã mang ý nghĩa về lớp.
 - **Conv giữa** bắt đầu khoanh vùng các bộ phận: mắt và miệng ở Angry, má và khóe miệng ở Disgust, hai bàn tay đặt dưới cằm ở Fear, trán và khóe miệng ở Happy.
 - **Conv cuối** tập trung vào vài vùng nhỏ và có ý nghĩa với từng cảm xúc:
   - Angry: miệng há và răng;

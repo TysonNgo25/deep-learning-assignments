@@ -523,7 +523,7 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 
 ---
 
-## T5 26/11/2026 – Kết quả BASE + E1–E6, mô hình cuối và PrivateTest, báo cáo đủ 5 mục, Word/PDF, slide
+## T5 26/11/2026 – Kết quả BASE + E1–E6, mô hình cuối và PrivateTest, báo cáo, slide, đóng gói zip
 
 ### Việc theo kế hoạch
 
@@ -543,6 +543,8 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
 7. Chốt tỷ lệ đóng góp (Trúc 25%, Khang 25%, Trung 25%, Nhân 25%), viết **phụ lục** (`report/appendix.md`: bảng phân công, danh sách file nộp, bảng lệnh tái lập, tài liệu tham khảo [1]–[9]). Cập nhật kế hoạch mục 8 theo việc đã làm thật: E7 không làm, Trúc viết thêm 3.0 và 3.7, Nhân viết 4.3. Bảng 2.1 báo cáo thêm `tong_hop.py`. Đã kiểm dòng `Phụ trách:` của 15 file `.py` và notebook khớp Bảng A.1.
 8. **Ghép báo cáo** thành `report/BaoCao_BTL02_Nhom05.docx` (3,2 MB) và `.pdf` (4,6 MB, 52 trang) bằng script mới `report/ghep_bao_cao.py`. Máy không có Word/LibreOffice/pandoc: dùng pandoc 3.9 trong gói `pypandoc_binary` (cài tạm ngoài repo), PDF in bằng Edge chạy ẩn từ HTML.
 9. **Slide** 15 trang: `slides/BTL02_Nhom05.pptx` (1,6 MB) và `.pdf` (1,8 MB), script `slides/lam_slide.js`. Mỗi slide ghi người trình bày theo bảng phân công và có ghi chú lời nói (speaker notes) để từng bạn tập. Đã tick checklist nộp: báo cáo, slide, nhật ký thực nghiệm, bảng phân công.
+10. **Đóng gói** `BTLON02_Emotion_HuynhNgocTruc_3123411312.zip` (158 MB, 123 file) ở gốc repo bằng skill `dong-goi-btl02`. Sửa script kiểm: loại thêm `docs/` (kế hoạch, ghi chú bàn giao) và `results/_thu/`. `requirements.txt` ghi phiên bản tối thiểu, bỏ `tqdm` (code không dùng). Chạy agent `btl02-cham-rubric` chấm thử lần cuối.
+11. Agent `btl02-cham-rubric` chấm thử: **khoảng 86–91/100**. Đã sửa theo góp ý: mục 5.3 giải thích vì sao test chỉ có một mô hình (không có trung bình ± độ lệch chuẩn); mục 3.7 dẫn độ lệch chuẩn 0,57 giữa các seed; mục 4.3 giải thích Grad-CAM conv đầu nhiễu; README ghi chú `best_model.pt` không có trên GitHub. Ghép lại báo cáo, nén lại zip (123 file, 158 MB). Hai góp ý không làm: "lỗi mã hóa" trong `final_metrics.json` không có thật (file UTF-8 đọc đúng, agent đọc sai bảng mã); cột "so với BASE" của E2-1 đúng như tên cột, mục 3.0 và 3.2 đã nói E2-1 so với E1-1.
 
 ### Commit trong ngày
 
@@ -590,6 +592,7 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 | Agent đối chiếu số liệu mục 4, 5 (khoảng 140 giá trị) | Đã sửa: 3 ô Bảng 4.1 lệch chữ số cuối vì làm tròn hai lần (Recall test Fear 0,4223, Recall val Happy 0,8547, F1 test Angry 0,5946; tính lại cả 42 ô từ `predictions_*.csv`), recall Fear 42,23% (2 chỗ), chênh macro F1 0,0104; ghi rõ 40 filter "< 1% ảnh" đã gồm 17 filter chết và thêm code sinh `last_conv_stats.json` (`python -m src.visualize --thong-ke`, chạy lại ra đúng 17/40); bỏ chữ "UTC" (JSON không ghi múi giờ); mô tả Grad-CAM conv cuối Fear (mắt + miệng/tay), Disgust (quanh mắt), conv giữa Happy (trán + khóe miệng); bỏ câu "không dựa vào nền hay tóc" (conv đầu vẫn sáng ở tóc/nền); bỏ câu dùng test để kết luận về việc chọn cấu hình |
 | Báo cáo Word/PDF | PDF 52 trang: đổi từng trang ra ảnh (PyMuPDF) xem: bìa, mục lục 2 trang, mỗi mục lớn sang trang mới, Bảng 3.1 sang trang vẫn lặp dòng tiêu đề, Bảng A.1 đủ 100%, hình lớn không bị cắt. Word: 21 hình, 25 bảng, 6 Heading 1, 36 Heading 2, A4 + lề đúng, Times New Roman 13 pt, bảng có viền, bìa đủ 4 người, 21 chú thích hình; **chưa xem được bố cục Word bằng mắt** (máy không có trình hiển thị docx) |
 | Slide | PDF 15 trang đổi ra ảnh xem từng slide; sửa: ảnh bìa sát chân trang, ô quy trình thừa chỗ, "Grad-CAM" bị ngắt ở dấu gạch (dùng gạch nối không ngắt U+2011), trục tung nhảy 55/58/61 (đặt bước 5 và 2), slide kết luận trống nửa dưới (thêm ô "Hướng tiếp theo", bảng rộng hơn). `.pptx`: `validate.py` của skill pptx **PASSED**, `slide_text.py` đủ 15 slide, không sót chữ mẫu, mỗi slide có ghi chú; 4 biểu đồ có màu riêng từng cột (`c:dPt`) và đúng bước trục. **Chưa xem .pptx bằng PowerPoint** (máy không có) |
+| Đóng gói | `check_submission.py`: **0 lỗi**, 2 cảnh báo báo nhầm (docstring ghi "không đọc PrivateTest" ở `train.py`, `visualize.py`). Zip: `testzip` không file hỏng; 123 file (gốc 4, configs 2, experiments 11, report 11, results 84, slides 4, src 7); không có `data/`, `Yêu cầu/`, `docs/`, `_thu/`, `CodetoTruc.md`, checkpoint trung gian; MD5 `best_model.pt` trong zip = bản trên máy; git bỏ qua file zip (`.gitignore` gốc `BTLON02_*.zip`) |
 | **Lỗi làm tròn accuracy** (phát hiện khi viết mục 3) | Log lưu val_acc 5 chữ số: BASE ghi 0.66425, nhưng thật là 2384/3589 = 0.664252, tức **66.43%**. In thẳng `0.66425 × 100` ra 66.42 (số thực máy tính ra 66.42499…). Sửa: dựng lại số ảnh đúng `round(acc × 3589)` (train: × 28709) rồi chia. Hậu quả đã sửa: BASE và E1-2 thành 66.43% (trước ghi 66.42%), E6-3 so với BASE thành −4.24 (trước −4.23). Đã sửa `NhatKyThucNghiem.md`, `final.yaml`, mục nhật ký này; `experiments/tong_hop.py` tính theo cách mới |
 
 ### Mô hình cuối
@@ -687,7 +690,8 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - [x] Commit + push `results/BASE`, `results/E1` … `E6`, `NhatKyThucNghiem.md`, `configs/final.yaml` (`ad79a0af`)
 - [x] Chạy mô hình cuối trên Kaggle (Save & Run All)
 - [x] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
-- [ ] Đóng gói: nhớ chép `results/final/best_model.pt` (155,6 MB, không có trên git) vào zip nộp
+- [x] Đóng gói: zip có `results/final/best_model.pt` (đã so MD5)
+- [ ] Trúc nộp `BTLON02_Emotion_HuynhNgocTruc_3123411312.zip` (nhóm trưởng nộp), hạn T7 28/11; zip 158 MB, kiểm giới hạn dung lượng nơi nộp trước
 - [x] Báo cáo mục 3
 - [x] Báo cáo mục 4, 5
 - [x] Phụ lục (bảng phân công, tỷ lệ 25% × 4, tài liệu tham khảo)

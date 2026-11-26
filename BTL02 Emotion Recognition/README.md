@@ -13,6 +13,8 @@ pip install -r requirements.txt
 ## Dữ liệu
 
 Tải `fer2013.csv` từ Kaggle (Challenges in Representation Learning: Facial Expression Recognition Challenge) và đặt vào `data/fer2013.csv`.
+
+Trọng số mô hình cuối `results/final/best_model.pt` (155.6 MB) có trong file zip nộp bài nhưng không có trên GitHub (vượt giới hạn 100 MB/file). Nạp bằng `src.evaluate.load_checkpoint`; vẽ lại hình bằng `python -m src.visualize`.
 Cột `Usage`: Training (28.709) dùng để train, PublicTest (3.589) làm validation, PrivateTest (3.589) làm test.
 
 ## Cấu trúc

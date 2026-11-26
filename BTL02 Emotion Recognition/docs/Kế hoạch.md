@@ -154,11 +154,11 @@ Mỗi lần chạy ghi 1 dòng ngay sau khi chạy xong:
 - [x] Report `.docx` + `.pdf`
 - [x] Slide `.pptx` + `.pdf`
 - [x] `NhatKyThucNghiem.md`
-- [ ] Code `src/`, `experiments/`, `configs/`, `README.md`, `requirements.txt` (không kèm `fer2013.csv`)
-- [ ] `results/` gồm log CSV, `summary.csv`, hình
-- [ ] Trọng số mô hình cuối `best_model.pt`
+- [x] Code `src/`, `experiments/`, `configs/`, `README.md`, `requirements.txt` (không kèm `fer2013.csv`)
+- [x] `results/` gồm log CSV, `summary.csv`, hình
+- [x] Trọng số mô hình cuối `best_model.pt`
 - [x] Bảng phân công + tỷ lệ đóng góp cộng đủ 100%
-- [ ] Zip `BTLON02_Emotion_HuynhNgocTruc_3123411312.zip`
+- [x] Zip `BTLON02_Emotion_HuynhNgocTruc_3123411312.zip`
 
 ## 12. Ghi chú từ code mẫu (đọc hết `Yêu cầu/` ngày 23/11)
 

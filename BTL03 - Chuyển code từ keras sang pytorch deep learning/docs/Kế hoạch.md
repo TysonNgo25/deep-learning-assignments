@@ -1,6 +1,8 @@
 # BTL03 – Chuyển code từ Keras sang PyTorch – Kế hoạch
 
-Cập nhật: 23/11/2026 (bản 1: sau khi đọc hết `Yêu cầu/`) · Người lập: Huỳnh Ngọc Trúc · Hạn nộp: **Thứ 7 28/11/2026** (trùng hạn BTL02)
+Cập nhật: 25/11/2026 (bản 2: dồn lịch vì 24/11 chưa làm; bản 1 ngày 23/11) · Người lập: Huỳnh Ngọc Trúc · Hạn nộp: **Thứ 7 28/11/2026** (trùng hạn BTL02)
+
+> Trạng thái mới nhất và việc làm ngay: [Bàn giao.md](B%C3%A0n%20giao.md) (25/11, chuyển sang Claude Code).
 
 ## 1. Đề bài yêu cầu gì
 
@@ -120,14 +122,14 @@ Nguyên tắc: lúc BTL02 đang train trên Kaggle/Colab thì viết code BTL03;
 | Ngày | Việc | Kết quả để kiểm tra | Trạng thái |
 |---|---|---|---|
 | T2 23/11 tối | Đọc hết `Yêu cầu/`; dựng thư mục; tải và kiểm dữ liệu Gender; bộ công cụ Claude Code | 4 file `.npy` đúng shape; `docs/Kế hoạch.md` | - [x] |
-| T3 24/11 | `common.py`; `getting_started`, `Func_apxm_MLP`, `MNIST_MLP` (chạy CPU) | MNIST_MLP 669.706 tham số, acc ≈ 0.96 | - [ ] |
-| T4 25/11 | `1_MNIST_CNN`, `2_Human_Gender_CNN`, `3_Emotion_Reg_CNN` (thư mục 2); chạy GPU | Tham số khớp 3 mô hình; 3 dòng trong `so_sanh.csv` | - [ ] |
-| T5 26/11 | `MNIST_CNN_LSTM`; 2 notebook Training Utilities; chạy GPU | LSTM 1.748.097 tham số; checkpoint, early stop, giảm lr chạy đúng | - [ ] |
-| T6 27/11 sáng | `1_segnet`, `2_obj_detection`; chạy GPU; hoàn thiện `so_sanh.csv` + hình | Đủ 11 dòng so sánh | - [ ] |
+| T3 24/11 | (không làm BTL03, dồn sang T4) | – | – |
+| T4 25/11 chiều–tối | `common.py`; `getting_started`, `Func_apxm_MLP`, `MNIST_MLP` (CPU); viết sẵn 3 notebook thư mục 2 (chạy thử CPU, `CHAY_THU = True`) | MNIST_MLP 669.706 tham số, acc ≈ 0.96; 3 mô hình thư mục 2 đúng số tham số | - [ ] |
+| T5 26/11 | Chạy GPU thư mục 2 (MNIST_CNN, Gender, Emotion); viết `MNIST_CNN_LSTM` + 2 notebook Training Utilities rồi chạy GPU | 6 dòng `so_sanh.csv`; LSTM 1.748.097 tham số; callback chạy đúng | - [ ] |
+| T6 27/11 sáng | `1_segnet`, `2_obj_detection`; chạy GPU; đủ `so_sanh.csv` + hình | `so_sanh.csv` đủ 12 dòng (10 notebook, Func_apxm 3 dòng A/B/C) | - [ ] |
 | T6 27/11 chiều–tối | Viết báo cáo (Word + PDF) | Bản đầy đủ | - [ ] |
-| T7 28/11 sáng | Rà số liệu (agent `btl03-doi-chieu-keras`, `btl03-cham-rubric`); README; đóng gói; nộp | Đã nộp zip | - [ ] |
+| T7 28/11 sáng | Rà số liệu (`/btl03-cham-thu`); README; đóng gói (`dong-goi-btl03`); nộp | Đã nộp zip | - [ ] |
 
-Dự phòng khi trễ: chạy Emotion ít epoch hơn (ghi rõ) → bỏ phần heatmap obj_detection → `Func_apxm_MLP` chỉ chạy vòng quét B.
+Dự phòng khi trễ (theo thứ tự cắt): chạy bản Training Utilities của Emotion với tối đa 30 epoch thay vì 100 (ghi rõ) → bỏ phần heatmap obj_detection → `Func_apxm_MLP` chỉ chạy vòng quét B → gom MNIST_CNN và CNN_LSTM vào cùng phiên GPU với BTL02.
 
 ## 8. Dữ liệu
 

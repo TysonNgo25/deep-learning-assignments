@@ -48,6 +48,7 @@ Bảng 5.2. Mô hình cuối F-1 trên validation và test.
 | **Test (PrivateTest, đánh giá 1 lần)** | **66.09%** | **0.6389** | **0.6585** |
 
 - Accuracy trên test (66.09%) cao hơn validation 0.22 điểm, macro F1 cao hơn 0.0104. Hai tập cho kết quả gần nhau.
+- Kết quả test là của một mô hình (F-1), không có trung bình ± độ lệch chuẩn như validation. Đánh giá cả 3 seed trên test rồi chọn hoặc so sánh giữa chúng là dùng test để ra quyết định; nhóm giữ nguyên tắc chọn xong trên validation rồi mới đánh giá test đúng một lần. Mức dao động giữa các seed được đo trên validation (± 0.57 điểm, mục 5.2).
 - Macro F1 (0.6389) thấp hơn accuracy vì các lớp khó (Fear F1 0.4651, Sad 0.5231) kéo trung bình xuống; lớp hiếm Disgust đạt F1 0.6139, không bị mô hình bỏ qua.
 
 ## 5.4. So với các mức tham chiếu

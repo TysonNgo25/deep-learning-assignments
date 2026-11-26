@@ -12,7 +12,8 @@ Nhật ký cá nhân của Trúc (không nộp). Quy tắc ở `CLAUDE.md` mục
 
 ### 2. Commit trong ngày
 
-_(Trúc điền ở mục ngày sau)_
+- `b885df2f` Up bài tập BTL03 (giải nén car_data, depth_hand): đưa đề gốc `Yêu cầu/` lên git, kèm dữ liệu xe và bàn tay của notebook thư mục 5 (Colab clone về là có).
+- `1c08b472` BTL03: đọc đề, dựng thư mục, kế hoạch, bộ công cụ Claude Code: thư mục `pytorch/`, `data/`, `results/`, `report/`, `docs/Kế hoạch.md`, README, requirements, nhật ký; bộ hook/command/rule/skill/agent BTL03 trong `.claude/`; cập nhật `CLAUDE.md`, README gốc, `.gitignore`.
 
 ### 3. Kết quả
 

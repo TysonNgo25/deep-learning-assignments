@@ -22,8 +22,9 @@ REQUIRED = [
     "results/final/figures/last_conv_filters.png", "results/final/figures/confusion_matrix.png",
 ]
 GROUPS = ["E1", "E2", "E3", "E4", "E5", "E6"]
-EXCLUDE_DIRS = {"data", "Yêu cầu", "checkpoints", "__pycache__", ".ipynb_checkpoints"}
-EXCLUDE_FILES = {"CodetoTruc.md", "Kế hoạch.md"}
+# docs/: kế hoạch và ghi chú bàn giao nội bộ; _thu/: kết quả chạy thử trên máy (git cũng bỏ qua).
+EXCLUDE_DIRS = {"data", "Yêu cầu", "checkpoints", "__pycache__", ".ipynb_checkpoints", "docs", "_thu"}
+EXCLUDE_FILES = {"CodetoTruc.md", "Kế hoạch.md", "BanGiao.md"}
 MIN_RUNS = 10
 
 errors, warnings = [], []
