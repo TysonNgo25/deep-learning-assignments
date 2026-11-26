@@ -38,4 +38,4 @@ Mã thoát 1 nếu có LỖI.
 & "C:\Users\hntruc\anaconda3\envs\btl02\python.exe" "..\.claude\skills\dong-goi-btl02\check_submission.py" --zip "BTLON02_Emotion_HuynhNgocTruc_3123411312.zip"
 ```
 
-Zip ghi ra gốc repo. Script bỏ `data/` (fer2013.csv), `Yêu cầu/`, `CodetoTruc.md`, `docs/Kế hoạch.md`, `Kế hoạch.md`, `checkpoints/`, `__pycache__`. In danh sách file đã nén để Trúc xem. Không commit file zip.
+Zip ghi ra gốc repo. Script bỏ `data/` (fer2013.csv), `Yêu cầu/`, `docs/` (kế hoạch, bàn giao), `CodetoTruc.md`, `results/_thu/`, `checkpoints/`, `__pycache__`. Trong `report/` chỉ giữ `.docx` + `.pdf`, trong `slides/` chỉ giữ `.pptx` + `.pdf` (Trúc chốt 26/11; file `.md`, `ghep_bao_cao.py`, `lam_slide.js` chỉ ở repo). Vẫn giữ `results/final/best_model.pt` (git bỏ qua file này). In danh sách file đã nén để Trúc xem. Không commit file zip.

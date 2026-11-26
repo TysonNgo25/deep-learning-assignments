@@ -26,6 +26,8 @@ GROUPS = ["E1", "E2", "E3", "E4", "E5", "E6"]
 EXCLUDE_DIRS = {"data", "Yêu cầu", "checkpoints", "__pycache__", ".ipynb_checkpoints", "docs", "_thu"}
 EXCLUDE_FILES = {"CodetoTruc.md", "Kế hoạch.md", "BanGiao.md"}
 MIN_RUNS = 10
+# Trong zip, report/ và slides/ chỉ giữ bản hoàn chỉnh (Trúc chốt 26/11); file .md, script ghép/tạo slide ở lại repo.
+ZIP_ONLY = {"report": {".docx", ".pdf"}, "slides": {".pptx", ".pdf"}}
 
 errors, warnings = [], []
 
@@ -93,6 +95,8 @@ if args.zip:
                     or p.suffix == ".pyc" or p.name.startswith("~$"):
                 continue
             if p.suffix == ".pt" and rel.as_posix() != "results/final/best_model.pt":
+                continue
+            if rel.parts[0] in ZIP_ONLY and p.suffix not in ZIP_ONLY[rel.parts[0]]:
                 continue
             z.write(p, Path(top) / rel)
             print("  +", rel.as_posix())

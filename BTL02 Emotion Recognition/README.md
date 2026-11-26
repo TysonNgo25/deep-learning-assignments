@@ -46,8 +46,8 @@ Cột `Usage`: Training (28.709) dùng để train, PublicTest (3.589) làm vali
 | `python -m experiments.tong_hop` | Bảng tổng hợp BASE + E1–E6 và hình cho báo cáo mục 3 | `results/tong_hop.csv`, `results/figures/` |
 | `python -m experiments.run_final` | Mô hình cuối theo `configs/final.yaml` (baseline + thay đổi tốt nhất E1–E6, phải `chot: true`): train seed 0, 1, 2, chọn seed theo val_loss, đánh giá PrivateTest **một lần**, vẽ hình. `--thu` để chạy thử (không đọc test) | `results/final/` |
 | `python -m src.visualize [--ckpt …]` | Filter lớp conv cuối, ảnh kích hoạt mạnh nhất, trọng số, feature map, Grad-CAM (chỉ dùng validation); mặc định mô hình cuối | `results/final/figures/` |
-| `python report/ghep_bao_cao.py` | Ghép `report/section_*.md` + `appendix.md` thành báo cáo Word và PDF (cần `pip install pypandoc_binary` và Edge/Chrome) | `report/BaoCao_BTL02_Nhom05.docx`, `.pdf` |
-| `node slides/lam_slide.js` | Slide 15 trang: PowerPoint (biểu đồ native, ghi chú lời nói) và PDF cùng bố cục (cần Node, `npm install pptxgenjs`, Edge/Chrome) | `slides/BTL02_Nhom05.pptx`, `.pdf` |
+| `python report/ghep_bao_cao.py` | Ghép `report/section_*.md` + `appendix.md` thành báo cáo Word và PDF (script và file nguồn .md chỉ có trong kho mã GitHub; file nộp chỉ kèm bản .docx/.pdf, .pptx/.pdf) (cần `pip install pypandoc_binary` và Edge/Chrome) | `report/BaoCao_BTL02_Nhom05.docx`, `.pdf` |
+| `node slides/lam_slide.js` | Slide 15 trang: PowerPoint (biểu đồ native, ghi chú lời nói) và PDF cùng bố cục (script và file nguồn .md chỉ có trong kho mã GitHub; file nộp chỉ kèm bản .docx/.pdf, .pptx/.pdf) (cần Node, `npm install pptxgenjs`, Edge/Chrome) | `slides/BTL02_Nhom05.pptx`, `.pdf` |
 
 Máy không có GPU thì thêm `--workers 0` khi chạy thử; thực nghiệm đầy đủ chạy trên GPU bằng `experiments/chay_colab_kaggle.ipynb` (Colab hoặc Kaggle).
 
