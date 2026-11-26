@@ -3,3 +3,4 @@ Func_apxm_MLP_A,1. MLP,test_mse,,0.0086,,65,65,100,100,SGD,0.01,128,cpu,6.8,0,"Q
 Func_apxm_MLP_B,1. MLP,test_mse,,0.0013,,2049,2049,100,100,SGD,0.01,128,cpu,5.4,0,"Quét B=8..512 (A=800, C=100); giá trị tại B=512; gốc chỉ có hình (Keras cũ), đọc từ hình test ≈ 0.0014"
 Func_apxm_MLP_C,1. MLP,test_mse,,0.0015,,513,513,190,190,SGD,0.01,128,cpu,13.8,0,"Quét C=10..190 (A=800, B=128); giá trị tại C=190; gốc chỉ có hình (Keras cũ), đọc từ hình test ≈ 0.0016"
 MNIST_MLP,1. MLP,test_acc,0.9648,0.9658,0.0010,669706,669706,30,30,SGD,0.01,128,cpu,84.0,0,"Keras gốc chạy trên TensorFlow 2.14, Colab T4; PyTorch khởi tạo glorot như Keras"
+2_obj_detection,5. Others,test_acc,0.9523,0.9375,-0.0148,83367,83367,5,5,Adam,0.001,128,cpu,105.5,0,accuracy tính như Keras (round == nhãn ±1); theo dấu = 0.9636; chia train/test random_state=0 (gốc không seed)

@@ -1,0 +1,13 @@
+{
+  "test_loss": 0.1074304467251709,
+  "test_metric": 0.9374999996420141,
+  "test_sign_accuracy": 0.9635885887675815,
+  "n_params": 83367,
+  "epochs_ran": 5,
+  "best_epoch": null,
+  "train_time_s": 105.45390725135803,
+  "device": "cpu",
+  "seed": 0,
+  "split_random_state": 0,
+  "torch_version": "2.15.0+cpu"
+}

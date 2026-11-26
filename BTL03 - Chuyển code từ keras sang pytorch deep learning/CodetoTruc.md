@@ -73,7 +73,8 @@ Dòng T4 25/11 trong Kế hoạch mục 7 đã tick. Dòng T5 26/11 chưa tick v
 
 - `9b8e06ec` Commit xong bài 2: commit chung với BTL02; phần BTL03 thêm `docs/Bàn giao.md` (bàn giao từ Claude app sang Claude Code), cập nhật `docs/Kế hoạch.md` (lịch bản 2) và `CodetoTruc.md` (điền hash ngày 23/11).
 - `87ae2f5c` BTL03: common.py, 9 notebook PyTorch (3 đã chạy CPU), so_sanh.csv, nhật ký 26/11: toàn bộ code và kết quả CPU của ngày.
-- Commit notebook Kaggle (`chay_kaggle.ipynb`, khóa file trong `ghi_so_sanh`, `.gitignore`): _(Trúc điền ở mục ngày sau)_
+- `898a2192` BTL03: notebook chạy Kaggle, khóa file khi ghi so_sanh.csv: `chay_kaggle.ipynb`, `_khoa_file` trong `common.py`, `.gitignore`.
+- Commit SegNet + obj_detection (2 notebook thư mục 5, thêm SegNet vào `chay_kaggle.ipynb`): _(Trúc điền ở mục ngày sau)_
 
 ### 3. Kết quả
 
@@ -93,6 +94,11 @@ Sau commit `87ae2f5c`:
 - `common.py`: `ghi_so_sanh` có thêm khóa file `_khoa_file` để hai notebook chạy song song không ghi đè `so_sanh.csv` của nhau.
 - `.gitignore`: bỏ qua `_log_kaggle/` (log trong zip Kaggle) và `*.lock`.
 
+Sau commit `898a2192` (làm sớm việc của T6 27/11 sáng):
+
+- `pytorch/5. Others/1_segnet_pytorch.ipynb`: đã viết, chạy thử qua, chờ GPU (đã thêm vào `chay_kaggle.ipynb`, luồng 1).
+- `pytorch/5. Others/2_obj_detection_pytorch.ipynb`: chạy đủ 5 epoch trên CPU (mô hình 83.367 tham số), có heatmap trên `test.jpg`.
+
 Môi trường: env `btl02` cài thêm `torchinfo`, `tensorboard`, `scikit-image`, `nbconvert`, `ipykernel`, `notebook`, `seaborn`.
 
 Notebook trong ngày:
@@ -109,6 +115,8 @@ Notebook trong ngày:
 | MNIST_CNN_LSTM | CNN bọc TimeDistributed + 2 LSTM 128 | 1.747.073 | 1.748.097 (+1.024) | MAE 0.6502 | chờ GPU | |
 | tu_2_Human_Gender_CNN | như Gender + 4 callback | 4.063.570 | 4.063.570 | 0.8773 | chờ GPU | |
 | tu_3_Emotion_Reg_CNN | như Emotion + augmentation + EarlyStopping | 19.028.287 | 19.028.287 | 0.6163 | chờ GPU | |
+| 1_segnet | encoder VGG 13 conv + BN, decoder UpSampling | 29.442.325 train được (tổng 29.458.211) | 29.442.325 (tổng 29.458.211) | pixel acc 0.7732 | chờ GPU | |
+| 2_obj_detection | mạng toàn tích chập (Conv 10, 10, 128 8×8, 1 1×1 tanh) | 83.367 | 83.367 | 0.9523 (cách Keras) | 0.9375 (−0.0148); theo dấu 0.9636 | CPU, 106 s |
 
 Số Func_apxm gốc là số đọc từ hình (notebook gốc không in số), nên trong `so_sanh.csv` cột `keras` để trống và số đọc từ hình ghi ở `ghi_chu`.
 
@@ -144,6 +152,8 @@ Các lớp `nn.Module`: tên lớp con trùng `name=` của Keras (`conv1_1`, `f
 - `GenderCNN`: hàm `khoi_conv` dựng một khối [n × (Conv + ReLU) → MaxPool → Dropout] bằng `nn.Sequential(OrderedDict(...))` để giữ tên lớp như Keras.
 - `EmoCNN`: padding `same` = 1, `valid` = 0, xen kẽ như gốc; Flatten 218 × 9 × 9 = 17.658.
 - `CnnLstm`: TimeDistributed bằng cách gộp `(N, 8, ...)` thành `(N·8, ...)` cho qua CNN rồi tách lại `(N, 8, 2304)`; hai `nn.LSTM` riêng (`lstm1` trả cả chuỗi, `lstm2` lấy bước cuối `out[:, -1]`).
+- `SegNet` (1_segnet): hàm `cbr` tạo bộ [Conv same + BatchNorm + ReLU]; encoder 13 conv + 5 MaxPool, decoder đối xứng có 5 `nn.Upsample(scale_factor=2)`, cuối Conv 1×1 ra 7 kênh + BatchNorm. Trả logits `(N, 7, 96, 96)`, thay `Reshape + Permute + softmax`. `loss_keras` và `pixel_accuracy` xử lý pixel nhãn lạ đúng như Keras (xem "Khác Keras ở đâu").
+- `CarConv` (2_obj_detection): mạng toàn tích chập; `forward(x, flatten=True)` khi train (ra `(N, 1)`), `flatten=False` khi vẽ heatmap trên ảnh lớn (ra `(1, 1, 83, 153)` với `test.jpg` 720×1280). Một mô hình dùng cho cả hai, không cần dựng `heatmodel` riêng rồi nạp file như Keras. `keras_accuracy` tính "accuracy" đúng cách Keras (`round(dự đoán) == nhãn`).
 - `keras_random_transform` (tu_3_Emotion): viết lại phép biến đổi của `ImageDataGenerator` Keras 2.0.9 bằng `scipy.ndimage.affine_transform`: xoay ±45°, dịch 20%, `order=0`, `mode='nearest'`, lật ngang 50%. `AugmentedFER` là Dataset áp phép biến đổi này mỗi lần lấy ảnh.
 
 ### 5. Khác Keras ở đâu
@@ -159,6 +169,12 @@ Các lớp `nn.Module`: tên lớp con trùng `name=` của Keras (`conv1_1`, `f
 - **Augmentation**: `torchvision.RandomAffine` lấp vùng trống bằng 0, Keras lấp `nearest`; vì vậy viết lại bằng scipy cho giống.
 - **Dữ liệu CNN_LSTM**: giữ nguyên vòng lặp numpy và `np.random.seed(2018)` nên dữ liệu sinh ra trùng gốc; chỉ đổi float64 → float32 (bản gốc tốn 3 GB RAM).
 - **Ô lỗi trong gốc**: `model.get_layer()` (1_MNIST_CNN) gọi thiếu tham số, đã bỏ và ghi chú.
+- **BatchNorm (SegNet)**: Keras `momentum=0.99`, `epsilon=1e-3` = PyTorch `momentum=0.01`, `eps=1e-3` (PyTorch định nghĩa momentum ngược). Running mean/var là buffer nên `count_params` so với "Trainable params" 29.442.325, `count_all` so với tổng 29.458.211.
+- **Nhãn SegNet có mức xám lạ**: 51, 102, 153, 204 (≈ 0,2% pixel train, 0,4% test) không thuộc 7 lớp. Ở gốc chúng thành one-hot toàn 0, nên góp 0 vào loss nhưng vẫn tính trong mẫu số, và được tính là lớp palm khi đo accuracy. Bản PyTorch gán −100, dùng `cross_entropy(reduction='none').mean()` và `clamp(min=0)` để ra đúng như vậy.
+- **Đường dẫn nhãn SegNet**: gốc `fn.replace('depth', 'labels')` thay mọi chữ "depth", hỏng với đường dẫn qua thư mục `depth_hand/`; bản PyTorch ghép đường dẫn riêng.
+- **"accuracy" của obj_detection**: loss MSE và đầu ra 1 giá trị nên Keras dùng `binary_accuracy` = `round(dự đoán) == nhãn`. Với nhãn ±1 thì phải |dự đoán| > 0,5 mới tính đúng. Bản PyTorch tính cả cách này (để so) và accuracy theo dấu.
+- **Chia train/test obj_detection**: gốc không đặt seed; bản PyTorch `random_state=0`.
+- **Heatmap ở mép ảnh**: code vẽ khung gốc sẽ `IndexError` nếu có ô được phát hiện ở hàng/cột cuối (`j*8+64 = 720`); bản PyTorch chặn chỉ số.
 
 ### 6. Đã kiểm tra
 
@@ -188,7 +204,8 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 
 - MNIST_MLP: Keras 0.9648 → PyTorch 0.9658 (+0.0010), test loss 0.1159 (Keras 0.1143). 30 epoch trên CPU mất 84 s, trong khi Keras trên T4 mất 1,13 phút. MLP nhỏ nên CPU đủ nhanh.
 - Func_apxm_MLP (test MSE ở điểm cuối mỗi vòng quét): A=1000 0.0086; B=512 0.0013; C=190 0.0015.
-- Đếm tham số khớp tuyệt đối với Keras ở 6 mô hình; CNN_LSTM lệch +1.024 đúng như tính trước.
+- Đếm tham số khớp tuyệt đối với Keras ở 8 mô hình (SegNet so "Trainable params", tổng kể cả buffer BN cũng khớp); CNN_LSTM lệch +1.024 đúng như tính trước.
+- 2_obj_detection: "accuracy" cách Keras 0.9375 (Keras 0.9523, −1,48 điểm), accuracy theo dấu 0.9636, test MSE 0.1074 (Keras 0.0642). `val_loss` epoch 4 là 0.0629 rồi epoch 5 nhảy lên 0.1074: chỉ 5 epoch và gốc đánh giá ở epoch cuối nên dao động này vào thẳng kết quả. Heatmap trên `test.jpg`: 54 ô > 0.99, khoanh đúng cả 2 xe (xe đen giữa, xe trắng phải), không có vùng nhầm (`results/2_obj_detection/heatmap_test.png`).
 
 ### 9. Câu hỏi vấn đáp có thể gặp
 
@@ -198,6 +215,9 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 - **`TimeDistributed` viết thế nào trong PyTorch?** Gộp chiều thời gian vào batch, `(N, 8, 1, 28, 28)` thành `(N·8, 1, 28, 28)`, cho qua CNN rồi reshape lại `(N, 8, 2304)`. CNN dùng chung trọng số cho cả 8 ảnh.
 - **Vì sao phải khởi tạo giống Keras?** Mặc định PyTorch khác Keras. Muốn chênh lệch kết quả chỉ đến từ thư viện và yếu tố ngẫu nhiên thì phải giữ khởi tạo giống nhau.
 - **EarlyStopping có lấy lại trọng số tốt nhất không?** Không, giống Keras (`restore_best_weights=False`). Vì vậy bản Gender nạp checkpoint tốt nhất rồi mới đánh giá; bản Emotion đánh giá mô hình ở epoch cuối như gốc.
+- **Vì sao "accuracy" obj_detection thấp hơn accuracy theo dấu?** Keras dùng `binary_accuracy` = `round(dự đoán) == nhãn`. Nhãn là ±1 nên dự đoán trong (−0,5; 0,5) làm tròn thành 0 và luôn bị tính sai, dù đúng dấu. Accuracy theo dấu (ngưỡng 0) mới là accuracy phân loại thật.
+- **Một mạng sao dùng được cho ảnh 64×64 và ảnh 720×1280?** Mạng không có lớp Dense, chỉ có conv và pooling, nên nhận ảnh kích thước bất kỳ. Ảnh 64×64 cho ra 1×1 điểm số; ảnh lớn cho bản đồ 83×153, mỗi điểm là điểm số của một cửa sổ 64×64 trượt bước 8.
+- **BatchNorm momentum 0.99 của Keras sao thành 0.01?** Keras: giá trị mới = 0.99·cũ + 0.01·batch. PyTorch: giá trị mới = (1 − m)·cũ + m·batch. Muốn giống thì m = 0.01.
 - **Func_apxm gốc chỉ có hình thì so sánh thế nào?** So hình dạng đường quét và độ lớn đọc từ hình. Trong `so_sanh.csv` cột Keras để trống, số đọc từ hình ghi ở cột ghi chú, không gõ thành số đo.
 
 ### 10. Còn treo
@@ -207,5 +227,6 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 - [ ] Tạo Kaggle Dataset riêng từ 4 file `data/gender/*.npy` (ví dụ `btl03-gender`, Private)
 - [ ] Chạy GPU trên Kaggle (`chay_kaggle.ipynb`, T4 x2, Internet On, Save & Run All) 6 notebook: 1_MNIST_CNN, 2_Human_Gender_CNN, 3_Emotion_Reg_CNN, MNIST_CNN_LSTM, tu_2_Human_Gender_CNN, tu_3_Emotion_Reg_CNN; tải notebook có output + `results/<notebook>/` về
 - [ ] Sau khi chạy GPU: viết lại câu nhận xét PCA cuối `1_MNIST_CNN` theo hình thật
-- [ ] `1_segnet`, `2_obj_detection` (T6 27/11 sáng)
+- [x] Viết `1_segnet`, `2_obj_detection` (kế hoạch T6 27/11 sáng, làm sớm 26/11)
+- [ ] Chạy `1_segnet` trên Kaggle (nếu lần chạy đầu dùng commit `898a2192` thì chưa có SegNet: giải nén zip lần 1, commit + push, rồi chạy lại với `CHON = ["1_segnet"]`)
 - [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không
