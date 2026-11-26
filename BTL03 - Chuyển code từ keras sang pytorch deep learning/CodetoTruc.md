@@ -72,7 +72,8 @@ Dòng T4 25/11 trong Kế hoạch mục 7 đã tick. Dòng T5 26/11 chưa tick v
 ### 2. Commit trong ngày
 
 - `9b8e06ec` Commit xong bài 2: commit chung với BTL02; phần BTL03 thêm `docs/Bàn giao.md` (bàn giao từ Claude app sang Claude Code), cập nhật `docs/Kế hoạch.md` (lịch bản 2) và `CodetoTruc.md` (điền hash ngày 23/11).
-- Commit code hôm nay (`common.py`, 9 notebook, `results/`): _(Trúc điền ở mục ngày sau)_
+- `87ae2f5c` BTL03: common.py, 9 notebook PyTorch (3 đã chạy CPU), so_sanh.csv, nhật ký 26/11: toàn bộ code và kết quả CPU của ngày.
+- Commit notebook Kaggle (`chay_kaggle.ipynb`, khóa file trong `ghi_so_sanh`, `.gitignore`): _(Trúc điền ở mục ngày sau)_
 
 ### 3. Kết quả
 
@@ -85,6 +86,12 @@ File mới:
 - `pytorch/3. CNN + LSTM/MNIST_CNN_LSTM_pytorch.ipynb`: như trên.
 - `pytorch/4. Training Utilities/2_Human_Gender_CNN_pytorch.ipynb`, `3_Emotion_Reg_CNN_pytorch.ipynb`: như trên.
 - `results/so_sanh.csv` (4 dòng), `results/MNIST_MLP/` (history.csv, metrics.json, curves.png), `results/Func_apxm_MLP/` (quet_A/B/C.csv + .png, metrics.json).
+
+Sau commit `87ae2f5c`:
+
+- `chay_kaggle.ipynb` (thư mục gốc BTL03): notebook điều khiển chạy trên Kaggle. Notebook này clone repo, liên kết dữ liệu Gender và FER2013 từ `/kaggle/input`, tải MNIST một lần, rồi chạy 6 notebook GPU bằng `nbconvert` theo 2 luồng song song (mỗi luồng một GPU của T4 x2). Cuối cùng nén notebook có output + `results/` thành `btl03_gpu_*.zip`.
+- `common.py`: `ghi_so_sanh` có thêm khóa file `_khoa_file` để hai notebook chạy song song không ghi đè `so_sanh.csv` của nhau.
+- `.gitignore`: bỏ qua `_log_kaggle/` (log trong zip Kaggle) và `*.lock`.
 
 Môi trường: env `btl02` cài thêm `torchinfo`, `tensorboard`, `scikit-image`, `nbconvert`, `ipykernel`, `notebook`, `seaborn`.
 
@@ -160,7 +167,9 @@ Các lớp `nn.Module`: tên lớp con trùng `name=` của Keras (`conv1_1`, `f
 3. Gender: dữ liệu **xếp theo nhãn**, male trước, female sau (train vị trí 0–9412 male, 9413–11937 female; val tương tự). Train vẫn đúng vì `shuffle=True`. Chạy thử phải lấy mẫu rải đều cả file (lấy 1.000 ảnh đầu thì toàn male).
 4. Chạy thử (`CHAY_THU = True`, CPU) 6 notebook GPU: đều qua, `assert` số tham số đều đúng. Callback của tu_2 lưu checkpoint đúng mẫu tên, dừng sớm, nạp lại file tốt nhất.
 5. Quét ô code của 9 notebook: không có `import keras/tensorflow`, `tf.keras` hay đường dẫn tuyệt đối. Keras gốc chỉ nằm trong ô markdown.
-6. Func_apxm: hình dạng 3 đường quét giống hình gốc (B và C giảm dần về ≈ 0,0014–0,0016; A dao động, có chỗ nhảy ở A=500 như gốc).
+6. `_khoa_file`: hai tiến trình cùng ghi 20 dòng vào một `so_sanh.csv` tạm → đủ 41 dòng (1 tiêu đề + 40), không mất dòng, không sót file `.lock`.
+7. `chay_kaggle.ipynb`: kiểm cú pháp 13 ô; chạy thử phần điều phối luồng và đóng gói zip trên máy, dùng `getting_started` thay cho notebook nặng → có log BẮT ĐẦU/XONG, zip có đúng đường dẫn `pytorch/...`, `results/...`, `_log_kaggle/...`.
+8. Func_apxm: hình dạng 3 đường quét giống hình gốc (B và C giảm dần về ≈ 0,0014–0,0016; A dao động, có chỗ nhảy ở A=500 như gốc).
 
 ### 7. Cách tự kiểm tra lại
 
@@ -193,8 +202,10 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 
 ### 10. Còn treo
 
-- [ ] Trúc commit + push code hôm nay (lệnh ở cuối phiên)
-- [ ] Chạy GPU (Colab/Kaggle) 6 notebook: 1_MNIST_CNN, 2_Human_Gender_CNN, 3_Emotion_Reg_CNN, MNIST_CNN_LSTM, tu_2_Human_Gender_CNN, tu_3_Emotion_Reg_CNN; tải notebook có output + `results/<notebook>/` về
+- [x] Trúc commit + push code hôm nay (`87ae2f5c`)
+- [ ] Commit + push `chay_kaggle.ipynb` (Kaggle clone từ GitHub nên phải push trước khi chạy)
+- [ ] Tạo Kaggle Dataset riêng từ 4 file `data/gender/*.npy` (ví dụ `btl03-gender`, Private)
+- [ ] Chạy GPU trên Kaggle (`chay_kaggle.ipynb`, T4 x2, Internet On, Save & Run All) 6 notebook: 1_MNIST_CNN, 2_Human_Gender_CNN, 3_Emotion_Reg_CNN, MNIST_CNN_LSTM, tu_2_Human_Gender_CNN, tu_3_Emotion_Reg_CNN; tải notebook có output + `results/<notebook>/` về
 - [ ] Sau khi chạy GPU: viết lại câu nhận xét PCA cuối `1_MNIST_CNN` theo hình thật
 - [ ] `1_segnet`, `2_obj_detection` (T6 27/11 sáng)
 - [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không

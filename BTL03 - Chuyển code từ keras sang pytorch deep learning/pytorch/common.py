@@ -33,6 +33,7 @@ import math
 import os
 import random
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
@@ -636,6 +637,28 @@ def plot_history(history: dict, name: str | None = None, metric_name: str = "acc
     return fig
 
 
+@contextmanager
+def _khoa_file(path: Path, timeout: float = 60.0):
+    """Khóa đơn giản bằng file `<path>.lock` (tạo độc quyền), dùng được cả Windows và Linux.
+
+    Nếu khóa tồn tại quá `timeout` giây (tiến trình trước chết giữa chừng) thì coi như bỏ.
+    """
+    lock = Path(str(path) + ".lock")
+    t0 = time.time()
+    while True:
+        try:
+            os.close(os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            break
+        except FileExistsError:
+            if time.time() - t0 > timeout:
+                lock.unlink(missing_ok=True)
+            time.sleep(0.1)
+    try:
+        yield
+    finally:
+        lock.unlink(missing_ok=True)
+
+
 def ghi_so_sanh(notebook: str, thu_muc: str, chi_so: str, keras: float | None, pytorch: float,
                 keras_params=None, pytorch_params=None, epochs_keras=None, epochs_pytorch=None,
                 optimizer="", lr=None, batch=None, device="", train_time_s=None, seed=0,
@@ -667,16 +690,17 @@ def ghi_so_sanh(notebook: str, thu_muc: str, chi_so: str, keras: float | None, p
         "optimizer": optimizer, "lr": text(lr), "batch": text(batch), "device": device,
         "train_time_s": fmt(train_time_s, 1), "seed": seed, "ghi_chu": ghi_chu,
     }
-    rows = []
-    if path.exists():
-        with open(path, newline="", encoding="utf-8") as f:
-            rows = list(csv.DictReader(f))
-    key = (notebook, thu_muc, chi_so)
-    rows = [r for r in rows if (r["notebook"], r["thu_muc"], r["chi_so"]) != key] + [row]
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=SO_SANH_COLUMNS)
-        w.writeheader()
-        w.writerows(rows)
+    with _khoa_file(path):        # Kaggle 2 GPU chạy 2 notebook song song, tránh ghi đè lẫn nhau
+        rows = []
+        if path.exists():
+            with open(path, newline="", encoding="utf-8") as f:
+                rows = list(csv.DictReader(f))
+        key = (notebook, thu_muc, chi_so)
+        rows = [r for r in rows if (r["notebook"], r["thu_muc"], r["chi_so"]) != key] + [row]
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=SO_SANH_COLUMNS)
+            w.writeheader()
+            w.writerows(rows)
     print(f"so_sanh.csv: {notebook} | {chi_so} Keras {row['keras'] or '(chỉ có hình)'} "
           f"| PyTorch {row['pytorch']} | chênh {row['chenh_lech'] or '-'}")
     return row

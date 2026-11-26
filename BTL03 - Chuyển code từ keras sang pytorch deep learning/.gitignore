@@ -15,3 +15,7 @@ __pycache__/
 
 # Office tạm
 ~$*
+
+# Log tải về từ Kaggle (zip của chay_kaggle.ipynb) và file khóa của ghi_so_sanh
+_log_kaggle/
+*.lock
