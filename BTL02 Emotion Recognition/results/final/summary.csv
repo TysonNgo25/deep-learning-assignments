@@ -1,0 +1,4 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+F-1,Mô hình cuối: model.arch=small,1,32,0.95151,0.65868,0.68003,42,1375.3,38901191
+F-0,Mô hình cuối: model.arch=small,0,41,0.9552,0.6701,0.71169,51,1491.7,38901191
+F-2,Mô hình cuối: model.arch=small,2,51,0.98316,0.66425,0.73998,60,1736.0,38901191

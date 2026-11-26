@@ -523,7 +523,7 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 
 ---
 
-## T5 26/11/2026 – Nhận kết quả BASE + E1–E6, ghi nhật ký thực nghiệm, chốt mô hình cuối, viết báo cáo mục 3
+## T5 26/11/2026 – Kết quả BASE + E1–E6, báo cáo mục 3, chạy mô hình cuối và đánh giá PrivateTest
 
 ### Việc theo kế hoạch
 
@@ -538,11 +538,13 @@ Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
 2. Ghi 18 dòng (BASE, E1-1 … E6-3) vào [NhatKyThucNghiem.md](NhatKyThucNghiem.md); mọi số đọc từ `results/<nhóm>/logs/<run>.csv`.
 3. Trúc chọn cấu hình mô hình cuối: **Small (E1-1)**. Đã điền [configs/final.yaml](configs/final.yaml): `model.arch: small`, `chot: true`.
 4. Viết `experiments/tong_hop.py` (bảng tổng hợp + 2 hình) và **báo cáo mục 3** (`report/section_3_experiments.md`): 3.0 thiết lập chung, 3.1–3.6 từng nhóm (bảng, hình, nhận xét có số), 3.7 tổng kết.
+5. Chạy mô hình cuối trên Kaggle (notebook `notebook0e986dcbeb`, Save & Run All): F-0, F-1, F-2 (Small, seed 0/1/2), chọn F-1, đánh giá PrivateTest **một lần** lúc 03:48:49 UTC 26/11. Chép `results/final/` vào repo, ghi F-0/1/2 vào nhật ký thực nghiệm. Đã tick ô T6 27/11 sáng trong kế hoạch (làm sớm).
 
 ### Commit trong ngày
 
 - `ad79a0af` BTL02: kết quả BASE + E1–E6, nhật ký thực nghiệm 18 run, chốt mô hình cuối (Small): thêm `results/BASE`, `results/E1` … `E6`, 18 dòng nhật ký thực nghiệm, `final.yaml` chốt.
-- _(commit báo cáo mục 3, `tong_hop.py`, sửa lỗi làm tròn 66.42 → 66.43: Trúc điền hash ở mục ngày sau)_
+- `88c6f596` BTL02: báo cáo mục 3, tong_hop.py; sửa làm tròn accuracy (BASE 66.43%): mục 3 báo cáo, `tong_hop.py`, sửa 66.42 → 66.43 ở các file.
+- _(commit `results/final/`, F-0/1/2 trong nhật ký thực nghiệm, `.gitignore` bỏ `best_model.pt`: Trúc điền hash ở mục ngày sau)_
 
 ### Kết quả
 
@@ -582,6 +584,25 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 | Agent đối chiếu số liệu mục 3 (khoảng 230 số) | 4 chỗ đã sửa: mốc train/val cắt nhau của BASE ghi rõ "lần đầu epoch 21, liên tục từ 23" và "lần đầu 26, liên tục từ 30"; câu "E1-1 thì ngược lại" đổi thành "E1-1 có train_acc vượt val_acc liên tục từ epoch 22" (đã kiểm: epoch 1–19 và 21 thì không); E2-1, E6-2 không "giảm đều" mà dao động rồi thấp nhất ở epoch 60 (sửa cả báo cáo lẫn nhật ký thực nghiệm); thêm nguồn 0.64–0.67, 24.94%; mỗi mục 3.1–3.6 có dòng Nguồn |
 | **Lỗi làm tròn accuracy** (phát hiện khi viết mục 3) | Log lưu val_acc 5 chữ số: BASE ghi 0.66425, nhưng thật là 2384/3589 = 0.664252, tức **66.43%**. In thẳng `0.66425 × 100` ra 66.42 (số thực máy tính ra 66.42499…). Sửa: dựng lại số ảnh đúng `round(acc × 3589)` (train: × 28709) rồi chia. Hậu quả đã sửa: BASE và E1-2 thành 66.43% (trước ghi 66.42%), E6-3 so với BASE thành −4.24 (trước −4.23). Đã sửa `NhatKyThucNghiem.md`, `final.yaml`, mục nhật ký này; `experiments/tong_hop.py` tính theo cách mới |
 
+### Mô hình cuối
+
+Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
+
+| Run | Seed | Epoch tốt nhất / đã chạy | val_loss | val_acc | train − val | Thời gian |
+|---|---|---|---|---|---|---|
+| F-0 | 0 | 41 / 51 | 0,9552 | 67,01% | +4,16 | 1492 s |
+| **F-1** (được chọn) | 1 | 32 / 42 | **0,9515** | 65,87% | +2,14 | 1375 s |
+| F-2 | 2 | 51 / 60 | 0,9832 | 66,43% | +7,57 | 1736 s |
+
+- **val_acc 3 seed: 66,43% ± 0,57** (độ lệch chuẩn mẫu). Trùng đúng BASE (Medium, seed 0: 66,43%). Mức +0,59 điểm của E1-1 nhiều khả năng là may mắn của seed 0: Small trung bình không hơn Medium. Đưa vào phần phân tích mục 5.
+- F-1 được chọn vì val_loss nhỏ nhất, dù val_acc của nó thấp nhất trong 3 seed. Đây là hệ quả trực tiếp của quy tắc chọn theo val_loss, phải nói rõ trong báo cáo.
+- **PrivateTest (1 lần): accuracy 66,09%, macro F1 0,6389.** Validation của F-1: 65,87%, macro F1 0,6284. Test và val gần nhau, không có dấu hiệu chọn mô hình làm lệch.
+- F1 test từng lớp: Happy 0,86, Surprise 0,77, Neutral 0,65, Disgust 0,61, Angry 0,59, Sad 0,52, Fear 0,47. Disgust (55 ảnh test) có F1 0,61, cao hơn Fear và Sad dù rất ít ảnh.
+- Confusion matrix: Fear hay bị nhầm thành Sad (21–23%), Disgust hay bị nhầm thành Angry (27% test, 39% val), Sad hay bị nhầm thành Neutral (13–15%), đúng như dự đoán từ ảnh trung bình ở mục 1.
+- F-0 trùng khít E1-1 ở mọi epoch: tái lập lần thứ hai.
+- **`best_model.pt` nặng 155,6 MB**, vượt giới hạn 100 MB/file của GitHub. Đã đổi `.gitignore` (bỏ dòng `!results/final/best_model.pt`) để git bỏ qua; file giữ trong máy, đưa vào zip nộp.
+- Hình đã xem: Grad-CAM conv cuối tập trung vào miệng (Angry, Happy, Fear) và mắt (Disgust, Surprise, Neutral); filter conv cuối ra mẫu hình sọc, lưới, tổ ong rõ ràng.
+
 ### Giải thích `experiments/tong_hop.py`
 
 - **`exact(acc, n)`**: dựng lại số ảnh đoán đúng `round(acc × n)` rồi chia cho n (n = 3589 với val, 28709 với train), để tránh lỗi làm tròn của log (xem bảng Đã kiểm tra).
@@ -620,8 +641,9 @@ Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem
 ### Còn treo
 
 - [x] Commit + push `results/BASE`, `results/E1` … `E6`, `NhatKyThucNghiem.md`, `configs/final.yaml` (`ad79a0af`)
-- [ ] Import lại notebook vào Kaggle; Save & Run All (lượt này các ô BASE và E1–E6 tự bỏ qua, chỉ ô mô hình cuối chạy)
-- [ ] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
+- [x] Chạy mô hình cuối trên Kaggle (Save & Run All)
+- [x] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
+- [ ] Đóng gói: nhớ chép `results/final/best_model.pt` (155,6 MB, không có trên git) vào zip nộp
 - [x] Báo cáo mục 3
 - [ ] Báo cáo mục 4, 5 (khi có mô hình cuối) và phụ lục (bảng phân công, ghép `tai_lieu_tham_khao.md`)
 - [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
