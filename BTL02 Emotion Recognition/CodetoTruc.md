@@ -276,17 +276,17 @@ Nguồn: `results/eda/class_counts.csv` và `results/eda/stats.json`.
 - [x] Chạy `python -m src.data` trên dữ liệu thật: `[OK ]` cả 3 tập, đã xem 4 hình, đã tick ô 23/11 trong kế hoạch
 - [x] Viết `src/data.py` + EDA
 - [x] Tạo conda env `btl02`. Máy không có GPU NVIDIA (không có `nvidia-smi`), nên E1–E7 và mô hình cuối chạy trên Colab/Kaggle
-- [ ] (tùy chọn) Đếm ảnh trùng trong FER2013 (Kaggle báo 34.034 chuỗi pixel khác nhau trên 35.887 ảnh), kiểm có ảnh nào nằm ở cả train lẫn val/test không, đưa vào mục 1 báo cáo
+- [x] (tùy chọn) Đếm ảnh trùng trong FER2013: làm ngày 25/11 (`duplicate_stats`), 34.034 ảnh khác nhau, 280 ảnh val và 288 ảnh test trùng train; đã đưa vào báo cáo mục 1.5
 - [x] Xóa file `Kế hoạch.md` cũ ở gốc thư mục BTL02 (đã không còn)
 - [x] `train.py`: `set_seed()` gọi **trước** `get_dataloaders()` (trong `train()`); đã kiểm tái lập, 2 lần cùng seed ra log giống hệt
 - [x] `train.py`: `--workers 0` ghi đè `num_workers` khi chạy thử trên máy thiếu RAM; baseline giữ 2 cho Colab/Kaggle
-- [ ] **Chạy BASE đầy đủ trên GPU** (Kaggle/Colab, notebook `experiments/chay_colab_kaggle.ipynb`), ghi `NhatKyThucNghiem.md`, chốt baseline trước hết 24/11 (từ 25/11 hook hỏi lại khi sửa `baseline.yaml`). Nếu BASE vẫn kẹt ~0,25 sau 5 epoch thì xem lại lr/khởi tạo **trước** khi chạy E1–E6
+- [x] **Chạy BASE đầy đủ trên GPU** (xong 25/11 trên Kaggle T4: val_acc 66.42% ở epoch 47/57, đã ghi `NhatKyThucNghiem.md`)
 - [ ] Sửa ghi chú đầu `configs/baseline.yaml`: lý do đổi lr là "theo code mẫu", không phải "lr 1e-3 bị kẹt" (phép thử `--thu` không phân biệt được hai lr)
 - [x] Trúc commit + push trước khi chạy notebook (commit `e5b06e03`, 25/11)
 
 ---
 
-## T4 25/11/2026 – Đưa lên Kaggle (2 × T4), chạy BASE, chạy E1–E6 song song trên 2 GPU
+## T4 25/11/2026 – Đưa lên Kaggle (2 × T4), chạy BASE + E1–E6; evaluate.py, visualize.py, run_final.py; báo cáo mục 1, 2
 
 ### Việc theo kế hoạch
 
@@ -320,7 +320,7 @@ Code cho các việc này đã viết sẵn từ 23/11. Hôm nay:
 - `fcdf6eea` BTL02: evaluate.py (metrics, confusion valid+test, ca đúng/sai, evaluate_final đánh giá test 1 lần): thêm `src/evaluate.py`.
 - `ed57e54e` BTL02: visualize.py (filter conv cuối, ảnh kích hoạt mạnh nhất, feature map, Grad-CAM): thêm `src/visualize.py`.
 - `d10dd58b` BTL02: run_final.py + configs/final.yaml (3 seed, test 1 lần), notebook thêm phần mô hình cuối.
-- _(commit báo cáo mục 1, 2, thống kê ảnh trùng, results/models: Trúc điền hash ở mục ngày sau)_
+- `3170e6e7` BTL02: báo cáo mục 1, 2; EDA thêm thống kê ảnh trùng; results/models (số tham số, khởi tạo He).
 
 ### Kết quả
 
@@ -509,8 +509,8 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 
 - [x] Xem 5 epoch đầu của BASE trên Kaggle: val_acc 0,535 ở epoch 7, đã vượt xa 0,2494
 - [x] Commit + push notebook mới (`597f4201`), Import lại vào Kaggle, **Save & Run All** (Version #1)
-- [ ] Kiểm tra trên Kaggle: notebook trong Version #1 là bản 1 ô chạy 2 GPU hay bản 6 ô cũ (bản cũ chỉ chậm hơn, kết quả như nhau)
-- [ ] Tải `results_*.zip` của Version #1, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (`/btl02-ghi-run`)
+- [x] Kiểm tra notebook trong Version #1: nhiều khả năng là bản 6 ô cũ, chạy tuần tự (xem mục 26/11, suy từ giờ tạo zip). Kết quả không đổi
+- [x] Tải `results_*.zip` của Version #1, giải nén, ghi `NhatKyThucNghiem.md` cho BASE và các run E1–E6 (26/11)
 - [x] Viết `src/evaluate.py` (accuracy, macro F1, confusion matrix valid + test, classification report, ca đúng/sai, đường học)
 - [x] `src/visualize.py`: filter conv cuối (3 cách), feature map, Grad-CAM conv đầu/giữa/cuối × 7 cảm xúc
 - [x] Đưa 2 loại ảnh rác (biển cảnh báo, biểu tượng máy ảnh) và thống kê ảnh trùng vào báo cáo mục 1.5
@@ -518,5 +518,88 @@ Cùng xu hướng với số đo bằng ảnh thật hôm 23/11 (0,37 → 0,0047
 - [ ] Báo cáo mục 3 (khi có E1–E6), mục 4 và 5 (khi có mô hình cuối), phụ lục (bảng phân công, ghép `tai_lieu_tham_khao.md`)
 - [ ] Phần hạn chế ở mục 5: khoảng 8% ảnh val/test trùng ảnh train, 57 nhóm nhãn mâu thuẫn (số ở `stats.json`)
 - [x] `experiments/run_final.py` + `configs/final.yaml` + phần mô hình cuối trong notebook
-- [ ] Có kết quả E1–E6: điền `configs/final.yaml` (mỗi khóa kèm run căn cứ), đổi `chot: true`
+- [x] Có kết quả E1–E6: điền `configs/final.yaml` (`model.arch: small`, căn cứ E1-1), `chot: true` (26/11)
 - [ ] Commit + push `results/BASE`, `results/E1` … `E6` và `final.yaml`; Import lại notebook; Save & Run All để chạy mô hình cuối
+
+---
+
+## T5 26/11/2026 – Nhận kết quả BASE + E1–E6 từ Kaggle, ghi nhật ký thực nghiệm, chốt cấu hình mô hình cuối
+
+### Việc theo kế hoạch
+
+Theo [docs/Kế hoạch.md](docs/Kế%20hoạch.md) mục 7:
+- T3 24/11: baseline chạy hết, val_acc trong khoảng 60–66%. Kết quả 66,42%, đạt.
+- T4 25/11: có `summary.csv` của E1, E2, có `evaluate.py`. Đạt.
+- T5 26/11: có `summary.csv` E3–E6, có `visualize.py` (viết từ 25/11). Đạt.
+
+Đã tick cả ba ô. **E7 (VGG16 128×128) chưa chạy**: kế hoạch ghi "làm nếu có GPU", và phương án dự phòng là bỏ E7 trước. Hôm nay:
+
+1. Tải `results_20261125-1359.zip` (Version #1 trên Kaggle), giải nén vào thư mục tạm, chỉ chép `results/BASE` và `results/E1` … `E6` vào repo. **Không lấy `results/eda/` trong zip**, vì đó là bản cũ Kaggle clone từ commit `e5b06e03`, chưa có thống kê ảnh trùng; giải nén đè sẽ mất `stats.json` mới mà báo cáo mục 1 đang dùng.
+2. Ghi 18 dòng (BASE, E1-1 … E6-3) vào [NhatKyThucNghiem.md](NhatKyThucNghiem.md); mọi số đọc từ `results/<nhóm>/logs/<run>.csv`.
+3. Trúc chọn cấu hình mô hình cuối: **Small (E1-1)**. Đã điền [configs/final.yaml](configs/final.yaml): `model.arch: small`, `chot: true`.
+
+### Commit trong ngày
+
+_(Trúc điền ở mục ngày sau)_
+
+### Kết quả
+
+- `results/BASE/`, `results/E1/` … `results/E6/`: mỗi nhóm có `logs/`, `configs/`, `summary.csv`, `figures/curves.png` (không có `checkpoints/`, đúng thiết kế notebook).
+- [NhatKyThucNghiem.md](NhatKyThucNghiem.md): 18 dòng.
+- [configs/final.yaml](configs/final.yaml): chốt Small.
+- [docs/Kế hoạch.md](docs/Kế%20hoạch.md): tick ô 24/11, 25/11, 26/11.
+
+### Run trong ngày
+
+Chi tiết và nhận xét từng run ở [NhatKyThucNghiem.md](NhatKyThucNghiem.md). Tất cả chạy trên Tesla T4, seed 0, ngày 25/11.
+
+| Nhóm | Run tốt nhất trong nhóm (val_acc tại epoch val_loss nhỏ nhất) | So với BASE 66,42% |
+|---|---|---|
+| E1 kiến trúc | E1-1 Small 67,01% | +0,59 |
+| E2 BatchNorm | E2-1 62,36% (so với E1-1: −4,65) | −4,07 |
+| E3 optimizer | E3-3 plateau 65,20% | −1,23 |
+| E4 augmentation | E4-3 thêm zoom 66,26% | −0,17 |
+| E5 kích hoạt | E5-1 LeakyReLU 66,29% | −0,14 |
+| E6 regularization | E6-2 dropout 0,4: 65,78% | −0,64 |
+
+### Đã kiểm tra
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Nội dung zip | 85 file, không có đường dẫn lạ; đủ `summary.csv` của BASE và E1–E6 |
+| Chép vào repo | Chỉ chép BASE, E1–E6 (các thư mục này chưa có trong repo, không ghi đè gì); `results/eda/` giữ nguyên |
+| E1-2 so với BASE | `diff` 6 cột đầu của hai log (bỏ cột thời gian): **giống hệt ở cả 57 epoch**. Cùng seed, khác phiên GPU vẫn tái lập đúng |
+| Tổng thời gian E1-2 = BASE = 1127 s | Thời gian từng epoch khác nhau (19,59 so với 19,91 s ở epoch 1…), tổng bằng nhau chỉ là trùng hợp |
+| Version #1 chạy song song hay tuần tự? | Bắt đầu khoảng 08:06 UTC, zip tạo lúc 13:59 UTC (khoảng 5 giờ 53 phút). Tổng thời gian 18 run khoảng 5 giờ 9 phút cộng BASE: khớp chạy **tuần tự**. Nếu song song, luồng dài nhất chỉ khoảng 3 giờ. Kết luận: Version #1 nhiều khả năng dùng bản notebook cũ 6 ô. Cột thời gian trong nhật ký thực nghiệm ghi "(T4)", không ghi "song song" |
+| E3-3 lr | Giảm còn 1e-5 ở epoch 26 (val_acc 64,59%), còn 1e-6 ở epoch 32, còn 1e-7 ở epoch 37, dừng ở epoch 43 |
+| E6-1 val_loss sau epoch 17 | 1,0102 → 1,0218 → … → 1,0722 ở epoch 27: tăng dần, quá khớp |
+| Run chạm trần 60 epoch | E2-1, E3-1, E5-3, E6-2: epoch tốt nhất = 60 = epoch cuối, val_loss vẫn đang giảm |
+| `final.yaml` | `load_final()` đọc được `chot: True`, `override {'model.arch': 'small'}`; `load_config` ra `arch small`, lr 1e-4 như baseline |
+
+### Số liệu cho báo cáo (mục 3)
+
+- BASE 66,42% (val_loss 0,9429), ngang báo cáo mẫu 0,64–0,67.
+- Chỉ E1-1 (Small) vượt BASE theo val_acc (+0,59 điểm), nhưng val_loss của nó cao hơn (0,9552). Không run nào có val_loss thấp hơn BASE.
+- Augmentation quan trọng nhất trong các yếu tố đã thử:
+  - Bỏ augmentation (E4-1): −6,55 điểm, khoảng cách train − val 8,62 điểm, dừng ở epoch 21.
+  - Thêm zoom (E4-3): khoảng cách train − val giảm còn 1,42 điểm (BASE 4,11).
+- Sigmoid (E5-3) thấp nhất mọi run: 56,59%, −9,84 điểm, vẫn chưa hội tụ sau 60 epoch.
+- Bốn run chạm trần 60 epoch (E2-1, E3-1, E5-3, E6-2): phải nói rõ trong báo cáo là kết quả có thể chưa phải tốt nhất của cấu hình đó.
+- Thời gian: Large chậm nhất (2124 s); E4-1 nhanh nhất (416 s) vì dừng sớm.
+
+### Câu hỏi vấn đáp có thể gặp
+
+- *Vì sao chọn Small dù val_loss cao hơn baseline?* Nhóm đã định trước quy tắc chọn: so val_acc tại epoch có val_loss nhỏ nhất. Theo quy tắc đó Small cao nhất (67,01% so với 66,42%). Chênh lệch nhỏ, mỗi run chỉ một seed, nên mô hình cuối chạy 3 seed để biết độ dao động.
+- *Vì sao không gộp thêm LeakyReLU, zoom… vào mô hình cuối?* Các run đó đều có val_acc thấp hơn BASE (−0,14, −0,17 điểm), không có bằng chứng là chúng giúp ích. Gộp thay đổi không có bằng chứng thì không giải thích được kết quả.
+- *Vì sao thêm BatchNorm (E2-1) lại kém hơn?* Run chạm trần 60 epoch, train_acc (56,12%) còn thấp hơn val_acc (62,36%), tức mạng chưa học xong. Nhóm không kết luận BN làm hại; với lr 1e-4 và 60 epoch thì cấu hình này chưa kịp hội tụ.
+- *Vì sao sigmoid kém nhất?* Đạo hàm sigmoid tối đa 0,25 và gần 0 khi bão hòa. Qua 9 lớp, gradient tới các lớp đầu rất nhỏ, mạng học chậm: sau 60 epoch val_acc mới 56,59%, val_loss vẫn đang giảm.
+- *Vì sao ReduceLROnPlateau (E3-3) không giúp?* Với patience 2, lr giảm 10 lần ngay ở epoch 26, rồi giảm tiếp xuống 1e-7 ở epoch 37; lr quá nhỏ nên mạng gần như ngừng học khi val_acc mới 65,20%.
+- *E1-2 trùng khít BASE chứng minh gì?* Cùng cấu hình, cùng seed thì cho đúng cùng log ở mọi epoch: kết quả tái lập được, nên chênh lệch giữa các run là do biến thực nghiệm, không do ngẫu nhiên giữa các lần chạy.
+
+### Còn treo
+
+- [ ] Commit + push `results/BASE`, `results/E1` … `E6`, `NhatKyThucNghiem.md`, `configs/final.yaml`; Import lại notebook vào Kaggle; Save & Run All (lượt này các ô BASE và E1–E6 tự bỏ qua, chỉ ô mô hình cuối chạy)
+- [ ] Tải kết quả mô hình cuối (`results/final/`), ghi F-0, F-1, F-2 vào `NhatKyThucNghiem.md`
+- [ ] Báo cáo mục 3 (viết được ngay từ `results/E*/`), sau đó mục 4, 5 và phụ lục
+- [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
+- [ ] Ghi chú đầu `configs/baseline.yaml` vẫn nêu lý do đổi lr chưa chính xác (treo từ 23/11); baseline đã chốt nên chỉ ghi rõ trong báo cáo mục 2.4 là lr lấy theo code mẫu (đã ghi)

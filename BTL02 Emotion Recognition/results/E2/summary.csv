@@ -1,0 +1,2 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E2-1,small + BatchNorm sau mỗi Conv (so với E1-1),0,60,1.01037,0.62357,0.56118,60,1868.7,38902087

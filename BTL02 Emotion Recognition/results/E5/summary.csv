@@ -1,0 +1,4 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E5-1,"LeakyReLU (độ dốc âm 0,01)",0,44,0.94856,0.66286,0.70037,54,1087.5,11327303
+E5-2,ELU,0,31,0.96429,0.64893,0.64781,41,827.5,11327303
+E5-3,Sigmoid,0,60,1.1531,0.5659,0.55237,60,1205.2,11327303

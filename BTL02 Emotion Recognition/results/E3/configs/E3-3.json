@@ -1,0 +1,43 @@
+{
+  "run_id": "E3-3",
+  "change": "Adam lr 1e-4 + ReduceLROnPlateau (factor 0,1, patience 2)",
+  "device": "Tesla T4",
+  "n_params": 11327303,
+  "train_mean": 0.5077425080522148,
+  "train_std": 0.25500891562521943,
+  "config": {
+    "seed": 0,
+    "data": {
+      "csv": "data/fer2013.csv",
+      "image_size": 48,
+      "num_classes": 7,
+      "normalize": "train_mean_std"
+    },
+    "augmentation": {
+      "hflip": true,
+      "rotation_deg": 10,
+      "shift": 0.1,
+      "zoom": 0.0
+    },
+    "model": {
+      "arch": "medium",
+      "activation": "relu",
+      "batchnorm": false,
+      "dropout_block": 0.2,
+      "dropout_fc": 0.5,
+      "fc_units": null
+    },
+    "train": {
+      "optimizer": "adam",
+      "lr": 0.0001,
+      "momentum": 0.9,
+      "weight_decay": 0.0,
+      "scheduler": "plateau",
+      "batch_size": 64,
+      "max_epochs": 60,
+      "early_stopping_patience": 10,
+      "class_weighted_loss": false,
+      "num_workers": 2
+    }
+  }
+}

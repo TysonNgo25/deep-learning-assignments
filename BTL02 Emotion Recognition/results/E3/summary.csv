@@ -1,0 +1,4 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E3-1,"SGD momentum 0,9, lr 1e-3",0,60,1.00599,0.61828,0.61249,60,1145.7,11327303
+E3-2,Adam lr 1e-3,0,28,1.04417,0.61159,0.591,38,734.6,11327303
+E3-3,"Adam lr 1e-4 + ReduceLROnPlateau (factor 0,1, patience 2)",0,33,0.97227,0.65199,0.65774,43,851.3,11327303

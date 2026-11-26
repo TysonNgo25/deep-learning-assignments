@@ -1,0 +1,4 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E4-1,Không augmentation,0,11,1.10962,0.59877,0.68501,21,416.0,11327303
+E4-2,Chỉ lật ngang,0,16,1.06875,0.61521,0.68661,26,514.8,11327303
+E4-3,Lật + xoay + dịch + zoom 10%,0,41,0.95065,0.66258,0.67676,51,1009.9,11327303

@@ -110,9 +110,9 @@ BTL02 Emotion Recognition/
 | Ngày | Việc | Kết quả để kiểm tra | Trạng thái |
 |---|---|---|---|
 | T2 23/11 tối | Tải `fer2013.csv`; dựng thư mục; `paths.py`, `data.py`; EDA (histogram lớp, ảnh mẫu) | Đếm đúng 28.709 / 3.589 / 3.589, đủ 7 lớp | - [x] |
-| T3 24/11 | `models.py` (4 kiến trúc, tùy BN/activation/dropout); `train.py` (log CSV, checkpoint, early stopping, đo thời gian); chạy thử baseline; chốt `baseline.yaml` | Baseline chạy hết, val_acc khoảng 60–66% (mẫu: 0,66) | - [ ] |
-| T4 25/11 | Chạy E1, E2 trên GPU; ghi nhật ký; viết `evaluate.py` | `results/E1`, `results/E2` có `summary.csv` | - [ ] |
-| T5 26/11 | Chạy E3, E4, E5, E6; E7 nếu có GPU; ghi nhật ký; viết `visualize.py` (filter, feature map, Grad-CAM) | Đủ `summary.csv` E3–E6 | - [ ] |
+| T3 24/11 | `models.py` (4 kiến trúc, tùy BN/activation/dropout); `train.py` (log CSV, checkpoint, early stopping, đo thời gian); chạy thử baseline; chốt `baseline.yaml` | Baseline chạy hết, val_acc khoảng 60–66% (mẫu: 0,66) | - [x] |
+| T4 25/11 | Chạy E1, E2 trên GPU; ghi nhật ký; viết `evaluate.py` | `results/E1`, `results/E2` có `summary.csv` | - [x] |
+| T5 26/11 | Chạy E3, E4, E5, E6; E7 nếu có GPU; ghi nhật ký; viết `visualize.py` (filter, feature map, Grad-CAM) | Đủ `summary.csv` E3–E6 | - [x] |
 | T6 27/11 sáng | Mô hình cuối 3 seed; test 1 lần; xuất toàn bộ hình mục 5 | Có `final_metrics.json` và đủ hình | - [ ] |
 | T6 27/11 chiều–tối | Viết report (Word + PDF); làm slide; gửi mỗi thành viên phần ghi tên mình | Bản đầy đủ report + slide | - [ ] |
 | T7 28/11 sáng | Rà số liệu với log; điền bảng phân công + tỷ lệ; README; đóng gói zip; nộp | Đã nộp zip | - [ ] |

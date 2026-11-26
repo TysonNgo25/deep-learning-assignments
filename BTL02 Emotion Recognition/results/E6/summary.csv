@@ -1,0 +1,4 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E6-1,"Không dropout (block 0, FC 0)",0,17,1.01021,0.62552,0.66585,27,533.3,11327303
+E6-2,"Dropout block 0,4",0,60,0.94656,0.65784,0.6708,60,1185.2,11327303
+E6-3,CE có trọng số lớp w_c = N/(K·n_c),0,35,1.06184,0.6219,0.61054,45,891.8,11327303

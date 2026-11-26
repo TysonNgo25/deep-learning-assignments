@@ -1,0 +1,5 @@
+run_id,change,seed,best_epoch,best_val_loss,val_acc_at_best,train_acc_at_best,epochs_ran,train_time_s,n_params
+E1-1,"Kiến trúc Small (2 block, FC 1024)",0,41,0.9552,0.6701,0.71169,51,1475.8,38901191
+E1-2,Kiến trúc Medium (= baseline),0,47,0.94295,0.66425,0.70539,57,1126.9,11327303
+E1-3,Kiến trúc Medium_01 (3/4/4 conv mỗi block),0,45,0.94954,0.65032,0.71037,55,1535.9,12101895
+E1-4,"Kiến trúc Large (4 block 64-128-256-512, FC 2048)",0,41,0.94638,0.65868,0.71013,51,2124.1,20406599

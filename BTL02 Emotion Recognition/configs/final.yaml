@@ -2,10 +2,12 @@
 # Chọn theo val_acc tại epoch có val_loss nhỏ nhất (results/E*/summary.csv), chỉ dựa trên validation.
 # Mỗi khóa ghi kèm run làm căn cứ. Khóa phải có trong baseline.yaml (sai tên thì run_final báo lỗi).
 #
-# Điền xong và kiểm lại thì đổi chot: true. Khi chot: false, run_final chỉ cho chạy thử (--thu),
-# để chạy lại notebook không vô tình đánh giá PrivateTest bằng cấu hình chưa chốt.
-chot: false
-override: {}
-#  model.arch: medium_01          # vd. E1-3 tốt nhất E1
-#  model.batchnorm: true          # vd. E2-1 tốt hơn E1-3
-#  train.scheduler: plateau       # vd. E3-3 tốt nhất E3
+# Chốt 26/11/2026:
+# - E1-1 (Small) là run duy nhất có val_acc cao hơn BASE: 67.01% so với 66.42% (+0.59 điểm).
+# - Các run E2–E6 đều có val_acc thấp hơn BASE nên không gộp thêm thay đổi nào.
+#   E2-1 (Small + BatchNorm) thấp hơn E1-1 4.65 điểm.
+# - Lưu ý: E1-1 có val_loss 0.9552, cao hơn BASE (0.9429), và mỗi run E chỉ có 1 seed.
+#   Ba seed của mô hình cuối cho biết độ dao động.
+chot: true
+override:
+  model.arch: small                # E1-1: val_acc 67.01%, cao nhất E1–E6
