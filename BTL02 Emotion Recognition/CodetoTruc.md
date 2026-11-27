@@ -703,3 +703,42 @@ Nguồn: `results/final/final_metrics.json`, `summary.csv`, `logs/F-*.csv`.
 - [ ] Gửi mỗi bạn phần đứng tên để đọc trước vấn đáp
 - [ ] E7: quyết định làm hay bỏ (dự phòng của kế hoạch: bỏ E7 trước)
 - [ ] Ghi chú đầu `configs/baseline.yaml` vẫn nêu lý do đổi lr chưa chính xác (treo từ 23/11); baseline đã chốt nên chỉ ghi rõ trong báo cáo mục 2.4 là lr lấy theo code mẫu (đã ghi)
+
+---
+
+## T6 27/11/2026 – Thêm bìa trường vào báo cáo, nén lại zip
+
+### 1. Việc theo kế hoạch
+
+Kế hoạch mục 7, dòng T6 27/11 chiều–tối: báo cáo + slide đã xong từ 26/11. Hôm nay chỉ thêm bìa theo mẫu của trường mà Trúc gửi (`TRƯỜNG ĐẠI HỌC SÀI GÒN.docx` ở gốc repo) vào báo cáo, rồi nén lại file nộp. Làm cùng lúc với BTL03.
+
+### 2. Commit trong ngày
+
+- _(Trúc điền ở mục ngày sau)_: bìa báo cáo, `report/bia.py`, `ghep_bao_cao.py`, báo cáo `.docx`/`.pdf` mới, nhật ký.
+
+### 3. Kết quả
+
+- `report/bia.py` (mới, dùng chung với BTL03): đọc file bìa mẫu, điền nội dung rồi ghép vào đầu báo cáo Word; dựng bìa HTML cùng nội dung cho bản PDF.
+- `report/ghep_bao_cao.py`: bỏ trang tiêu đề do pandoc tự tạo, gọi `tao_bia_docx` sau khi tạo `.docx` và chèn bìa HTML (`--include-before-body`) trước mục lục của bản PDF.
+- Nội dung bìa (Trúc chốt 27/11): Trường Đại học Sài Gòn, Khoa CNTT, logo; "HỌC PHẦN: HỌC SÂU"; "BÁO CÁO BÀI TẬP LỚN 02 – NHẬN DẠNG CẢM XÚC KHUÔN MẶT TRÊN FER2013 BẰNG MẠNG NƠ-RON TÍCH CHẬP"; giảng viên Đỗ Như Tài; "Sinh viên thực hiện: Nhóm 05" + 4 thành viên kèm MSSV; lớp DCT123C3; "TP. HCM, THÁNG 11/2026" (file mẫu ghi "THÁNG 11/10/2026", đã sửa).
+- `report/BaoCao_BTL02_Nhom05.docx` và `.pdf` ghép lại; PDF 52 trang (trang 1 là bìa, không đánh số).
+- Zip nén lại bằng `check_submission.py --zip`, đổi tên thành `BTL02_Nhom05_HuynhNgocTruc_3123411312.zip` như file Trúc đã có (thư mục trong zip vẫn là `BTLON02_Emotion_...`). Env `btl02` cài thêm `python-docx`, `docxcompose`.
+
+Lệnh ghép lại: đứng ở thư mục BTL02, `python report/ghep_bao_cao.py`.
+
+### 4. Giải thích từng hàm
+
+- `tao_bia_docx(bao_cao, ten_bai, de_tai, workdir)`: mở file bìa bằng `python-docx`; `_dat_chu` thay chữ trong đoạn "BÁO CÁO BÀI TẬP", "Sinh viên thực hiện" và dòng ngày nhưng giữ nguyên định dạng của đoạn (Times New Roman 13 pt đậm, căn giữa); bỏ 6 đoạn trống phía trên dòng ngày để bìa vẫn vừa 1 trang sau khi thêm dòng; rồi dùng `docxcompose.Composer(bao_cao).insert(0, bia)`. Báo cáo làm gốc nên kiểu chữ của báo cáo giữ nguyên; đoạn cuối của bìa mang `sectPr` riêng nên bìa giữ lề của file mẫu, phần sau giữ lề báo cáo.
+- `bia_html(ten_bai, de_tai, logo)` + `CSS_BIA`: bìa cho bản PDF in từ HTML, cùng nội dung; `@page :first` bỏ số trang ở bìa. Logo chép từ file bìa ra file tạm (`luu_logo`) vì pandoc không nhúng được ảnh dạng data URI.
+
+### 5. Đã kiểm tra
+
+1. PDF: trang 1 là bìa có logo (1 ảnh), vừa 1 trang, trang 2 là mục lục.
+2. DOCX: `validate.py` của skill docx báo "All validations PASSED"; thứ tự bìa → ngắt phần → mục lục; logo trỏ đúng ảnh trong gói.
+3. Zip mới so với zip cũ: cùng 112 file, chỉ khác `BaoCao_BTL02_Nhom05.docx` và `.pdf`. `check_submission.py`: 0 lỗi, 2 cảnh báo cũ (chú thích có nhắc tập test trong `src/train.py`, `src/visualize.py`, không phải rò rỉ).
+
+### 6. Còn treo
+
+- [ ] Trúc mở bản `.docx` bằng Word xem bìa (máy không có Word/LibreOffice nên chưa xem được ảnh trang Word; bản PDF đã xem)
+- [ ] Trúc nộp `BTL02_Nhom05_HuynhNgocTruc_3123411312.zip`
+

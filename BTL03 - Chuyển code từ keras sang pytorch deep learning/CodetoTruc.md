@@ -328,4 +328,6 @@ Hoàn thiện và đóng gói (tối 27/11, làm sớm việc T7 28/11):
 - [x] Viết báo cáo (T6 27/11 chiều–tối): `report/BaoCao_BTL03_Nhom05.docx` + `.pdf`, 37 trang
 - [ ] Gửi mỗi bạn notebook + mục báo cáo đứng tên mình để đọc trước vấn đáp
 - [x] README, chấm thử, đóng gói `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` (làm sớm tối 27/11)
+- [x] Thêm bìa trường (mẫu `TRƯỜNG ĐẠI HỌC SÀI GÒN.docx` ở gốc repo) vào báo cáo: `report/bia.py` (dùng chung với BTL02), `ghep_bao_cao.py` bỏ trang tiêu đề pandoc, ghép bìa vào `.docx` (docxcompose) và chèn bìa HTML vào `.pdf`. Bìa ghi "BÁO CÁO BÀI TẬP LỚN 03 – CHUYỂN CODE TỪ KERAS SANG PYTORCH", Nhóm 05 + 4 thành viên kèm MSSV, lớp DCT123C3, "TP. HCM, THÁNG 11/2026". PDF 39 trang; DOCX qua `validate.py`; zip nén lại
+- [ ] Trúc mở bản `.docx` bằng Word xem bìa (máy không có Word/LibreOffice nên chưa xem ảnh trang Word)
 - [ ] Trúc mở PDF xem lần cuối rồi nộp zip

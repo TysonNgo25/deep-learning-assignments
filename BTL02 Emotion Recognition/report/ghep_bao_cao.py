@@ -15,6 +15,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+from bia import CSS_BIA, bia_html, luu_logo, tao_bia_docx
+
 REPORT = Path(__file__).resolve().parent
 PARTS = ["section_1_intro_data.md", "section_2_code.md", "section_3_experiments.md",
          "section_4_visualize.md", "section_5_final.md", "appendix.md"]
@@ -32,6 +34,16 @@ date: "Tháng 11 năm 2026"
 lang: vi
 ---
 """
+# Bìa: mẫu "TRƯỜNG ĐẠI HỌC SÀI GÒN.docx" ở gốc repo, điền nội dung trong report/bia.py (thêm 27/11).
+COVER_TEN_BAI = "BÁO CÁO BÀI TẬP LỚN 02"
+COVER_DE_TAI = "NHẬN DẠNG CẢM XÚC KHUÔN MẶT TRÊN FER2013 BẰNG MẠNG NƠ-RON TÍCH CHẬP"
+# Có bìa nên bỏ trang tiêu đề của pandoc; chỉ giữ ngôn ngữ và tiêu đề tab trình duyệt.
+META_BODY = """---
+lang: vi
+pagetitle: "Nhận dạng cảm xúc khuôn mặt trên FER2013"
+---
+"""
+
 # Ngắt trang trong Word (khối OpenXML thô, pandoc chèn nguyên văn).
 PAGE_BREAK = '\n```{=openxml}\n<w:p><w:r><w:br w:type="page"/></w:r></w:p>\n```\n'
 TNR = '<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman" />'
@@ -144,22 +156,25 @@ def reference_docx(pandoc, workdir):
 
 def build_docx(pandoc, texts, workdir):
     body = PAGE_BREAK.join(texts)
-    md = META + "\n" + PAGE_BREAK + static_toc(texts) + PAGE_BREAK + body
+    md = META_BODY + "\n" + static_toc(texts) + PAGE_BREAK + body
     src = workdir / "bao_cao_docx.md"
     src.write_text(md, encoding="utf-8")
     subprocess.run([pandoc, str(src), "-f", "markdown-implicit_figures", "-o", str(OUT.with_suffix(".docx")),
                     "--reference-doc", str(reference_docx(pandoc, workdir)),
                     "--resource-path", str(REPORT)], check=True)
+    tao_bia_docx(OUT.with_suffix(".docx"), COVER_TEN_BAI, COVER_DE_TAI, workdir)
 
 
 def build_pdf(pandoc, texts, workdir):
     src = workdir / "bao_cao_html.md"
-    src.write_text(META + "\n" + "\n".join(texts), encoding="utf-8")
+    src.write_text(META_BODY + "\n" + "\n".join(texts), encoding="utf-8")
     css = workdir / "bao_cao.css"
-    css.write_text(CSS, encoding="utf-8")
+    css.write_text(CSS + CSS_BIA, encoding="utf-8")
+    bia = workdir / "bia.html"
+    bia.write_text(bia_html(COVER_TEN_BAI, COVER_DE_TAI, luu_logo(workdir)), encoding="utf-8")
     html = workdir / "bao_cao.html"
     subprocess.run([pandoc, str(src), "-f", "markdown-implicit_figures", "-s", "--embed-resources",
-                    "--toc", "--toc-depth=2", "--css", str(css), "--resource-path", str(REPORT),
+                    "--toc", "--toc-depth=2", "--css", str(css), "--resource-path", str(REPORT), "--include-before-body", str(bia),
                     "--metadata", "toc-title=Mục lục", "-o", str(html)], check=True)
     pdf = OUT.with_suffix(".pdf")
     subprocess.run([browser_exe(), "--headless", "--disable-gpu", "--no-pdf-header-footer",
