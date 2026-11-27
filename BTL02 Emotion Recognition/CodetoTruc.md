@@ -740,5 +740,7 @@ Lệnh ghép lại: đứng ở thư mục BTL02, `python report/ghep_bao_cao.py
 ### 6. Còn treo
 
 - [ ] Trúc mở bản `.docx` bằng Word xem bìa (máy không có Word/LibreOffice nên chưa xem được ảnh trang Word; bản PDF đã xem)
+- [x] Trúc sửa tay `BaoCao_BTL02_Nhom05.docx` bằng WPS (tối 27/11). PDF xuất lại **từ file .docx đã sửa** qua WPS (COM `KWps.Application`, mở chỉ đọc, `ExportAsFixedFormat(..., 17)`), không chạy `ghep_bao_cao.py` nữa vì script dựng lại .docx từ các file .md sẽ ghi đè phần Trúc sửa. PDF 52 trang, khớp bố cục Word (bản PDF này không có số trang vì file Word chưa có số trang ở chân trang). Zip nén lại, đã kiểm .docx/.pdf trong zip trùng MD5 với file trong report/
+- [ ] Từ giờ sửa báo cáo thì sửa thẳng file .docx rồi xuất PDF bằng WPS; nếu muốn sửa .md và chạy `ghep_bao_cao.py`, phải chép lại các chỗ đã sửa tay vào .md trước
 - [ ] Trúc nộp `BTL02_Nhom05_HuynhNgocTruc_3123411312.zip`
 

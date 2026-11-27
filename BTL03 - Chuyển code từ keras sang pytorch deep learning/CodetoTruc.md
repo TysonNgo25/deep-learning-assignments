@@ -330,4 +330,6 @@ Hoàn thiện và đóng gói (tối 27/11, làm sớm việc T7 28/11):
 - [x] README, chấm thử, đóng gói `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` (làm sớm tối 27/11)
 - [x] Thêm bìa trường (mẫu `TRƯỜNG ĐẠI HỌC SÀI GÒN.docx` ở gốc repo) vào báo cáo: `report/bia.py` (dùng chung với BTL02), `ghep_bao_cao.py` bỏ trang tiêu đề pandoc, ghép bìa vào `.docx` (docxcompose) và chèn bìa HTML vào `.pdf`. Bìa ghi "BÁO CÁO BÀI TẬP LỚN 03 – CHUYỂN CODE TỪ KERAS SANG PYTORCH", Nhóm 05 + 4 thành viên kèm MSSV, lớp DCT123C3, "TP. HCM, THÁNG 11/2026". PDF 39 trang; DOCX qua `validate.py`; zip nén lại
 - [ ] Trúc mở bản `.docx` bằng Word xem bìa (máy không có Word/LibreOffice nên chưa xem ảnh trang Word)
+- [x] Trúc sửa tay `BaoCao_BTL03_Nhom05.docx` bằng WPS (tối 27/11). PDF xuất lại **từ file .docx đã sửa** qua WPS (COM `KWps.Application`, mở chỉ đọc, `ExportAsFixedFormat(..., 17)`), không chạy `ghep_bao_cao.py` nữa vì script dựng lại .docx từ các file .md sẽ ghi đè phần Trúc sửa. PDF 38 trang, khớp bố cục Word (bản PDF này không có số trang vì file Word chưa có số trang ở chân trang). Zip nén lại, đã kiểm .docx/.pdf trong zip trùng MD5 với file trong report/
+- [ ] Từ giờ sửa báo cáo thì sửa thẳng file .docx rồi xuất PDF bằng WPS; nếu muốn sửa .md và chạy `ghep_bao_cao.py`, phải chép lại các chỗ đã sửa tay vào .md trước
 - [ ] Trúc mở PDF xem lần cuối rồi nộp zip
