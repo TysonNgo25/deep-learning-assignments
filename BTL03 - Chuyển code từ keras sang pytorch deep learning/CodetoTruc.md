@@ -287,7 +287,8 @@ Hoàn thiện và đóng gói (tối 27/11, làm sớm việc T7 28/11):
 - Agent `btl03-cham-rubric` chấm thử: ước lượng 91–94/100, không lỗi nặng. Đã sửa: dòng `Người viết:` dưới từng tiểu mục 3.1–3.10; README nói rõ 11 notebook = 10 có mô hình + getting_started, "val acc" là tập gốc dùng làm validation; `chay_kaggle.ipynb` ghi rõ là notebook hỗ trợ (không có output); câu `CHAY_THU` chỉ áp cho notebook có huấn luyện; `check_submission.py` in UTF-8 trên Windows, nhận 3 dòng Func_apxm A/B/C, bỏ cảnh báo count_params cho getting_started.
 - Agent `btl03-doi-chieu-keras` đối chiếu số trong báo cáo: các số chính khớp. Đã sửa: SegNet "giữ 3–5 điểm" thành "cao hơn ở cả 15 epoch, chênh 2.8–6.2 điểm train, 1.3–6.0 điểm val" (báo cáo, notebook, nhật ký); Func_apxm vòng quét B gốc ở B = 8 là ≈ 0.0112 (đường test), không phải 0.0105 (đường train); thêm câu dẫn trước Bảng 3.2–3.10.
 - `.gitignore` gốc thêm `BTL02_Nhom05_*.zip`, `BTL03_Nhom05_*.zip`, `btl03_gpu_*.zip`.
-- `check_submission.py --zip`: 0 lỗi, 0 cảnh báo; nén `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` ở gốc repo, 69 file.
+- `check_submission.py --zip`: 0 lỗi, 0 cảnh báo; nén `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` ở gốc repo.
+- Trúc yêu cầu phần `report/` trong zip giống BTL02: chỉ kèm `BaoCao_BTL03_Nhom05.docx` và `.pdf` (thêm `ZIP_ONLY` vào `check_submission.py` như commit `358d3d09` của BTL02); file `.md`, `ghep_bao_cao.py`, `ve_hinh_tong_hop.py`, `hinh/` ở lại repo. README và phụ lục C ghi rõ. Nén lại: 58 file, 11,1 MB.
 
 ### 4. Giải thích lỗi
 
