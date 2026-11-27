@@ -49,7 +49,7 @@ Nhật ký cá nhân của Trúc (không nộp). Quy tắc ở `CLAUDE.md` mục
 
 ### 9. Còn treo
 
-- [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không
+- [x] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không (chốt 27/11: nhóm 5; tên theo mẫu BTL02; không cần slide)
 - [x] Sinh dữ liệu Emotion từ `fer2013.csv` (26/11: đọc thẳng bằng `load_fer2013`, không cần sinh CSV)
 - [x] Viết `pytorch/common.py` (T3 24/11) (xong 26/11)
 
@@ -170,7 +170,7 @@ Các lớp `nn.Module`: tên lớp con trùng `name=` của Keras (`conv1_1`, `f
 - **Dữ liệu CNN_LSTM**: giữ nguyên vòng lặp numpy và `np.random.seed(2018)` nên dữ liệu sinh ra trùng gốc; chỉ đổi float64 → float32 (bản gốc tốn 3 GB RAM).
 - **Ô lỗi trong gốc**: `model.get_layer()` (1_MNIST_CNN) gọi thiếu tham số, đã bỏ và ghi chú.
 - **BatchNorm (SegNet)**: Keras `momentum=0.99`, `epsilon=1e-3` = PyTorch `momentum=0.01`, `eps=1e-3` (PyTorch định nghĩa momentum ngược). Running mean/var là buffer nên `count_params` so với "Trainable params" 29.442.325, `count_all` so với tổng 29.458.211.
-- **Nhãn SegNet có mức xám lạ**: 51, 102, 153, 204 (≈ 0,2% pixel train, 0,4% test) không thuộc 7 lớp. Ở gốc chúng thành one-hot toàn 0, nên góp 0 vào loss nhưng vẫn tính trong mẫu số, và được tính là lớp palm khi đo accuracy. Bản PyTorch gán −100, dùng `cross_entropy(reduction='none').mean()` và `clamp(min=0)` để ra đúng như vậy.
+- **Nhãn SegNet có mức xám lạ**: 51, 102, 153, 204 (0,06% pixel train, 0,37% test, đếm trên toàn bộ ảnh; số ≈ 0,2%/0,4% ghi trước đó là ước lượng trên 1/10 số ảnh) không thuộc 7 lớp. Ở gốc chúng thành one-hot toàn 0, nên góp 0 vào loss nhưng vẫn tính trong mẫu số, và được tính là lớp palm khi đo accuracy. Bản PyTorch gán −100, dùng `cross_entropy(reduction='none').mean()` và `clamp(min=0)` để ra đúng như vậy.
 - **Đường dẫn nhãn SegNet**: gốc `fn.replace('depth', 'labels')` thay mọi chữ "depth", hỏng với đường dẫn qua thư mục `depth_hand/`; bản PyTorch ghép đường dẫn riêng.
 - **"accuracy" của obj_detection**: loss MSE và đầu ra 1 giá trị nên Keras dùng `binary_accuracy` = `round(dự đoán) == nhãn`. Với nhãn ±1 thì phải |dự đoán| > 0,5 mới tính đúng. Bản PyTorch tính cả cách này (để so) và accuracy theo dấu.
 - **Chia train/test obj_detection**: gốc không đặt seed; bản PyTorch `random_state=0`.
@@ -229,11 +229,11 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 - [x] Sau khi chạy GPU: viết lại câu nhận xét PCA cuối `1_MNIST_CNN` theo hình thật (27/11)
 - [x] Viết `1_segnet`, `2_obj_detection` (kế hoạch T6 27/11 sáng, làm sớm 26/11)
 - [x] Chạy `1_segnet` trên Kaggle (27/11, cùng lần chạy với 6 notebook kia)
-- [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không
+- [x] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không (chốt 27/11: nhóm 5; tên theo mẫu BTL02; không cần slide)
 
 ---
 
-## T6 27/11/2026 – Sửa lỗi Kaggle train bằng CPU, chạy GPU 7 notebook, đủ so_sanh.csv
+## T6 27/11/2026 – Sửa lỗi Kaggle train bằng CPU, chạy GPU 7 notebook, viết báo cáo nhóm
 
 ### 1. Việc theo kế hoạch
 
@@ -272,6 +272,23 @@ Kết quả GPU (zip `btl03_gpu_20261127-0507.zip`, giải nén vào thư mục 
 | tu_3_Emotion_Reg_CNN | 0.6163 | 0.6166 | +0.0003 | 57 (tốt nhất 52) / 54 (tốt nhất 49) | 1.406 s |
 | 1_segnet (pixel acc) | 0.7732 | 0.8108 | +0.0376 | 15 / 15 | 480 s |
 
+Báo cáo và làm nhóm (chiều–tối):
+
+- Agent `btl03-doi-chieu-keras` rà 11 notebook so với Keras gốc: không có lỗi nghiêm trọng; 12 dòng `so_sanh.csv` khớp output. Đã xử lý các góp ý: thêm ô giải thích dòng cảnh báo TensorFlow trong notebook Gender bản Training Utilities (cảnh báo nói về TensorFlow do `tensorboard` nạp, PyTorch vẫn chạy cuda); báo cáo LSTM nêu khoảng dao động 9 epoch cuối thay vì một con số; obj_detection nêu rõ hai bản chia train/test khác nhau.
+- Sửa số pixel lạ của SegNet thành số đếm trên toàn bộ ảnh: 0,06% train, 0,37% test (số 0,17%/0,42% trước đó là ước lượng trên 1/10 số ảnh).
+- Báo cáo `report/`: 7 mục `.md`, `ve_hinh_tong_hop.py` (Hình 4.1 từ `so_sanh.csv`), `ghep_bao_cao.py` (dựa trên script BTL02, cần `pypandoc_binary` và Edge). Ghép ra `BaoCao_BTL03_Nhom05.docx` (2,9 MB) và `.pdf` (3,6 MB, 37 trang).
+- **Làm nhóm** (Trúc chốt 27/11): Nhóm 5, 25% mỗi người. Trúc: `common.py`, getting_started, Func_apxm, MNIST_MLP, `chay_kaggle`, mục 1, 2, 3.1, 3.2, 4, 6, phụ lục. Khang: 1_MNIST_CNN, CNN_LSTM, mục 3.3, 3.6. Trung: Gender, Gender + callback, obj_detection, mục 3.4, 3.7, 3.10. Nhân: Emotion, Emotion + augmentation, SegNet, mục 3.5, 3.8, 3.9, 5. Mỗi notebook có dòng `Phụ trách:`, mỗi mục báo cáo có dòng `Người viết:`, phụ lục A có bảng phân công. Cập nhật Kế hoạch mục 11 và `CLAUDE.md` mục 0, 5.
+- Env `btl02` cài thêm `pypandoc_binary`, `pymupdf` (xem trang PDF).
+
+Hoàn thiện và đóng gói (tối 27/11, làm sớm việc T7 28/11):
+
+- Trúc chốt không cần slide.
+- README viết lại: thành viên + tỷ lệ, bảng kết quả Keras ↔ PyTorch, cấu trúc, cài đặt, dữ liệu (cần đặt `Yêu cầu/` cạnh `pytorch/` khi chạy lại SegNet và phát hiện xe), cách chạy, cách ghép báo cáo.
+- Agent `btl03-cham-rubric` chấm thử: ước lượng 91–94/100, không lỗi nặng. Đã sửa: dòng `Người viết:` dưới từng tiểu mục 3.1–3.10; README nói rõ 11 notebook = 10 có mô hình + getting_started, "val acc" là tập gốc dùng làm validation; `chay_kaggle.ipynb` ghi rõ là notebook hỗ trợ (không có output); câu `CHAY_THU` chỉ áp cho notebook có huấn luyện; `check_submission.py` in UTF-8 trên Windows, nhận 3 dòng Func_apxm A/B/C, bỏ cảnh báo count_params cho getting_started.
+- Agent `btl03-doi-chieu-keras` đối chiếu số trong báo cáo: các số chính khớp. Đã sửa: SegNet "giữ 3–5 điểm" thành "cao hơn ở cả 15 epoch, chênh 2.8–6.2 điểm train, 1.3–6.0 điểm val" (báo cáo, notebook, nhật ký); Func_apxm vòng quét B gốc ở B = 8 là ≈ 0.0112 (đường test), không phải 0.0105 (đường train); thêm câu dẫn trước Bảng 3.2–3.10.
+- `.gitignore` gốc thêm `BTL02_Nhom05_*.zip`, `BTL03_Nhom05_*.zip`, `btl03_gpu_*.zip`.
+- `check_submission.py --zip`: 0 lỗi, 0 cảnh báo; nén `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` ở gốc repo, 69 file.
+
 ### 4. Giải thích lỗi
 
 - Trong torchinfo (`torchinfo.py` dòng 293) có `model = model if device is None else model.to(device)`. `nn.Module.to()` chuyển **chính** mô hình, không tạo bản sao.
@@ -285,7 +302,7 @@ Kết quả GPU (zip `btl03_gpu_20261127-0507.zip`, giải nén vào thư mục 
 2. `chay_kaggle.ipynb`: kiểm cú pháp 15 ô; chạy đoạn kiểm GPU trên máy (bỏ 2 dòng `assert cuda`) → in `fit: train trên cpu`, `OK`.
 3. 7 notebook từ Kaggle: 0 ô lỗi, 0 ô chưa chạy, đều có dòng `fit: train trên cuda`, đều `CHAY_THU = False`.
 4. `so_sanh.csv` trong zip chứa nguyên 5 dòng của máy (Func_apxm A/B/C, MNIST_MLP, obj_detection) + 7 dòng GPU → chép đè an toàn.
-5. **SegNet +3,76 điểm** (vượt ngưỡng 3 điểm của rule, nên phải tìm nguyên nhân): so log từng epoch với log Keras gốc → bản PyTorch cao hơn ngay từ epoch 1 (train 0.670 / 0.631, val 0.679 / 0.619) và giữ 3–5 điểm suốt 15 epoch ở cả train lẫn val, nên là khác biệt có hệ thống. Nguyên nhân: `Reshape((7, 9216))` + `Permute((2, 1))` của gốc viết cho channels_first nhưng chạy channels_last, nên softmax của mỗi "pixel" lấy điểm số từ 7 pixel khác nhau trong ảnh (xem "Khác Keras ở đâu"). Bản PyTorch tính softmax đúng theo pixel.
+5. **SegNet +3,76 điểm** (vượt ngưỡng 3 điểm của rule, nên phải tìm nguyên nhân): so log từng epoch với log Keras gốc → bản PyTorch cao hơn ngay từ epoch 1 (train 0.670 / 0.631, val 0.679 / 0.619) và cao hơn ở cả 15 epoch (chênh 2.8–6.2 điểm train, 1.3–6.0 điểm val; agent đối chiếu sửa lại câu "giữ 3–5 điểm" ban đầu), nên là khác biệt có hệ thống. Nguyên nhân: `Reshape((7, 9216))` + `Permute((2, 1))` của gốc viết cho channels_first nhưng chạy channels_last, nên softmax của mỗi "pixel" lấy điểm số từ 7 pixel khác nhau trong ảnh (xem "Khác Keras ở đâu"). Bản PyTorch tính softmax đúng theo pixel.
 6. tu_2 Gender dừng muộn hơn Keras 15 epoch: bản PyTorch kẹt ở mức 0.7885 (đoán toàn male) đến epoch 7, Keras thoát từ epoch 4; sau đó cùng xu hướng. lr giữ 1e-3 suốt (ReduceLROnPlateau không kích hoạt), giống log gốc.
 7. LSTM MAE 0.5588 tốt hơn gốc 0.0914 (ngưỡng 0,3): `val_loss` Keras ở 4 epoch cuối dao động 0.60–0.71, nên mức này nằm trong dao động.
 8. Gender (thư mục 2): recall female 0.3574 (451/1262), male 0.9679; 662/662 ảnh đen bị đoán male.
@@ -306,5 +323,8 @@ Kết quả GPU (zip `btl03_gpu_20261127-0507.zip`, giải nén vào thư mục 
 
 - [x] Trúc dừng lần chạy Kaggle cũ, commit + push bản sửa, import lại `chay_kaggle.ipynb`, Save & Run All
 - [x] Tải zip, gộp `so_sanh.csv`, kiểm từng notebook
-- [ ] Commit kết quả GPU (lệnh ở cuối phiên)
-- [ ] Viết báo cáo (T6 27/11 chiều–tối)
+- [ ] Commit kết quả GPU + báo cáo (lệnh ở cuối phiên)
+- [x] Viết báo cáo (T6 27/11 chiều–tối): `report/BaoCao_BTL03_Nhom05.docx` + `.pdf`, 37 trang
+- [ ] Gửi mỗi bạn notebook + mục báo cáo đứng tên mình để đọc trước vấn đáp
+- [x] README, chấm thử, đóng gói `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` (làm sớm tối 27/11)
+- [ ] Trúc mở PDF xem lần cuối rồi nộp zip

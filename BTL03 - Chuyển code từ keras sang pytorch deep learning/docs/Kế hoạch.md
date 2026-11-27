@@ -126,8 +126,8 @@ Nguyên tắc: lúc BTL02 đang train trên Kaggle/Colab thì viết code BTL03;
 | T4 25/11 chiều–tối | `common.py`; `getting_started`, `Func_apxm_MLP`, `MNIST_MLP` (CPU); viết sẵn 3 notebook thư mục 2 (chạy thử CPU, `CHAY_THU = True`) | MNIST_MLP 669.706 tham số, acc ≈ 0.96; 3 mô hình thư mục 2 đúng số tham số | - [x] (làm 26/11: MNIST_MLP 0.9658; CNN_LSTM và 2 notebook TU cũng đã viết, chờ GPU) |
 | T5 26/11 | Chạy GPU thư mục 2 (MNIST_CNN, Gender, Emotion); viết `MNIST_CNN_LSTM` + 2 notebook Training Utilities rồi chạy GPU | 12 dòng `so_sanh.csv`; LSTM 1.748.097 tham số; callback chạy đúng | - [x] (chạy GPU 27/11 sau khi sửa lỗi train bằng CPU) |
 | T6 27/11 sáng | `1_segnet`, `2_obj_detection`; chạy GPU; đủ `so_sanh.csv` + hình | `so_sanh.csv` đủ 12 dòng (10 notebook, Func_apxm 3 dòng A/B/C) | - [x] (27/11) |
-| T6 27/11 chiều–tối | Viết báo cáo (Word + PDF) | Bản đầy đủ | - [ ] |
-| T7 28/11 sáng | Rà số liệu (`/btl03-cham-thu`); README; đóng gói (`dong-goi-btl03`); nộp | Đã nộp zip | - [ ] |
+| T6 27/11 chiều–tối | Viết báo cáo (Word + PDF) | Bản đầy đủ | - [x] (`report/BaoCao_BTL03_Nhom05.docx/.pdf`, 27/11) |
+| T7 28/11 sáng | Rà số liệu (`/btl03-cham-thu`); README; đóng gói (`dong-goi-btl03`); nộp | Đã nộp zip | - [ ] (làm sớm 27/11: README, chấm thử ~91–94/100, zip `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` đã nén; còn Trúc nộp) |
 
 Dự phòng khi trễ (theo thứ tự cắt): chạy bản Training Utilities của Emotion với tối đa 30 epoch thay vì 100 (ghi rõ) → bỏ phần heatmap obj_detection → `Func_apxm_MLP` chỉ chạy vòng quét B → gom MNIST_CNN và CNN_LSTM vào cùng phiên GPU với BTL02.
 
@@ -167,9 +167,9 @@ Dự phòng khi trễ (theo thứ tự cắt): chạy bản Training Utilities c
 
 ## 11. Còn mở (hỏi thầy hoặc tự chốt)
 
-- [ ] Làm cá nhân hay nhóm 5? (đang giả định: cá nhân, Trúc)
-- [ ] Tên file zip nộp?
-- [ ] Có cần slide không?
+- [x] Làm nhóm 5 (chốt 27/11): bìa đủ 4 thành viên, bảng phân công 25% mỗi người ở phụ lục A báo cáo, mỗi notebook có dòng `Phụ trách:`
+- [x] Tên file (chốt 27/11, theo mẫu BTL02): báo cáo `report/BaoCao_BTL03_Nhom05.docx/.pdf`, zip `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip`
+- [x] Không cần slide (Trúc chốt 27/11)
 - [ ] Iris và colab_getting_started không có Keras: chỉ ghi chú là đủ?
 
 ## 12. Ghi chú từ code gốc (đọc hết `Yêu cầu/` ngày 23/11)

@@ -1,5 +1,7 @@
 """Phần dùng chung cho các notebook BTL03 (chuyển code Keras sang PyTorch).
 
+Phụ trách: Huỳnh Ngọc Trúc (Nhóm 05)
+
 Keras có sẵn `compile` / `fit` / `evaluate` / `predict` và callback; PyTorch
 không có, nên file này viết lại các hàm đó để notebook PyTorch đọc gần giống
 notebook Keras gốc và mọi notebook dùng chung một vòng train.

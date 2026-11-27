@@ -2,7 +2,7 @@
 
 Chạy từ thư mục 'BTL03 - Chuyển code từ keras sang pytorch deep learning':
     python ../.claude/skills/dong-goi-btl03/check_submission.py
-    python ../.claude/skills/dong-goi-btl03/check_submission.py --zip BTLON03_KerasPyTorch_HuynhNgocTruc_3123411312.zip
+    python ../.claude/skills/dong-goi-btl03/check_submission.py --zip BTL03_Nhom05_HuynhNgocTruc_3123411312.zip
 """
 import argparse
 import csv
@@ -12,6 +12,8 @@ import sys
 import unicodedata
 import zipfile
 from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")   # in tiếng Việt trên console Windows
 
 NAME = "BTL03 - Chuyển code từ keras sang pytorch deep learning"
 BTL = Path.cwd()
@@ -34,6 +36,8 @@ TARGETS = [
 REQUIRED = ["README.md", "requirements.txt", "pytorch/common.py", "results/so_sanh.csv"]
 EXCLUDE_DIRS = {"data", "Yêu cầu", "docs", "checkpoints", "runs", "__pycache__", ".ipynb_checkpoints"}
 EXCLUDE_FILES = {"CodetoTruc.md", ".gitkeep"}
+# Trong zip, report/ chỉ giữ bản hoàn chỉnh .docx/.pdf như BTL02 (Trúc chốt 27/11); file .md, script ghép, vẽ hình ở lại repo.
+ZIP_ONLY = {"report": {".docx", ".pdf"}}
 KERAS_RE = re.compile(r"^\s*(import|from)\s+(tensorflow|keras)\b", re.M)
 ABS_RE = re.compile(r"[A-Za-z]:[\\/]+(Users|Data)[\\/]")
 
@@ -75,7 +79,7 @@ for t in TARGETS:
         errors.append(f"{rel}: còn CHAY_THU = True (kết quả chạy thử, không phải bản nộp)")
     if ABS_RE.search(src):
         errors.append(f"{rel}: có đường dẫn tuyệt đối")
-    if "count_params" not in src:
+    if "count_params" not in src and not rel.startswith("pytorch/0."):   # getting_started không có mô hình
         warnings.append(f"{rel}: không thấy kiểm số tham số (count_params)")
 
 common = BTL / "pytorch" / "common.py"
@@ -95,7 +99,11 @@ if ss.exists():
         key = f"tu_{base}" if t.startswith("4.") else base
         if t.startswith("0."):
             continue  # getting_started không có kết quả để so
-        if key not in names:
+        if base == "Func_apxm_MLP":   # rule btl03-ket-qua: một dòng mỗi vòng quét A/B/C
+            thieu = [f"{key}_{v}" for v in "ABC" if f"{key}_{v}" not in names]
+            if thieu:
+                errors.append(f"results/so_sanh.csv: thiếu dòng {', '.join(thieu)}")
+        elif key not in names:
             errors.append(f"results/so_sanh.csv: thiếu dòng cho {key}")
 
 req = BTL / "requirements.txt"
@@ -122,6 +130,8 @@ if args.zip:
                     or p.suffix in (".pyc", ".pt", ".pth") or p.name.startswith("~$"):
                 continue
             rel = p.relative_to(BTL)
+            if rel.parts[0] in ZIP_ONLY and p.suffix not in ZIP_ONLY[rel.parts[0]]:
+                continue
             z.write(p, Path(top) / rel)
             print("  +", rel.as_posix())
     print(f"\nĐã nén: {out}")

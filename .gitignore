@@ -64,6 +64,10 @@ BTL01_Nhom05_*.zip
 
 # File nén nộp BTL02
 BTLON02_*.zip
+BTL02_Nhom05_*.zip
 
 # File nén nộp BTL03
 BTLON03_*.zip
+BTL03_Nhom05_*.zip
+# Zip kết quả tải từ Kaggle
+btl03_gpu_*.zip

@@ -32,7 +32,7 @@ Mã thoát 1 nếu có LỖI.
 ## 3. Nén
 
 ```powershell
-& "C:\Users\hntruc\anaconda3\envs\btl02\python.exe" "..\.claude\skills\dong-goi-btl03\check_submission.py" --zip "BTLON03_KerasPyTorch_HuynhNgocTruc_3123411312.zip"
+& "C:\Users\hntruc\anaconda3\envs\btl02\python.exe" "..\.claude\skills\dong-goi-btl03\check_submission.py" --zip "BTL03_Nhom05_HuynhNgocTruc_3123411312.zip"
 ```
 
-Đổi tên zip nếu thầy quy định khác. Zip ghi ra gốc repo (đã có trong `.gitignore` gốc: `BTLON03_*.zip`). Script bỏ `data/`, `Yêu cầu/`, `docs/`, `CodetoTruc.md`, `checkpoints/`, `runs/`, `*.pt`, `__pycache__`, `.ipynb_checkpoints`. In danh sách file đã nén để Trúc xem. Không commit file zip.
+Đổi tên zip nếu thầy quy định khác. Zip ghi ra gốc repo (`.gitignore` gốc có `BTL03_Nhom05_*.zip`). Script bỏ `data/`, `Yêu cầu/`, `docs/`, `CodetoTruc.md`, `checkpoints/`, `runs/`, `*.pt`, `__pycache__`, `.ipynb_checkpoints`. Trong `report/` chỉ nén `.docx` và `.pdf` (giống BTL02). In danh sách file đã nén để Trúc xem. Không commit file zip.

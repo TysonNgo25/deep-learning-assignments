@@ -7,7 +7,7 @@ Hai bài cùng hạn **T7 28/11/2026**. Đầu phiên hỏi Trúc đang làm bà
 | Bài | Nội dung | Ai làm | Kế hoạch |
 | --- | --- | --- | --- |
 | **BTL02 Emotion Recognition** | FER2013, CNN PyTorch, thực nghiệm E1–E7 | Trúc làm, bảng phân công đủ 4 thành viên Nhóm 5 | [BTL02 Emotion Recognition/docs/Kế hoạch.md](BTL02%20Emotion%20Recognition/docs/K%E1%BA%BF%20ho%E1%BA%A1ch.md) |
-| **BTL03 Chuyển code Keras → PyTorch** | 11 notebook Keras trong `Yêu cầu/examples/` (MLP, CNN, CNN+LSTM, SegNet, phát hiện xe) chuyển sang PyTorch, so với kết quả gốc | Trúc (cá nhân hay nhóm: chưa chốt) | [BTL03 - Chuyển code từ keras sang pytorch deep learning/docs/Kế hoạch.md](BTL03%20-%20Chuy%E1%BB%83n%20code%20t%E1%BB%AB%20keras%20sang%20pytorch%20deep%20learning/docs/K%E1%BA%BF%20ho%E1%BA%A1ch.md) |
+| **BTL03 Chuyển code Keras → PyTorch** | 11 notebook Keras trong `Yêu cầu/examples/` (MLP, CNN, CNN+LSTM, SegNet, phát hiện xe) chuyển sang PyTorch, so với kết quả gốc | Trúc làm, bảng phân công đủ 4 thành viên Nhóm 5 (chốt 27/11) | [BTL03 - Chuyển code từ keras sang pytorch deep learning/docs/Kế hoạch.md](BTL03%20-%20Chuy%E1%BB%83n%20code%20t%E1%BB%AB%20keras%20sang%20pytorch%20deep%20learning/docs/K%E1%BA%BF%20ho%E1%BA%A1ch.md) |
 
 - BTL01 đã nộp (8/11/2026): chỉ đọc, không chạy lại, không sửa kết quả.
 
@@ -95,7 +95,8 @@ Thư mục: `BTL03 - Chuyển code từ keras sang pytorch deep learning/` (gọ
 - **Dữ liệu** trong `data/` (git bỏ qua). Gender đã kiểm 23/11: lệch lớp 78,85% male, 662/5968 ảnh val đen; nêu trong báo cáo, không xóa.
 - Không sửa, xóa, di chuyển gì trong `Yêu cầu/` (hook chặn).
 - Môi trường: dùng chung env `btl02` + `requirements.txt` của BTL03; notebook nặng chạy GPU Colab/Kaggle. Chi tiết ở skill `chay-notebook-btl03`.
-- Tên file nộp: chưa chốt, đề xuất `BTLON03_KerasPyTorch_HuynhNgocTruc_3123411312.zip` (`docs/Kế hoạch.md` mục 11).
+- **Phân công:** Nhóm 5, 25% mỗi người (báo cáo phụ lục A). Mỗi notebook có dòng `Phụ trách: <tên>` ở ô đầu, mỗi mục báo cáo có dòng `Người viết:`; giữ khớp với bảng.
+- Tên file nộp: báo cáo `report/BaoCao_BTL03_Nhom05.docx/.pdf`, zip `BTL03_Nhom05_HuynhNgocTruc_3123411312.zip` (chốt 27/11).
 
 ## 6. Công cụ Claude cho BTL03
 
