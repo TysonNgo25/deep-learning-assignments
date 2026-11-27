@@ -233,7 +233,9 @@ def summary(model: nn.Module, input_size, **kwargs):
         return None
     kwargs.setdefault("col_names", ("output_size", "num_params"))
     kwargs.setdefault("depth", 3)
-    kwargs.setdefault("device", "cpu")
+    # Dùng đúng thiết bị đang chứa mô hình: torchinfo gọi model.to(device), nên nếu truyền "cpu"
+    # thì mô hình trên GPU bị kéo về CPU và cả notebook train bằng CPU (lỗi gặp trên Kaggle 26–27/11).
+    kwargs.setdefault("device", next(model.parameters()).device)
     return _summary(model, input_size=input_size, **kwargs)
 
 
@@ -489,6 +491,8 @@ def fit(model: nn.Module, train_loader: DataLoader, val_loader: DataLoader | Non
         keys += ["val_loss"] + ([f"val_{metric_name}"] if metric else [])
     history = {k: [] for k in keys + ["lr", "epoch_time_s"]}
 
+    if verbose:
+        print(f"fit: train trên {device_name(device)}")
     for cb in callbacks:
         cb.on_train_begin(model)
     for epoch in range(1, epochs + 1):

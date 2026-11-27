@@ -74,7 +74,7 @@ Dòng T4 25/11 trong Kế hoạch mục 7 đã tick. Dòng T5 26/11 chưa tick v
 - `9b8e06ec` Commit xong bài 2: commit chung với BTL02; phần BTL03 thêm `docs/Bàn giao.md` (bàn giao từ Claude app sang Claude Code), cập nhật `docs/Kế hoạch.md` (lịch bản 2) và `CodetoTruc.md` (điền hash ngày 23/11).
 - `87ae2f5c` BTL03: common.py, 9 notebook PyTorch (3 đã chạy CPU), so_sanh.csv, nhật ký 26/11: toàn bộ code và kết quả CPU của ngày.
 - `898a2192` BTL03: notebook chạy Kaggle, khóa file khi ghi so_sanh.csv: `chay_kaggle.ipynb`, `_khoa_file` trong `common.py`, `.gitignore`.
-- Commit SegNet + obj_detection (2 notebook thư mục 5, thêm SegNet vào `chay_kaggle.ipynb`): _(Trúc điền ở mục ngày sau)_
+- `c1238fe8` BTL03: 1_segnet, 2_obj_detection (chạy CPU), thêm SegNet vào chay_kaggle: 2 notebook thư mục 5, dòng obj_detection trong `so_sanh.csv`, SegNet vào luồng 1 của `chay_kaggle.ipynb`.
 
 ### 3. Kết quả
 
@@ -230,3 +230,50 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 - [x] Viết `1_segnet`, `2_obj_detection` (kế hoạch T6 27/11 sáng, làm sớm 26/11)
 - [ ] Chạy `1_segnet` trên Kaggle (nếu lần chạy đầu dùng commit `898a2192` thì chưa có SegNet: giải nén zip lần 1, commit + push, rồi chạy lại với `CHON = ["1_segnet"]`)
 - [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không
+
+---
+
+## T6 27/11/2026 – Sửa lỗi Kaggle train bằng CPU (summary kéo mô hình về CPU)
+
+### 1. Việc theo kế hoạch
+
+Kế hoạch mục 7, T6 27/11 sáng: SegNet, obj_detection, chạy GPU, đủ `so_sanh.csv`. SegNet và obj_detection đã viết từ 26/11. Lần chạy Kaggle tối 26/11 (`chay_kaggle.ipynb`, T4 x2) chạy gần 12 giờ (42.170 s) mà chưa xong, Output 0 B. Sáng nay tìm ra nguyên nhân và sửa; phải chạy lại GPU.
+
+### 2. Commit trong ngày
+
+- _(Trúc điền ở mục ngày sau)_: sửa `summary()` trong `common.py`, thêm ô kiểm GPU + timeout + theo dõi % GPU vào `chay_kaggle.ipynb`, nhật ký.
+
+### 3. Kết quả
+
+File đã sửa:
+
+- `pytorch/common.py`:
+  - `summary()` truyền cho torchinfo đúng thiết bị đang chứa mô hình (`next(model.parameters()).device`), không mặc định `"cpu"` nữa.
+  - `fit()` in dòng `fit: train trên <thiết bị>` trước epoch 1, nhìn output là biết chạy CPU hay GPU.
+- `chay_kaggle.ipynb`:
+  - Thêm mục "2. Kiểm tra mô hình thật sự train trên GPU". Ô này dựng mô hình nhỏ trên `cuda`, gọi `summary`, train 1 epoch, rồi `assert` mô hình còn ở `cuda`; sai thì dừng ngay.
+  - `nbconvert` mỗi ô tối đa 2 giờ (`timeout=7200`, trước là không giới hạn).
+  - Vòng theo dõi in thêm % dùng GPU và bộ nhớ GPU mỗi phút.
+
+### 4. Giải thích lỗi
+
+- Trong torchinfo (`torchinfo.py` dòng 293) có `model = model if device is None else model.to(device)`. `nn.Module.to()` chuyển **chính** mô hình, không tạo bản sao.
+- `summary()` cũ đặt `device="cpu"`. Mỗi notebook gọi `model = init_keras_like(...).to(device)` (lên GPU), rồi `summary(model, ...)`, nên mô hình bị kéo về CPU.
+- `fit()` lấy thiết bị từ tham số mô hình (`next(model.parameters()).device`), nên batch cũng đưa lên CPU. Không có lỗi "tensor khác thiết bị" nào, chỉ chậm. Train cả 7 notebook bằng CPU thì 12 giờ không đủ (riêng LSTM gốc trên Core i7 mất 13,5 giờ).
+- Trên máy không lộ ra vì máy chỉ có CPU. 4 notebook đã chạy ở máy (getting_started, Func_apxm, MNIST_MLP, obj_detection) không bị ảnh hưởng.
+
+### 5. Đã kiểm tra
+
+1. Tái hiện lỗi: mô hình đặt trên CPU, gọi thẳng `torchinfo.summary(..., device='meta')` → mô hình bị chuyển sang `meta`. Gọi `summary()` mới → mô hình vẫn ở CPU.
+2. `chay_kaggle.ipynb`: kiểm cú pháp 15 ô; chạy đoạn kiểm GPU trên máy (bỏ 2 dòng `assert cuda`) → in `fit: train trên cpu`, `OK`.
+
+### 6. Câu hỏi vấn đáp có thể gặp
+
+- **Vì sao PyTorch phải tự chuyển mô hình và dữ liệu sang GPU?** Keras/TensorFlow tự đặt phép tính lên GPU. PyTorch để người viết quyết định bằng `.to(device)`, cho cả mô hình lẫn từng batch. Một hàm phụ gọi `.to("cpu")` là cả quá trình train chuyển sang CPU mà không báo lỗi.
+- **Làm sao biết notebook đang chạy GPU?** Xem `next(model.parameters()).device`, dòng `fit: train trên ...`, hoặc `nvidia-smi` (% GPU > 0 khi đang train).
+
+### 7. Còn treo
+
+- [ ] Trúc dừng lần chạy Kaggle cũ, commit + push bản sửa, import lại `chay_kaggle.ipynb`, Save & Run All
+- [ ] Tải zip, gộp `so_sanh.csv`, kiểm từng notebook (Claude làm)
+- [ ] Viết báo cáo (T6 27/11 chiều–tối)
