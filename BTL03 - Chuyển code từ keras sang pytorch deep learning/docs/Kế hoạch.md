@@ -124,8 +124,8 @@ Nguyên tắc: lúc BTL02 đang train trên Kaggle/Colab thì viết code BTL03;
 | T2 23/11 tối | Đọc hết `Yêu cầu/`; dựng thư mục; tải và kiểm dữ liệu Gender; bộ công cụ Claude Code | 4 file `.npy` đúng shape; `docs/Kế hoạch.md` | - [x] |
 | T3 24/11 | (không làm BTL03, dồn sang T4) | – | – |
 | T4 25/11 chiều–tối | `common.py`; `getting_started`, `Func_apxm_MLP`, `MNIST_MLP` (CPU); viết sẵn 3 notebook thư mục 2 (chạy thử CPU, `CHAY_THU = True`) | MNIST_MLP 669.706 tham số, acc ≈ 0.96; 3 mô hình thư mục 2 đúng số tham số | - [x] (làm 26/11: MNIST_MLP 0.9658; CNN_LSTM và 2 notebook TU cũng đã viết, chờ GPU) |
-| T5 26/11 | Chạy GPU thư mục 2 (MNIST_CNN, Gender, Emotion); viết `MNIST_CNN_LSTM` + 2 notebook Training Utilities rồi chạy GPU | 6 dòng `so_sanh.csv`; LSTM 1.748.097 tham số; callback chạy đúng | - [ ] |
-| T6 27/11 sáng | `1_segnet`, `2_obj_detection`; chạy GPU; đủ `so_sanh.csv` + hình | `so_sanh.csv` đủ 12 dòng (10 notebook, Func_apxm 3 dòng A/B/C) | - [ ] |
+| T5 26/11 | Chạy GPU thư mục 2 (MNIST_CNN, Gender, Emotion); viết `MNIST_CNN_LSTM` + 2 notebook Training Utilities rồi chạy GPU | 12 dòng `so_sanh.csv`; LSTM 1.748.097 tham số; callback chạy đúng | - [x] (chạy GPU 27/11 sau khi sửa lỗi train bằng CPU) |
+| T6 27/11 sáng | `1_segnet`, `2_obj_detection`; chạy GPU; đủ `so_sanh.csv` + hình | `so_sanh.csv` đủ 12 dòng (10 notebook, Func_apxm 3 dòng A/B/C) | - [x] (27/11) |
 | T6 27/11 chiều–tối | Viết báo cáo (Word + PDF) | Bản đầy đủ | - [ ] |
 | T7 28/11 sáng | Rà số liệu (`/btl03-cham-thu`); README; đóng gói (`dong-goi-btl03`); nộp | Đã nộp zip | - [ ] |
 

@@ -4,3 +4,10 @@ Func_apxm_MLP_B,1. MLP,test_mse,,0.0013,,2049,2049,100,100,SGD,0.01,128,cpu,5.4,
 Func_apxm_MLP_C,1. MLP,test_mse,,0.0015,,513,513,190,190,SGD,0.01,128,cpu,13.8,0,"Quét C=10..190 (A=800, B=128); giá trị tại C=190; gốc chỉ có hình (Keras cũ), đọc từ hình test ≈ 0.0016"
 MNIST_MLP,1. MLP,test_acc,0.9648,0.9658,0.0010,669706,669706,30,30,SGD,0.01,128,cpu,84.0,0,"Keras gốc chạy trên TensorFlow 2.14, Colab T4; PyTorch khởi tạo glorot như Keras"
 2_obj_detection,5. Others,test_acc,0.9523,0.9375,-0.0148,83367,83367,5,5,Adam,0.001,128,cpu,105.5,0,accuracy tính như Keras (round == nhãn ±1); theo dấu = 0.9636; chia train/test random_state=0 (gốc không seed)
+MNIST_CNN_LSTM,3. CNN + LSTM,mae,0.6502,0.5588,-0.0914,1747073,1748097,30,30,SGD,0.01,128,cuda (Tesla T4),1150.0,0,LSTM PyTorch có 2 bias → +1024 tham số; cổng dùng sigmoid thay hard_sigmoid; dữ liệu sinh với seed 2018 như gốc
+1_MNIST_CNN,2. CNN + MLP,test_acc,0.9884,0.9891,0.0007,1817610,1817610,30,30,SGD,0.01,128,cuda (Tesla T4),141.2,0,"Keras gốc chạy trên TensorFlow 2.14, Colab T4 (3,39 phút)"
+tu_3_Emotion_Reg_CNN,4. Training Utilities,test_acc,0.6163,0.6166,0.0003,19028287,19028287,57,54,Adam,0.0001,128,cuda (Tesla T4),1406.1,0,Augmentation viết lại như ImageDataGenerator Keras 2.0.9 + EarlyStopping(5); Keras dừng epoch 57; PyTorch dừng epoch 54
+2_Human_Gender_CNN,2. CNN + MLP,test_acc,0.8264,0.8388,0.0124,4063570,4063570,30,30,Adam,0.0001,128,cuda (Tesla T4),182.7,0,Không chia 255 như gốc; đoán toàn male = 0.7885
+3_Emotion_Reg_CNN,2. CNN + MLP,test_acc,0.5954,0.5890,-0.0064,19028287,19028287,15,15,Adam,0.0001,128,cuda (Tesla T4),355.1,0,Không chia 255 như gốc; test = PublicTest như gốc
+tu_2_Human_Gender_CNN,4. Training Utilities,test_acc,0.8773,0.8809,0.0036,4063570,4063570,32,47,Adam,0.001,128,cuda (Tesla T4),282.1,0,4 callback; Keras dừng epoch 32 (tốt nhất 27); PyTorch tốt nhất epoch 42; accuracy của checkpoint tốt nhất
+1_segnet,5. Others,pixel_acc,0.7732,0.8108,0.0376,29442325,29442325,15,15,Adam,0.0001,8,cuda (Tesla T4),480.2,0,So tham số train được (Keras tổng 29458211 gồm running mean/var BN); BN eps 1e-3 momentum 0.01; pixel lạ xử lý như one-hot toàn 0 của Keras

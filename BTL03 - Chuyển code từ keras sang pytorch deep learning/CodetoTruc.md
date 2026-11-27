@@ -223,25 +223,26 @@ Lưu ý: gọi `python -m nbconvert` thay cho `jupyter nbconvert` để chắc c
 ### 10. Còn treo
 
 - [x] Trúc commit + push code hôm nay (`87ae2f5c`)
-- [ ] Commit + push `chay_kaggle.ipynb` (Kaggle clone từ GitHub nên phải push trước khi chạy)
-- [ ] Tạo Kaggle Dataset riêng từ 4 file `data/gender/*.npy` (ví dụ `btl03-gender`, Private)
-- [ ] Chạy GPU trên Kaggle (`chay_kaggle.ipynb`, T4 x2, Internet On, Save & Run All) 6 notebook: 1_MNIST_CNN, 2_Human_Gender_CNN, 3_Emotion_Reg_CNN, MNIST_CNN_LSTM, tu_2_Human_Gender_CNN, tu_3_Emotion_Reg_CNN; tải notebook có output + `results/<notebook>/` về
-- [ ] Sau khi chạy GPU: viết lại câu nhận xét PCA cuối `1_MNIST_CNN` theo hình thật
+- [x] Commit + push `chay_kaggle.ipynb` (`898a2192`)
+- [x] Tạo Kaggle Dataset riêng từ 4 file `data/gender/*.npy` (`btl03-gender`, Private)
+- [x] Chạy GPU trên Kaggle (`chay_kaggle.ipynb`, T4 x2, Internet On, Save & Run All) 6 notebook (xong 27/11 sau khi sửa lỗi CPU, xem mục 27/11): 1_MNIST_CNN, 2_Human_Gender_CNN, 3_Emotion_Reg_CNN, MNIST_CNN_LSTM, tu_2_Human_Gender_CNN, tu_3_Emotion_Reg_CNN; tải notebook có output + `results/<notebook>/` về
+- [x] Sau khi chạy GPU: viết lại câu nhận xét PCA cuối `1_MNIST_CNN` theo hình thật (27/11)
 - [x] Viết `1_segnet`, `2_obj_detection` (kế hoạch T6 27/11 sáng, làm sớm 26/11)
-- [ ] Chạy `1_segnet` trên Kaggle (nếu lần chạy đầu dùng commit `898a2192` thì chưa có SegNet: giải nén zip lần 1, commit + push, rồi chạy lại với `CHON = ["1_segnet"]`)
+- [x] Chạy `1_segnet` trên Kaggle (27/11, cùng lần chạy với 6 notebook kia)
 - [ ] Hỏi thầy: cá nhân hay nhóm, tên file zip, có cần slide không
 
 ---
 
-## T6 27/11/2026 – Sửa lỗi Kaggle train bằng CPU (summary kéo mô hình về CPU)
+## T6 27/11/2026 – Sửa lỗi Kaggle train bằng CPU, chạy GPU 7 notebook, đủ so_sanh.csv
 
 ### 1. Việc theo kế hoạch
 
-Kế hoạch mục 7, T6 27/11 sáng: SegNet, obj_detection, chạy GPU, đủ `so_sanh.csv`. SegNet và obj_detection đã viết từ 26/11. Lần chạy Kaggle tối 26/11 (`chay_kaggle.ipynb`, T4 x2) chạy gần 12 giờ (42.170 s) mà chưa xong, Output 0 B. Sáng nay tìm ra nguyên nhân và sửa; phải chạy lại GPU.
+Kế hoạch mục 7, T6 27/11 sáng: SegNet, obj_detection, chạy GPU, đủ `so_sanh.csv`. SegNet và obj_detection đã viết từ 26/11. Lần chạy Kaggle tối 26/11 (`chay_kaggle.ipynb`, T4 x2) chạy gần 12 giờ (42.170 s) mà chưa xong, Output 0 B. Sáng nay tìm ra nguyên nhân và sửa; chạy lại trên Kaggle 7 notebook GPU (2 luồng song song, 04:23 → 05:07, khoảng 44 phút), tất cả trên `cuda (Tesla T4)`. `so_sanh.csv` đủ 12 dòng. Dòng T5 26/11 và T6 27/11 sáng trong Kế hoạch mục 7 đã tick.
 
 ### 2. Commit trong ngày
 
-- _(Trúc điền ở mục ngày sau)_: sửa `summary()` trong `common.py`, thêm ô kiểm GPU + timeout + theo dõi % GPU vào `chay_kaggle.ipynb`, nhật ký.
+- `60565e46` BTL03: sửa summary() kéo mô hình về CPU; chay_kaggle kiểm GPU, timeout, theo dõi % GPU: sửa `summary()` trong `common.py`, thêm ô kiểm GPU + timeout + theo dõi % GPU vào `chay_kaggle.ipynb`, nhật ký.
+- Commit kết quả GPU (7 notebook có output, 7 thư mục `results/`, `so_sanh.csv` 12 dòng, ô giải thích SegNet, nhận xét PCA, nhật ký): _(Trúc điền ở mục ngày sau)_
 
 ### 3. Kết quả
 
@@ -255,6 +256,22 @@ File đã sửa:
   - `nbconvert` mỗi ô tối đa 2 giờ (`timeout=7200`, trước là không giới hạn).
   - Vòng theo dõi in thêm % dùng GPU và bộ nhớ GPU mỗi phút.
 
+Kết quả GPU (zip `btl03_gpu_20261127-0507.zip`, giải nén vào thư mục tạm, kiểm rồi mới chép vào repo):
+
+- 7 notebook có output: `2. CNN + MLP/` (3), `3. CNN + LSTM/` (1), `4. Training Utilities/` (2), `5. Others/1_segnet`.
+- 7 thư mục `results/<notebook>/` mới; `results/so_sanh.csv` 12 dòng (5 dòng cũ giữ nguyên + 7 dòng GPU).
+- Sửa thêm 2 ô markdown: nhận xét PCA cuối `1_MNIST_CNN` (viết theo hình thật); ô "Vì sao bản PyTorch cao hơn Keras khoảng 3,8 điểm?" trong `1_segnet`.
+
+| Notebook | Keras gốc | PyTorch (T4) | Chênh | Epoch Keras / PyTorch | Thời gian PyTorch |
+|---|---|---|---|---|---|
+| 1_MNIST_CNN | 0.9884 | 0.9891 | +0.0007 | 30 / 30 | 141 s |
+| 2_Human_Gender_CNN | 0.8264 | 0.8388 | +0.0124 | 30 / 30 | 183 s |
+| 3_Emotion_Reg_CNN | 0.5954 | 0.5890 | −0.0064 | 15 / 15 | 355 s |
+| MNIST_CNN_LSTM (MAE, thấp là tốt) | 0.6502 | 0.5588 | −0.0914 | 30 / 30 | 1.150 s |
+| tu_2_Human_Gender_CNN | 0.8773 | 0.8809 | +0.0036 | 32 (tốt nhất 27) / 47 (tốt nhất 42) | 282 s |
+| tu_3_Emotion_Reg_CNN | 0.6163 | 0.6166 | +0.0003 | 57 (tốt nhất 52) / 54 (tốt nhất 49) | 1.406 s |
+| 1_segnet (pixel acc) | 0.7732 | 0.8108 | +0.0376 | 15 / 15 | 480 s |
+
 ### 4. Giải thích lỗi
 
 - Trong torchinfo (`torchinfo.py` dòng 293) có `model = model if device is None else model.to(device)`. `nn.Module.to()` chuyển **chính** mô hình, không tạo bản sao.
@@ -266,14 +283,28 @@ File đã sửa:
 
 1. Tái hiện lỗi: mô hình đặt trên CPU, gọi thẳng `torchinfo.summary(..., device='meta')` → mô hình bị chuyển sang `meta`. Gọi `summary()` mới → mô hình vẫn ở CPU.
 2. `chay_kaggle.ipynb`: kiểm cú pháp 15 ô; chạy đoạn kiểm GPU trên máy (bỏ 2 dòng `assert cuda`) → in `fit: train trên cpu`, `OK`.
+3. 7 notebook từ Kaggle: 0 ô lỗi, 0 ô chưa chạy, đều có dòng `fit: train trên cuda`, đều `CHAY_THU = False`.
+4. `so_sanh.csv` trong zip chứa nguyên 5 dòng của máy (Func_apxm A/B/C, MNIST_MLP, obj_detection) + 7 dòng GPU → chép đè an toàn.
+5. **SegNet +3,76 điểm** (vượt ngưỡng 3 điểm của rule, nên phải tìm nguyên nhân): so log từng epoch với log Keras gốc → bản PyTorch cao hơn ngay từ epoch 1 (train 0.670 / 0.631, val 0.679 / 0.619) và giữ 3–5 điểm suốt 15 epoch ở cả train lẫn val, nên là khác biệt có hệ thống. Nguyên nhân: `Reshape((7, 9216))` + `Permute((2, 1))` của gốc viết cho channels_first nhưng chạy channels_last, nên softmax của mỗi "pixel" lấy điểm số từ 7 pixel khác nhau trong ảnh (xem "Khác Keras ở đâu"). Bản PyTorch tính softmax đúng theo pixel.
+6. tu_2 Gender dừng muộn hơn Keras 15 epoch: bản PyTorch kẹt ở mức 0.7885 (đoán toàn male) đến epoch 7, Keras thoát từ epoch 4; sau đó cùng xu hướng. lr giữ 1e-3 suốt (ReduceLROnPlateau không kích hoạt), giống log gốc.
+7. LSTM MAE 0.5588 tốt hơn gốc 0.0914 (ngưỡng 0,3): `val_loss` Keras ở 4 epoch cuối dao động 0.60–0.71, nên mức này nằm trong dao động.
+8. Gender (thư mục 2): recall female 0.3574 (451/1262), male 0.9679; 662/662 ảnh đen bị đoán male.
+9. Xem 3 hình PCA `1_MNIST_CNN`: ảnh gốc chỉ 0 và 1 tách; `fc2` thành cụm rõ; GAP sau `pool3` ở giữa.
 
-### 6. Câu hỏi vấn đáp có thể gặp
+### 6. Khác Keras ở đâu
+
+- **Reshape + Permute của SegNet gốc**: viết cho channels_first nhưng chạy channels_last. Dãy bộ nhớ `(96, 96, 7)` là pixel 0 kênh 0…6, pixel 1 kênh 0…6, …; `Reshape((7, 9216))` cắt dãy đó thành 7 hàng liên tiếp, sau `Permute` thì "lớp i của pixel j" là phần tử thứ `i·9216 + j` của dãy, tức pixel `(i·9216 + j) // 7`. Mỗi pixel đầu ra lấy điểm số từ 7 pixel khác nhau. Bản PyTorch không lặp lại lỗi này.
+
+### 7. Câu hỏi vấn đáp có thể gặp
 
 - **Vì sao PyTorch phải tự chuyển mô hình và dữ liệu sang GPU?** Keras/TensorFlow tự đặt phép tính lên GPU. PyTorch để người viết quyết định bằng `.to(device)`, cho cả mô hình lẫn từng batch. Một hàm phụ gọi `.to("cpu")` là cả quá trình train chuyển sang CPU mà không báo lỗi.
+- **Vì sao SegNet PyTorch cao hơn Keras gần 4 điểm?** Bản Keras gốc dùng `Reshape((7, 96*96))` trên tensor channels_last `(N, 96, 96, 7)`, nên không tách đúng kênh lớp mà trộn điểm số của 7 pixel khác nhau. Bản PyTorch để đầu ra `(N, 7, 96, 96)` và `CrossEntropyLoss` lấy softmax theo chiều lớp của từng pixel. Kiến trúc, số tham số, siêu tham số giữ nguyên.
+- **Gender đạt 0.84 có tốt không?** Đoán toàn male đã được 0.7885. Recall female chỉ 0.36 và mọi ảnh đen đều bị đoán male, nên mô hình nghiêng hẳn về lớp đông.
 - **Làm sao biết notebook đang chạy GPU?** Xem `next(model.parameters()).device`, dòng `fit: train trên ...`, hoặc `nvidia-smi` (% GPU > 0 khi đang train).
 
-### 7. Còn treo
+### 8. Còn treo
 
-- [ ] Trúc dừng lần chạy Kaggle cũ, commit + push bản sửa, import lại `chay_kaggle.ipynb`, Save & Run All
-- [ ] Tải zip, gộp `so_sanh.csv`, kiểm từng notebook (Claude làm)
+- [x] Trúc dừng lần chạy Kaggle cũ, commit + push bản sửa, import lại `chay_kaggle.ipynb`, Save & Run All
+- [x] Tải zip, gộp `so_sanh.csv`, kiểm từng notebook
+- [ ] Commit kết quả GPU (lệnh ở cuối phiên)
 - [ ] Viết báo cáo (T6 27/11 chiều–tối)

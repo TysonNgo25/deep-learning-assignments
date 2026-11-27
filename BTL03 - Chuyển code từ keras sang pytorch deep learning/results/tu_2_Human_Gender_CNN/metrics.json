@@ -1,0 +1,12 @@
+{
+  "test_loss": 0.3298518189476259,
+  "test_metric": 0.8808646111002556,
+  "n_params": 4063570,
+  "epochs_ran": 47,
+  "best_epoch": 42,
+  "train_time_s": 282.106600522995,
+  "device": "cuda (Tesla T4)",
+  "seed": 0,
+  "lr_cuoi": 0.001,
+  "torch_version": "2.11.0+cu130"
+}
